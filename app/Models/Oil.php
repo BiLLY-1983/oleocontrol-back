@@ -4,6 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 use Laravel\Sanctum\HasApiTokens;
 
 class Oil extends Model
@@ -17,7 +18,7 @@ class Oil extends Model
     /* Relaciones */
     /* ---------- */
 
-    public function analyses()
+    public function analyses(): HasMany
     {
         return $this->hasMany(Analysis::class);
     }

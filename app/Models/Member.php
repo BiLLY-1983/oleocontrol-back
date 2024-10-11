@@ -5,6 +5,7 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 use Laravel\Sanctum\HasApiTokens;
 
 class Member extends Model
@@ -23,12 +24,12 @@ class Member extends Model
         return $this->belongsTo(User::class, 'member_id');
     }
 
-    public function entries()
+    public function entries(): HasMany
     {
         return $this->hasMany(Entry::class);
     }
 
-    public function settlements()
+    public function settlements(): HasMany
     {
         return $this->hasMany(Settlement::class);
     }
