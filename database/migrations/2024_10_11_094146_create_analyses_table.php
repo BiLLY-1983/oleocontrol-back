@@ -22,7 +22,7 @@ return new class extends Migration
             $table->unsignedBigInteger('oil_id');
             $table->decimal('oil_quantity', 10, 2);
             $table->foreign('entry_id')->references('id')->on('entries')->onDelete('cascade');
-            $table->foreign('worker_id')->references('worker_id')->on('workers');
+            $table->foreign('worker_id')->references('id')->on('workers');
             $table->foreign('oil_id')->references('id')->on('oils');
             $table->timestamps();
         });
