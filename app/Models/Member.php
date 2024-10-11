@@ -4,8 +4,32 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Laravel\Sanctum\HasApiTokens;
 
 class Member extends Model
 {
-    use HasFactory;
+    use HasFactory, HasApiTokens;
+
+    protected $guarded = [];
+
+
+    /* ---------- */
+    /* Relaciones */
+    /* ---------- */
+
+    public function user(): BelongsTo
+    {
+        return $this->belongsTo(User::class, 'member_id');
+    }
+
+    public function entries()
+    {
+        return $this->hasMany(Entry::class);
+    }
+
+    public function settlements()
+    {
+        return $this->hasMany(Settlement::class);
+    }
 }
