@@ -11,6 +11,9 @@ class Oil extends Model
 {
     use HasFactory, HasApiTokens;
 
+    // Especificar nombre de la tabla (daba problemas a la hora de realizar los seeders)
+    protected $table = 'oils';
+
     protected $guarded = [];
 
 
