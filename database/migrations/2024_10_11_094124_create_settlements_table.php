@@ -14,7 +14,7 @@ return new class extends Migration
         Schema::create('settlements', function (Blueprint $table) {
             $table->id();
             $table->decimal('amount', 10, 2);
-            $table->decimal('price', 10, 2);
+            $table->decimal('price', 10, 2)->nullable();
             $table->enum('settlement_status', ['Pendiente', 'Aceptada', 'Cancelada'])->default('Pendiente');
             $table->unsignedBigInteger('member_id');
             $table->unsignedBigInteger('worker_id')->nullable();
