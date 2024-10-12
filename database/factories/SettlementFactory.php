@@ -18,11 +18,14 @@ class SettlementFactory extends Factory
      */
     public function definition(): array
     {
+        // Obtener un miembro aleatorio, asegurando que existen miembros
+        $member = Member::inRandomOrder()->first();
+
         return [
             'amount' => $this->faker->randomFloat(2, 100, 10000), 
             'price' => $this->faker->randomFloat(2, 10, 500),    
-            'settlement_status' => $this->faker->randomElement(['Pending', 'Paid', 'Cancelled']),
-            'member_id' => Member::inRandomOrder()->first()->id, 
+            'settlement_status' => 'Pendiente',
+            'member_id' => $member->id, 
             'worker_id' => null, 
 
         ];

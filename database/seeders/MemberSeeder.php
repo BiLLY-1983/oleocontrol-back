@@ -14,6 +14,14 @@ class MemberSeeder extends Seeder
      */
     public function run(): void
     {
-        Member::factory()->count(50)->create();
+        // Obtener todos los usuarios que tienen el rol 'member'
+        $members = User::whereHas('roles', fn($query) => $query->where('name', 'Socio'))->get();
+
+        foreach ($members as $member) {
+            Member::create([
+                'user_id' => $member->id,
+                'member_number' => 1000 + $member->id
+            ]);
+        }
     }
 }

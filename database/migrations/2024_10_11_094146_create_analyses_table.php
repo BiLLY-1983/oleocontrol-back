@@ -17,7 +17,7 @@ return new class extends Migration
             $table->decimal('acidity', 5, 2)->nullable();
             $table->decimal('humidity', 5, 2)->nullable();
             $table->decimal('yield', 5, 2)->nullable(); 
-            $table->unsignedBigInteger('entry_id'); 
+            $table->unsignedBigInteger('entry_id')->unique(); //? 
             $table->unsignedBigInteger('worker_id')->nullable();
             $table->unsignedBigInteger('oil_id')->nullable();
             $table->decimal('oil_quantity', 10, 2)->nullable();

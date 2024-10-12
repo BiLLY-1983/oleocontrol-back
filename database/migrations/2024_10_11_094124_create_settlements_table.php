@@ -15,7 +15,7 @@ return new class extends Migration
             $table->id();
             $table->decimal('amount', 10, 2);
             $table->decimal('price', 10, 2);
-            $table->enum('settlement_status', ['Pending', 'Paid', 'Cancelled']);
+            $table->enum('settlement_status', ['Pendiente', 'Aceptada', 'Cancelada'])->default('Pendiente');
             $table->unsignedBigInteger('member_id');
             $table->unsignedBigInteger('worker_id')->nullable();
             $table->foreign('member_id')->references('id')->on('members')->onDelete('cascade');
