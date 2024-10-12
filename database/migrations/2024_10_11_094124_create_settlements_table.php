@@ -18,8 +18,13 @@ return new class extends Migration
             $table->enum('settlement_status', ['Pendiente', 'Aceptada', 'Cancelada'])->default('Pendiente');
             $table->unsignedBigInteger('member_id');
             $table->unsignedBigInteger('worker_id')->nullable();
-            $table->foreign('member_id')->references('id')->on('members')->onDelete('cascade');
-            $table->foreign('worker_id')->references('id')->on('workers');
+            $table->foreign('member_id')
+                ->references('id')->on('members')
+                ->onUpdate('cascade')
+                ->onDelete('cascade');
+            $table->foreign('worker_id')->
+                references('id')->on('workers')
+                ->onUpdate('cascade');
             $table->timestamps();
         });
     }

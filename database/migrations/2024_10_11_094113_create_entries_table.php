@@ -17,7 +17,10 @@ return new class extends Migration
             $table->integer('quantity');
             $table->enum('analysis_status', ['Pendiente', 'Completo'])->default('Pendiente');
             $table->unsignedBigInteger('member_id');
-            $table->foreign('member_id')->references('id')->on('members')->onDelete('cascade');
+            $table->foreign('member_id')
+                ->references('id')->on('members')
+                ->onUpdate('cascade')
+                ->onDelete('cascade');
             $table->timestamps();
         });
     }

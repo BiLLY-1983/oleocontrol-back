@@ -21,9 +21,16 @@ return new class extends Migration
             $table->unsignedBigInteger('worker_id')->nullable();
             $table->unsignedBigInteger('oil_id')->nullable();
             $table->decimal('oil_quantity', 10, 2)->nullable();
-            $table->foreign('entry_id')->references('id')->on('entries')->onDelete('cascade');
-            $table->foreign('worker_id')->references('id')->on('workers');
-            $table->foreign('oil_id')->references('id')->on('oils');
+            $table->foreign('entry_id')
+                ->references('id')->on('entries')
+                ->onUpdate('cascade')
+                ->onDelete('cascade');
+            $table->foreign('worker_id')
+                ->references('id')->on('workers')
+                ->onUpdate('cascade');
+            $table->foreign('oil_id')
+                ->references('id')->on('oils')
+                ->onUpdate('cascade');
             $table->timestamps();
         });
     }
