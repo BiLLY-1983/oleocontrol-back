@@ -24,6 +24,12 @@ class UserResource extends JsonResource
             'phone' => $this->phone,
             'status' => $this->status,
             'profile_picture' => $this->profile_picture,
+            'roles' => $this->roles->map(function($role) {
+                return [
+                    'id' => $role->id,
+                    'name' => $role->name,
+                ];
+            }),
         ];
     }
 }
