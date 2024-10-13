@@ -21,7 +21,7 @@ class Member extends Model
 
     public function user(): BelongsTo
     {
-        return $this->belongsTo(User::class, 'member_id');
+        return $this->belongsTo(User::class);
     }
 
     public function entries(): HasMany

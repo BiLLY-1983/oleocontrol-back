@@ -20,10 +20,10 @@ class Worker extends Model
     /* ---------- */
     public function user()
     {
-        return $this->belongsTo(User::class, 'worker_id');
+        return $this->belongsTo(User::class);
     }
 
-    public function departments(): BelongsTo
+    public function department(): BelongsTo
     {
         return $this->belongsTo(Department::class);
     }

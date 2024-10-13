@@ -2,63 +2,57 @@
 
 namespace App\Http\Controllers;
 
-use Illuminate\Http\Request;
+use App\Http\Requests\SettlementRequest;
+use App\Http\Resources\SettlementResource;
+use App\Models\Settlement;
+use Illuminate\Http\JsonResponse;
 
 class SettlementController extends Controller
 {
-    /**
-     * Display a listing of the resource.
-     */
-    public function index()
+    public function index(): JsonResponse
     {
-        //
+        return response()->json([
+            'status' => 'success',
+            'data' => SettlementResource::collection(Settlement::all())
+        ], 200);
     }
 
-    /**
-     * Show the form for creating a new resource.
-     */
-    public function create()
+    public function store(SettlementRequest $request): JsonResponse
     {
-        //
+        $settlement = Settlement::create($request->validated());
+        
+        return response()->json([
+            'status' => 'success',
+            'data' => new SettlementResource($settlement)
+        ], 201);
     }
 
-    /**
-     * Store a newly created resource in storage.
-     */
-    public function store(Request $request)
+    public function show($id): JsonResponse
     {
-        //
+        return response()->json([
+            'status' => 'success',
+            'data' => new SettlementResource(Settlement::findOrFail($id))
+        ], 200);
     }
 
-    /**
-     * Display the specified resource.
-     */
-    public function show(string $id)
+    public function update(SettlementRequest $request, $id): JsonResponse
     {
-        //
+        $settlement = Settlement::findOrFail($id);
+        $settlement->update($request->validated());
+
+        return response()->json([
+            'status' => 'success',
+            'data' => new SettlementResource($settlement)
+        ], 200);
     }
 
-    /**
-     * Show the form for editing the specified resource.
-     */
-    public function edit(string $id)
+    public function destroy($id): JsonResponse
     {
-        //
-    }
+        $settlement = Settlement::findOrFail($id);
+        $settlement->delete();
 
-    /**
-     * Update the specified resource in storage.
-     */
-    public function update(Request $request, string $id)
-    {
-        //
-    }
-
-    /**
-     * Remove the specified resource from storage.
-     */
-    public function destroy(string $id)
-    {
-        //
+        return response()->json([
+            'status' => 'success',
+        ], 200);
     }
 }

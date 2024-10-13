@@ -2,63 +2,57 @@
 
 namespace App\Http\Controllers;
 
-use Illuminate\Http\Request;
+use App\Http\Requests\NotificationRequest;
+use App\Http\Resources\NotificationResource;
+use App\Models\Notification;
+use Illuminate\Http\JsonResponse;
 
 class NotificationController extends Controller
 {
-    /**
-     * Display a listing of the resource.
-     */
-    public function index()
+    public function index(): JsonResponse
     {
-        //
+        return response()->json([
+            'status' => 'success',
+            'data' => NotificationResource::collection(Notification::all())
+        ], 200);
     }
 
-    /**
-     * Show the form for creating a new resource.
-     */
-    public function create()
+    public function store(NotificationRequest $request): JsonResponse
     {
-        //
+        $notification = Notification::create($request->validated());
+        
+        return response()->json([
+            'status' => 'success',
+            'data' => new NotificationResource($notification)
+        ], 201);
     }
 
-    /**
-     * Store a newly created resource in storage.
-     */
-    public function store(Request $request)
+    public function show($id): JsonResponse
     {
-        //
+        return response()->json([
+            'status' => 'success',
+            'data' => new NotificationResource(Notification::findOrFail($id))
+        ], 200);
     }
 
-    /**
-     * Display the specified resource.
-     */
-    public function show(string $id)
+    public function update(NotificationRequest $request, $id): JsonResponse
     {
-        //
+        $notification = Notification::findOrFail($id);
+        $notification->update($request->validated());
+
+        return response()->json([
+            'status' => 'success',
+            'data' => new NotificationResource($notification)
+        ], 200);
     }
 
-    /**
-     * Show the form for editing the specified resource.
-     */
-    public function edit(string $id)
+    public function destroy($id): JsonResponse
     {
-        //
-    }
+        $notification = Notification::findOrFail($id);
+        $notification->delete();
 
-    /**
-     * Update the specified resource in storage.
-     */
-    public function update(Request $request, string $id)
-    {
-        //
-    }
-
-    /**
-     * Remove the specified resource from storage.
-     */
-    public function destroy(string $id)
-    {
-        //
+        return response()->json([
+            'status' => 'success',
+        ], 200);
     }
 }

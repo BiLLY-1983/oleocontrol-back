@@ -13,7 +13,7 @@ return new class extends Migration
     {
         Schema::create('oils', function (Blueprint $table) {
             $table->id();
-            $table->string('name');
+            $table->string('name', 255);
             $table->text('description')->max(500)->nullable();
             $table->timestamps();
         });

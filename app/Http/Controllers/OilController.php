@@ -2,63 +2,57 @@
 
 namespace App\Http\Controllers;
 
-use Illuminate\Http\Request;
+use App\Http\Requests\OilRequest;
+use App\Http\Resources\OilResource;
+use App\Models\Oil;
+use Illuminate\Http\JsonResponse;
 
 class OilController extends Controller
 {
-    /**
-     * Display a listing of the resource.
-     */
-    public function index()
+    public function index(): JsonResponse
     {
-        //
+        return response()->json([
+            'status' => 'success',
+            'data' => OilResource::collection(Oil::all())
+        ], 200);
     }
 
-    /**
-     * Show the form for creating a new resource.
-     */
-    public function create()
+    public function store(OilRequest $request): JsonResponse
     {
-        //
+        $oil = Oil::create($request->validated());
+        
+        return response()->json([
+            'status' => 'success',
+            'data' => new OilResource($oil)
+        ], 201);
     }
 
-    /**
-     * Store a newly created resource in storage.
-     */
-    public function store(Request $request)
+    public function show($id): JsonResponse
     {
-        //
+        return response()->json([
+            'status' => 'success',
+            'data' => new OilResource(Oil::findOrFail($id))
+        ], 200);
     }
 
-    /**
-     * Display the specified resource.
-     */
-    public function show(string $id)
+    public function update(OilRequest $request, $id): JsonResponse
     {
-        //
+        $oil = Oil::findOrFail($id);
+        $oil->update($request->validated());
+
+        return response()->json([
+            'status' => 'success',
+            'data' => new OilResource($oil)
+        ], 200);
     }
 
-    /**
-     * Show the form for editing the specified resource.
-     */
-    public function edit(string $id)
+    public function destroy($id): JsonResponse
     {
-        //
-    }
+        $oil = Oil::findOrFail($id);
+        $oil->delete();
 
-    /**
-     * Update the specified resource in storage.
-     */
-    public function update(Request $request, string $id)
-    {
-        //
-    }
-
-    /**
-     * Remove the specified resource from storage.
-     */
-    public function destroy(string $id)
-    {
-        //
+        return response()->json([
+            'status' => 'success',
+        ], 200);
     }
 }

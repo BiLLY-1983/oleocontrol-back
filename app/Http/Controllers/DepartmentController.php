@@ -2,63 +2,57 @@
 
 namespace App\Http\Controllers;
 
-use Illuminate\Http\Request;
+use App\Http\Requests\DepartmentRequest;
+use App\Http\Resources\DepartmentResource;
+use App\Models\Department;
+use Illuminate\Http\JsonResponse;
 
 class DepartmentController extends Controller
 {
-    /**
-     * Display a listing of the resource.
-     */
-    public function index()
+    public function index(): JsonResponse
     {
-        //
+        return response()->json([
+            'status' => 'success',
+            'data' => DepartmentResource::collection(Department::all())
+        ], 200);
     }
 
-    /**
-     * Show the form for creating a new resource.
-     */
-    public function create()
+    public function store(DepartmentRequest $request): JsonResponse
     {
-        //
+        $department = Department::create($request->validated());
+        
+        return response()->json([
+            'status' => 'success',
+            'data' => new DepartmentResource($department)
+        ], 201);
     }
 
-    /**
-     * Store a newly created resource in storage.
-     */
-    public function store(Request $request)
+    public function show($id): JsonResponse
     {
-        //
+        return response()->json([
+            'status' => 'success',
+            'data' => new DepartmentResource(Department::findOrFail($id))
+        ], 200);
     }
 
-    /**
-     * Display the specified resource.
-     */
-    public function show(string $id)
+    public function update(DepartmentRequest $request, $id): JsonResponse
     {
-        //
+        $department = Department::findOrFail($id);
+        $department->update($request->validated());
+
+        return response()->json([
+            'status' => 'success',
+            'data' => new DepartmentResource($department)
+        ], 200);
     }
 
-    /**
-     * Show the form for editing the specified resource.
-     */
-    public function edit(string $id)
+    public function destroy($id): JsonResponse
     {
-        //
-    }
+        $department = Department::findOrFail($id);
+        $department->delete();
 
-    /**
-     * Update the specified resource in storage.
-     */
-    public function update(Request $request, string $id)
-    {
-        //
-    }
-
-    /**
-     * Remove the specified resource from storage.
-     */
-    public function destroy(string $id)
-    {
-        //
+        return response()->json([
+            'status' => 'success',
+        ], 200);
     }
 }

@@ -2,63 +2,57 @@
 
 namespace App\Http\Controllers;
 
-use Illuminate\Http\Request;
+use App\Http\Requests\WorkerRequest; // Asegúrate de crear este Request
+use App\Http\Resources\WorkerResource; // Asegúrate de crear este Resource
+use App\Models\Worker;
+use Illuminate\Http\JsonResponse;
 
 class WorkerController extends Controller
 {
-    /**
-     * Display a listing of the resource.
-     */
-    public function index()
+    public function index(): JsonResponse
     {
-        //
+        return response()->json([
+            'status' => 'success',
+            'data' => WorkerResource::collection(Worker::all())
+        ], 200);
     }
 
-    /**
-     * Show the form for creating a new resource.
-     */
-    public function create()
+    public function store(WorkerRequest $request): JsonResponse
     {
-        //
+        $worker = Worker::create($request->validated());
+        
+        return response()->json([
+            'status' => 'success',
+            'data' => new WorkerResource($worker)
+        ], 201);
     }
 
-    /**
-     * Store a newly created resource in storage.
-     */
-    public function store(Request $request)
+    public function show($id): JsonResponse
     {
-        //
+        return response()->json([
+            'status' => 'success',
+            'data' => new WorkerResource(Worker::findOrFail($id))
+        ], 200);
     }
 
-    /**
-     * Display the specified resource.
-     */
-    public function show(string $id)
+    public function update(WorkerRequest $request, $id): JsonResponse
     {
-        //
+        $worker = Worker::findOrFail($id);
+        $worker->update($request->validated());
+
+        return response()->json([
+            'status' => 'success',
+            'data' => new WorkerResource($worker)
+        ], 200);
     }
 
-    /**
-     * Show the form for editing the specified resource.
-     */
-    public function edit(string $id)
+    public function destroy($id): JsonResponse
     {
-        //
-    }
+        $worker = Worker::findOrFail($id);
+        $worker->delete();
 
-    /**
-     * Update the specified resource in storage.
-     */
-    public function update(Request $request, string $id)
-    {
-        //
-    }
-
-    /**
-     * Remove the specified resource from storage.
-     */
-    public function destroy(string $id)
-    {
-        //
+        return response()->json([
+            'status' => 'success',
+        ], 204);
     }
 }
