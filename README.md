@@ -1,1 +1,1 @@
-![Logo OleoControl](public/readme/logo_transparent.png)
+![Logo OleoControl](public/readme/logo-color.png)
