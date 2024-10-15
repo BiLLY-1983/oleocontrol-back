@@ -1,0 +1,1 @@
+![Logo OleoControl](public/storage/readme/logo_transparent.png)
