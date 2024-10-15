@@ -5,6 +5,7 @@ namespace App\Http\Controllers\api;
 use App\Http\Controllers\Controller;
 use App\Models\User;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Validation\ValidationException;
 
@@ -74,8 +75,11 @@ class AuthController extends Controller
 
     public function logout(Request $request)
     {
-        $request->user()->currentAccessToken()->delete();
-
-        return response()->json(['message' => 'Sesión cerrada exitosamente']);
+        if (Auth::check()) {
+            $request->user()->currentAccessToken()->delete();
+            return response()->json(['message' => 'Logout exitoso']);
+        }
+    
+        return response()->json(['message' => 'Acceso denegado'], 403);
     }
 }

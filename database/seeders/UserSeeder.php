@@ -6,7 +6,6 @@ use App\Models\Member;
 use App\Models\Role;
 use App\Models\User;
 use App\Models\Worker;
-use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\Hash;
 
@@ -32,6 +31,7 @@ class UserSeeder extends Seeder
     
         $adminRole = Role::where('name', 'Administrador')->first();
         $admin->roles()->attach($adminRole);
+        
 
         /* ------------------------- */
 
@@ -47,7 +47,7 @@ class UserSeeder extends Seeder
             'status' => true,
             'profile_picture' => 'profile_pictures/guess.jpg'
         ]);
-    
+   
         $guessRole = Role::where('name', 'Invitado')->first();
         $guess->roles()->attach($guessRole);
 

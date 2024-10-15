@@ -20,13 +20,11 @@ class WorkerSeeder extends Seeder
 
         // Comprobar si hay departamentos disponibles
         if ($departments->isEmpty()) {
-            $this->command->warn('No hay departamentos disponibles. No se pueden asignar workers.');
+            $this->command->warn('No hay departamentos disponibles. No se pueden asignar trabajadores.');
             return;
         }
 
-
-
-        // Obtener todos los usuarios que tienen el rol 'worker'
+        // Obtener todos los usuarios que tienen el rol 'Trabajador'
         $workers = User::whereHas('roles', fn($query) => $query->where('name', 'Trabajador'))->get();
 
         foreach ($workers as $worker) {
