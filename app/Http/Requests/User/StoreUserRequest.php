@@ -1,10 +1,10 @@
 <?php
 
-namespace App\Http\Requests;
+namespace App\Http\Requests\User;
 
 use Illuminate\Foundation\Http\FormRequest;
 
-class UserRequest extends FormRequest
+class StoreUserRequest extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.
@@ -22,15 +22,16 @@ class UserRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'username' => 'required|string|max:255|unique:users,username,' . $this->id,
+            'username' => 'required|string|max:255|unique:users',
             'first_name' => 'required|string|max:255',
             'last_name' => 'required|string|max:255',
-            'dni' => 'required|string|max:20|unique:users,dni,' . $this->id,
-            'email' => 'required|string|email|max:255|unique:users,email,' . $this->id,
-            'password' => 'nullable|string|min:8',
+            'dni' => 'required|string|max:20|unique:users',
+            'email' => 'required|string|email|max:255|unique:users', 
+            'password' => 'nullable|string|min:8|confirmed',
             'phone' => 'required|string|max:20',
             'status' => 'boolean',
             'profile_picture' => 'nullable|string|max:255',
         ];
+        
     }
 }

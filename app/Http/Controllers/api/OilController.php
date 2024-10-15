@@ -1,8 +1,10 @@
 <?php
 
-namespace App\Http\Controllers;
+namespace App\Http\Controllers\api;
 
-use App\Http\Requests\OilRequest;
+use App\Http\Controllers\Controller;
+use App\Http\Requests\Oil\StoreOilRequest;
+use App\Http\Requests\Oil\UpdateOilRequest;
 use App\Http\Resources\OilResource;
 use App\Models\Oil;
 use Illuminate\Http\JsonResponse;
@@ -17,7 +19,7 @@ class OilController extends Controller
         ], 200);
     }
 
-    public function store(OilRequest $request): JsonResponse
+    public function store(StoreOilRequest $request): JsonResponse
     {
         $oil = Oil::create($request->validated());
         
@@ -35,7 +37,7 @@ class OilController extends Controller
         ], 200);
     }
 
-    public function update(OilRequest $request, $id): JsonResponse
+    public function update(UpdateOilRequest $request, $id): JsonResponse
     {
         $oil = Oil::findOrFail($id);
         $oil->update($request->validated());

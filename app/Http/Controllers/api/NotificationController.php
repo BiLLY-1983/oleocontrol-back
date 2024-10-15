@@ -1,8 +1,9 @@
 <?php
 
-namespace App\Http\Controllers;
+namespace App\Http\Controllers\api;
 
-use App\Http\Requests\NotificationRequest;
+use App\Http\Controllers\Controller;
+use App\Http\Requests\Notification\StoreNotificationRequest;
 use App\Http\Resources\NotificationResource;
 use App\Models\Notification;
 use Illuminate\Http\JsonResponse;
@@ -17,7 +18,7 @@ class NotificationController extends Controller
         ], 200);
     }
 
-    public function store(NotificationRequest $request): JsonResponse
+    public function store(StoreNotificationRequest $request): JsonResponse
     {
         $notification = Notification::create($request->validated());
         
@@ -35,7 +36,7 @@ class NotificationController extends Controller
         ], 200);
     }
 
-    public function update(NotificationRequest $request, $id): JsonResponse
+    public function update(StoreNotificationRequest $request, $id): JsonResponse
     {
         $notification = Notification::findOrFail($id);
         $notification->update($request->validated());

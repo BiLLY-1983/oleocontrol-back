@@ -1,8 +1,10 @@
 <?php
 
-namespace App\Http\Controllers;
+namespace App\Http\Controllers\api;
 
-use App\Http\Requests\SettlementRequest;
+use App\Http\Controllers\Controller;
+use App\Http\Requests\Settlement\StoreSettlementRequest;
+use App\Http\Requests\Settlement\UpdateOSettlementRequest;
 use App\Http\Resources\SettlementResource;
 use App\Models\Settlement;
 use Illuminate\Http\JsonResponse;
@@ -17,7 +19,7 @@ class SettlementController extends Controller
         ], 200);
     }
 
-    public function store(SettlementRequest $request): JsonResponse
+    public function store(StoreSettlementRequest $request): JsonResponse
     {
         $settlement = Settlement::create($request->validated());
         
@@ -35,7 +37,7 @@ class SettlementController extends Controller
         ], 200);
     }
 
-    public function update(SettlementRequest $request, $id): JsonResponse
+    public function update(UpdateOSettlementRequest $request, $id): JsonResponse
     {
         $settlement = Settlement::findOrFail($id);
         $settlement->update($request->validated());

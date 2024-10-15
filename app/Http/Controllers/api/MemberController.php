@@ -1,9 +1,11 @@
 <?php
 
-namespace App\Http\Controllers;
+namespace App\Http\Controllers\api;
 
-use App\Http\Requests\MemberRequest; // Asegúrate de crear este Request
-use App\Http\Resources\MemberResource; // Asegúrate de crear este Resource
+use App\Http\Controllers\Controller;
+use App\Http\Requests\Member\StoreMemberRequest;
+use App\Http\Requests\Member\UpdateMemberRequest;
+use App\Http\Resources\MemberResource;
 use App\Models\Member;
 use Illuminate\Http\JsonResponse;
 
@@ -17,7 +19,7 @@ class MemberController extends Controller
         ], 200);
     }
 
-    public function store(MemberRequest $request): JsonResponse
+    public function store(StoreMemberRequest $request): JsonResponse
     {
         $member = Member::create($request->validated());
         
@@ -35,7 +37,7 @@ class MemberController extends Controller
         ], 200);
     }
 
-    public function update(MemberRequest $request, $id): JsonResponse
+    public function update(UpdateMemberRequest $request, $id): JsonResponse
     {
         $member = Member::findOrFail($id);
         $member->update($request->validated());

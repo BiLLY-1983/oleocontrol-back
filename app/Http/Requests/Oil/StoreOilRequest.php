@@ -1,17 +1,17 @@
 <?php
 
-namespace App\Http\Requests;
+namespace App\Http\Requests\Oil;
 
 use Illuminate\Foundation\Http\FormRequest;
 
-class NotificationRequest extends FormRequest
+class StoreOilRequest extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.
      */
     public function authorize(): bool
     {
-        return false;
+        return true;
     }
 
     /**
@@ -22,10 +22,8 @@ class NotificationRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'message' => 'required|string|max:500',
-            'sender_id' => 'required|exists:users,id',
-            'receiver_id' => 'required|exists:users,id',
-            'date' => 'nullable|date',
+            'name' => 'required|string|max:255',
+            'description' => 'nullable|string|max:500',
         ];
     }
 }

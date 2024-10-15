@@ -1,8 +1,10 @@
 <?php
 
-namespace App\Http\Controllers;
+namespace App\Http\Controllers\api;
 
-use App\Http\Requests\UserRequest;
+use App\Http\Controllers\Controller;
+use App\Http\Requests\User\StoreUserRequest;
+use App\Http\Requests\User\UpdateOUserRequest;
 use App\Http\Resources\UserResource;
 use App\Models\User;
 use Illuminate\Http\JsonResponse;
@@ -17,7 +19,7 @@ class UserController extends Controller
         ], 200);
     }
 
-    public function store(UserRequest $request): JsonResponse
+    public function store(StoreUserRequest $request): JsonResponse
     {
         $user = User::create($request->validated());
         
@@ -35,7 +37,7 @@ class UserController extends Controller
         ], 200);
     }
 
-    public function update(UserRequest $request, $id): JsonResponse
+    public function update(UpdateOUserRequest $request, $id): JsonResponse
     {
         $user = User::findOrFail($id);
         $user->update($request->validated());

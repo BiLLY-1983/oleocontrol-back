@@ -1,8 +1,10 @@
 <?php
 
-namespace App\Http\Controllers;
+namespace App\Http\Controllers\api;
 
-use App\Http\Requests\EntryRequest;
+use App\Http\Controllers\Controller;
+use App\Http\Requests\Entry\StoreEntryRequest;
+use App\Http\Requests\Entry\UpdateEntryRequest;
 use App\Http\Resources\EntryResource;
 use App\Models\Entry;
 use Illuminate\Http\JsonResponse;
@@ -17,7 +19,7 @@ class EntryController extends Controller
         ], 200);
     }
 
-    public function store(EntryRequest $request): JsonResponse
+    public function store(StoreEntryRequest $request): JsonResponse
     {
         $entry = Entry::create($request->validated());
         
@@ -35,7 +37,7 @@ class EntryController extends Controller
         ], 200);
     }
 
-    public function update(EntryRequest $request, $id): JsonResponse
+    public function update(UpdateEntryRequest $request, $id): JsonResponse
     {
         $entry = Entry::findOrFail($id);
         $entry->update($request->validated());

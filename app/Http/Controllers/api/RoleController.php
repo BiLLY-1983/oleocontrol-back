@@ -1,8 +1,10 @@
 <?php
 
-namespace App\Http\Controllers;
+namespace App\Http\Controllers\api;
 
-use App\Http\Requests\RoleRequest;
+use App\Http\Controllers\Controller;
+use App\Http\Requests\Role\StoreRoleRequest;
+use App\Http\Requests\Role\UpdateRoleRequest;
 use App\Http\Resources\RoleResource;
 use App\Models\Role;
 use Illuminate\Http\JsonResponse;
@@ -17,7 +19,7 @@ class RoleController extends Controller
         ], 200);
     }
 
-    public function store(RoleRequest $request): JsonResponse
+    public function store(StoreRoleRequest $request): JsonResponse
     {
         $role = Role::create($request->validated());
         
@@ -35,7 +37,7 @@ class RoleController extends Controller
         ], 200);
     }
 
-    public function update(RoleRequest $request, $id): JsonResponse
+    public function update(UpdateRoleRequest $request, $id): JsonResponse
     {
         $role = Role::findOrFail($id);
         $role->update($request->validated());

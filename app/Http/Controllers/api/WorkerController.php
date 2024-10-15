@@ -1,8 +1,10 @@
 <?php
 
-namespace App\Http\Controllers;
+namespace App\Http\Controllers\api;
 
-use App\Http\Requests\WorkerRequest; // Asegúrate de crear este Request
+use App\Http\Controllers\Controller;
+use App\Http\Requests\Worker\StoreWorkerRequest;
+use App\Http\Requests\Worker\UpdateOWorkerRequest;
 use App\Http\Resources\WorkerResource; // Asegúrate de crear este Resource
 use App\Models\Worker;
 use Illuminate\Http\JsonResponse;
@@ -17,7 +19,7 @@ class WorkerController extends Controller
         ], 200);
     }
 
-    public function store(WorkerRequest $request): JsonResponse
+    public function store(StoreWorkerRequest $request): JsonResponse
     {
         $worker = Worker::create($request->validated());
         
@@ -35,7 +37,7 @@ class WorkerController extends Controller
         ], 200);
     }
 
-    public function update(WorkerRequest $request, $id): JsonResponse
+    public function update(UpdateOWorkerRequest $request, $id): JsonResponse
     {
         $worker = Worker::findOrFail($id);
         $worker->update($request->validated());

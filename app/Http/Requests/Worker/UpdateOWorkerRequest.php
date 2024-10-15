@@ -1,17 +1,17 @@
 <?php
 
-namespace App\Http\Requests;
+namespace App\Http\Requests\Worker;
 
 use Illuminate\Foundation\Http\FormRequest;
 
-class RoleRequest extends FormRequest
+class UpdateOWorkerRequest extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.
      */
     public function authorize(): bool
     {
-        return true; // Permitir a todos los usuarios
+        return true;
     }
 
     /**
@@ -21,8 +21,11 @@ class RoleRequest extends FormRequest
      */
     public function rules(): array
     {
+        $workerId = $this->route('worker');
+
         return [
-            'name' => 'required|string|max:255|unique:roles'
+            'user_id' => 'required|exists:users,id|unique:workers,user_id,' . $workerId,
+            'department_id' => 'nullable|exists:departments,id'
         ];
     }
 }

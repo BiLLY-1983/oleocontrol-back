@@ -1,8 +1,10 @@
 <?php
 
-namespace App\Http\Controllers;
+namespace App\Http\Controllers\api;
 
-use App\Http\Requests\AnalysisRequest;
+use App\Http\Controllers\Controller;
+use App\Http\Requests\Analysis\StoreAnalysisRequest;
+use App\Http\Requests\Analysis\UpdateAnalysisRequest;
 use App\Http\Resources\AnalysisResource;
 use App\Models\Analysis;
 use Illuminate\Http\JsonResponse;
@@ -17,7 +19,7 @@ class AnalysisController extends Controller
         ], 200);
     }
 
-    public function store(AnalysisRequest $request): JsonResponse
+    public function store(StoreAnalysisRequest $request): JsonResponse
     {
         $analysis = Analysis::create($request->validated());
         
@@ -35,7 +37,7 @@ class AnalysisController extends Controller
         ], 200);
     }
 
-    public function update(AnalysisRequest $request, $id): JsonResponse
+    public function update(UpdateAnalysisRequest $request, $id): JsonResponse
     {
         $analysis = Analysis::findOrFail($id);
         $analysis->update($request->validated());

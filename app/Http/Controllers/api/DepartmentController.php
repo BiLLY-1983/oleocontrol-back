@@ -1,8 +1,10 @@
 <?php
 
-namespace App\Http\Controllers;
+namespace App\Http\Controllers\api;
 
-use App\Http\Requests\DepartmentRequest;
+use App\Http\Controllers\Controller;
+use App\Http\Requests\Department\StoreDepartmentRequest;
+use App\Http\Requests\Department\UpdateDepartmentRequest;
 use App\Http\Resources\DepartmentResource;
 use App\Models\Department;
 use Illuminate\Http\JsonResponse;
@@ -17,7 +19,7 @@ class DepartmentController extends Controller
         ], 200);
     }
 
-    public function store(DepartmentRequest $request): JsonResponse
+    public function store(StoreDepartmentRequest $request): JsonResponse
     {
         $department = Department::create($request->validated());
         
@@ -35,7 +37,7 @@ class DepartmentController extends Controller
         ], 200);
     }
 
-    public function update(DepartmentRequest $request, $id): JsonResponse
+    public function update(UpdateDepartmentRequest $request, $id): JsonResponse
     {
         $department = Department::findOrFail($id);
         $department->update($request->validated());
