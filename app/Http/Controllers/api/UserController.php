@@ -15,16 +15,17 @@ class UserController extends Controller
     /**
      *   Función que muestra los usuarios del sistema.
      * 
-     *   Verifica si el usuario es 'administrador':
-     *   -   Si lo es, retorna el recurso
-     *   -   Si no lo es, devuelve un mensaje de error
+     *   Verifica si el usuario es 'Administrador':
+     *   -   Si lo es, retorna una coleción con todos los usuarios del sistema.
+     *   -   Si no lo es, devuelve un mensaje de error.
      * 
      *   @return JsonResponse Respuesta JSON con un mensaje de éxito
-     *   y una colección con todos los usuarios de la aplicación 
+     *   y una colección con todos los usuarios de la aplicación si el usuario es 'Administrador', 
+     *   o un mensaje de error si no tiene permisos.
      */
     public function index(): JsonResponse
     {
-        // Verificar si el usuario autenticado es un Administrador
+        // Verificar si el usuario autenticado es un administrador
         if (!Auth::user()->roles->contains('name', 'Administrador')) {
             return response()->json([
                 'status' => 'error',
@@ -47,6 +48,14 @@ class UserController extends Controller
     */
     public function store(StoreUserRequest $request): JsonResponse
     {
+        // Verificar si el usuario autenticado es un administrador
+        if (!Auth::user()->roles->contains('name', 'Administrador')) {
+            return response()->json([
+                'status' => 'error',
+                'message' => 'No tienes permisos para listar los usuarios.'
+            ], 403);
+        }
+
         $user = User::create($request->validated());
         
         // Respuesta del recurso
@@ -60,7 +69,7 @@ class UserController extends Controller
     *   Función para mostrar un usuario en concreto.
     *
     *   Verifica si el usuario es 'administrador':
-    *   -   Si lo es, retorna el recurso
+    *   -   Si lo es, retorna el recurso.
     *   -   Si no lo es, se verifica si el usuario autenticado está intentando acceder a su propio perfil:
     *       · Si el ID del usuario autenticado no coincide con el ID proporcionado, 
     *           se devuelve un mensaje de error con un código 403 (Prohibido).
@@ -129,8 +138,27 @@ class UserController extends Controller
         ], 200);
     }
 
+    /**
+    *   Función para eliminar un usuario.
+    *
+     *   Verifica si el usuario es 'Administrador':
+     *   -   Si lo es, elimina el usuario y devuelve un mensaje de éxito.
+     *   -   Si no lo es, devuelve un mensaje de error.
+    *
+    *   @param int ID del usuario a eliminar.
+    *   @return JsonResponse Respuesta JSON con un mensaje de éxito, 
+    *   o un mensaje de error
+    */
     public function destroy($id): JsonResponse
     {
+        // Verificar si el usuario autenticado es un administrador
+        if (!Auth::user()->roles->contains('name', 'Administrador')) {
+            return response()->json([
+                'status' => 'error',
+                'message' => 'No tienes permisos para listar los usuarios.'
+            ], 403);
+        }
+
         $user = User::findOrFail($id);
         $user->delete();
 
