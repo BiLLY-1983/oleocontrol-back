@@ -141,9 +141,9 @@ class UserController extends Controller
     /**
     *   Función para eliminar un usuario.
     *
-     *   Verifica si el usuario es 'Administrador':
-     *   -   Si lo es, elimina el usuario y devuelve un mensaje de éxito.
-     *   -   Si no lo es, devuelve un mensaje de error.
+    *   Verifica si el usuario es 'Administrador':
+    *   -   Si lo es, elimina el usuario y devuelve un mensaje de éxito.
+    *   -   Si no lo es, devuelve un mensaje de error.
     *
     *   @param int ID del usuario a eliminar.
     *   @return JsonResponse Respuesta JSON con un mensaje de éxito, 
