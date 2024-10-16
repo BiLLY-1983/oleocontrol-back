@@ -4,7 +4,7 @@ namespace App\Http\Requests\User;
 
 use Illuminate\Foundation\Http\FormRequest;
 
-class UpdateOUserRequest extends FormRequest
+class UpdateUserRequest extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.
@@ -27,8 +27,8 @@ class UpdateOUserRequest extends FormRequest
             'username' => 'nullable|string|max:255|unique:users,username,' . $userId,
             'first_name' => 'nullable|string|max:255',
             'last_name' => 'nullable|string|max:255',
-            'dni' => 'required|string|max:20|unique:users,dni,' . $userId,
-            'email' => 'required|email|max:255|unique:users,email,' . $userId,
+            'dni' => 'nullable|string|max:20|unique:users,dni,' . $userId,
+            'email' => 'nullable|email|max:255|unique:users,email,' . $userId,
             'password' => 'nullable|string|min:8', 
             'phone' => 'nullable|string|max:20',
             'status' => 'nullable|boolean', 

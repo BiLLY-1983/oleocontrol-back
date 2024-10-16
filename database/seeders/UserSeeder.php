@@ -53,6 +53,44 @@ class UserSeeder extends Seeder
 
         /* ------------------------- */
 
+        /* ------------------------- */
+
+        /* Crear un usuario Socio */
+        $member = User::create([
+            'username' => 'Member',
+            'first_name' => 'Prueba',
+            'last_name' => '.',
+            'dni' => 'member',
+            'email' => 'socio@gmail.com',
+            'password' => bcrypt('password'),
+            'phone' => '111111111',
+            'status' => true,
+            'profile_picture' => 'profile_pictures/guess.jpg'
+        ]);
+   
+        $memberRole = Role::where('name', 'Socio')->first();
+        $member->roles()->attach($memberRole);
+
+        /* ------------------------- */
+
+        /* Crear un usuario Trabajador */
+        $worker = User::create([
+            'username' => 'Worker',
+            'first_name' => 'Worker',
+            'last_name' => '.',
+            'dni' => 'worker',
+            'email' => 'worker@gmail.com',
+            'password' => bcrypt('password'),
+            'phone' => '111111111',
+            'status' => true,
+            'profile_picture' => 'profile_pictures/guess.jpg'
+        ]);
+   
+        $workerRole = Role::where('name', 'Trabajador')->first();
+        $worker->roles()->attach($workerRole);
+
+        /* ------------------------- */
+
         // Crear otros 100 usuarios
         $usersCreated = User::factory()->count(100)->create();
 

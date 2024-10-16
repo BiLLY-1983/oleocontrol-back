@@ -13,32 +13,40 @@ use App\Http\Controllers\api\UserController;
 use App\Http\Controllers\api\WorkerController;
 use Illuminate\Support\Facades\Route;
 
-
+/* Rutas para el Login/Logout */
+/* -------------------------- */
 Route::post('login', [AuthController::class, 'login'])->name('login');
 Route::middleware('auth:sanctum')->post('/logout', [AuthController::class, 'logout']);
 
-Route::middleware(['auth:sanctum', 'admin'])->group(function () {
-    Route::apiResource('users', UserController::class);
-    Route::apiResource('roles', RoleController::class);
-    Route::apiResource('departments', DepartmentController::class);
-    Route::apiResource('workers', WorkerController::class);
-    Route::apiResource('members', MemberController::class);
-    Route::apiResource('entries', EntryController::class);
-    Route::apiResource('settlements', SettlementController::class);
-    Route::apiResource('oils', OilController::class);
-    Route::apiResource('analyses', AnalysisController::class);
-    Route::apiResource('notifications', NotificationController::class);
+Route::middleware(['auth:sanctum', 'role'])->group(function () {
+
+    /* -------------------------- */
+    /* Rutas para Administradores */
+    /* -------------------------- */
+    Route::apiResources([
+        'users' => UserController::class,
+        'roles' => RoleController::class,
+        'departments' => DepartmentController::class,
+        'workers' => WorkerController::class,
+        'members' => MemberController::class,
+        'entries' => EntryController::class,
+        'settlements' => SettlementController::class,
+        'oils' => OilController::class,
+        'analyses' => AnalysisController::class,
+        'notifications' => NotificationController::class,
+    ]);
+
+    /* ----------------- */
+    /* Rutas para socios */
+    /* ----------------- */
+    Route::get('users/{user}', [UserController::class, 'show']); // Visualización de datos de usuario
+    Route::put('users/{user}', [UserController::class, 'update']); // Edición de datos de usuario (propios)
+    Route::patch('users/{user}', [UserController::class, 'update']); // Edición de datos de usuario (propios)
+    
+    //Route::get('entries', EntryController::class); // Visualización de entradas propias
+    //Route::get('analyses', AnalysisController::class); // Visualización de análisis propios
+    //Route::get('settlements', SettlementController::class); // Visualización de liquidaciones propias
 });
 
-/* 
-Route::apiResource('users', UserController::class);
-Route::apiResource('roles', RoleController::class);
-Route::apiResource('departments', DepartmentController::class);
-Route::apiResource('workers', WorkerController::class);
-Route::apiResource('members', MemberController::class);
-Route::apiResource('entries', EntryController::class);
-Route::apiResource('settlements', SettlementController::class);
-Route::apiResource('oils', OilController::class);
-Route::apiResource('analyses', AnalysisController::class);
-Route::apiResource('notifications', NotificationController::class);
- */
+
+
