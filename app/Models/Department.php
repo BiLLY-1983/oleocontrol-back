@@ -18,8 +18,8 @@ class Department extends Model
     /* Relaciones */
     /* ---------- */
 
-    public function workers(): HasMany
+    public function employees(): HasMany
     {
-        return $this->hasMany(Worker::class);
+        return $this->hasMany(Employee::class);
     }
 }

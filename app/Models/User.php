@@ -68,7 +68,12 @@ class User extends Authenticatable
 
     public function members(): HasOne
     {
-        return $this->hasOne(Member::class, 'member_id');
+        return $this->hasOne(Member::class, 'user_id');
+    }
+
+    public function employee(): HasOne
+    {
+        return $this->hasOne(Employee::class, 'user_id');
     }
 
     public function notificationsSent(): HasMany

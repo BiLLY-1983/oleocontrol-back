@@ -3,7 +3,7 @@
 namespace Database\Factories;
 
 use App\Models\Member;
-use App\Models\Worker;
+use App\Models\employee;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 /**
@@ -26,7 +26,7 @@ class SettlementFactory extends Factory
             'price' => $this->faker->randomFloat(2, 10, 500),    
             'settlement_status' => 'Pendiente',
             'member_id' => $member->id, 
-            'worker_id' => null, 
+            'employee_id' => null, 
 
         ];
     }

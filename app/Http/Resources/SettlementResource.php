@@ -23,9 +23,9 @@ class SettlementResource extends JsonResource
                 'member_id' => $this->member_id,
                 'name' => $this->member->user->first_name . ' ' . $this->member->user->last_name,
             ],
-            'worker' => $this->worker ? [
-                'worker_id' => $this->worker_id,
-                'name' => $this->worker->user->first_name . ' ' . $this->worker->user->last_name,
+            'employee' => $this->employee ? [
+                'employee_id' => $this->employee_id,
+                'name' => $this->employee->user->first_name . ' ' . $this->employee->user->last_name,
             ] : null,
             
         ];

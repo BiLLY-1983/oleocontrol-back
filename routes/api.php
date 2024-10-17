@@ -10,7 +10,7 @@ use App\Http\Controllers\api\OilController;
 use App\Http\Controllers\api\RoleController;
 use App\Http\Controllers\api\SettlementController;
 use App\Http\Controllers\api\UserController;
-use App\Http\Controllers\api\WorkerController;
+use App\Http\Controllers\api\EmployeeController;
 use Illuminate\Support\Facades\Route;
 
 /* Rutas para el Login/Logout */
@@ -27,7 +27,7 @@ Route::middleware(['auth:sanctum', 'role'])->group(function () {
         'users' => UserController::class,
         'roles' => RoleController::class,
         'departments' => DepartmentController::class,
-        'workers' => WorkerController::class,
+        'employees' => EmployeeController::class,
         'members' => MemberController::class,
         'entries' => EntryController::class,
         'settlements' => SettlementController::class,
@@ -37,15 +37,19 @@ Route::middleware(['auth:sanctum', 'role'])->group(function () {
     ]);
 
     /* ----------------- */
-    /* Rutas para socios */
+    /* Rutas para Socios */
     /* ----------------- */
-    Route::get('users/{user}', [UserController::class, 'show']); // Visualización de datos de usuario
-    Route::put('users/{user}', [UserController::class, 'update']); // Edición de datos de usuario (propios)
-    Route::patch('users/{user}', [UserController::class, 'update']); // Edición de datos de usuario (propios)
-    
-    //Route::get('entries', EntryController::class); // Visualización de entradas propias
-    //Route::get('analyses', AnalysisController::class); // Visualización de análisis propios
-    //Route::get('settlements', SettlementController::class); // Visualización de liquidaciones propias
+    Route::get('entries/{id}', [UserController::class, 'show']); 
+    Route::put('users/{id}', [UserController::class, 'update']); 
+    Route::patch('users/{id}', [UserController::class, 'update']); 
+
+    Route::get('getEntriesUser/{member_id}', [EntryController::class, 'getEntriesUser']); 
+    //Route::get('analyses/{id}', [AnalysisController::class]); 
+    //Route::get('settlements/{id}', [SettlementController::class]); 
+
+    /* -------------------- */
+    /* Rutas para Empleados */
+    /* -------------------- */
 });
 
 

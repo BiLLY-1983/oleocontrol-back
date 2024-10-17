@@ -17,6 +17,7 @@ class Role extends Model
     /* ---------- */
     /* Relaciones */
     /* ---------- */
+    
     public function users(): BelongsToMany
     {
         return $this->belongsToMany(User::class);

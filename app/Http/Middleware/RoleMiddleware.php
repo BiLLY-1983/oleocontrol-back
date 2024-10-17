@@ -23,12 +23,12 @@ class RoleMiddleware
             return response()->json(['message' => __('http-statuses.403')], 403);
         }
 
-        // Verificar si es administrador
+        // Verificar si es 'Administrador'. Si lo es se permite el acceso.
         if ($user->roles->contains('name', 'Administrador')) {
-            return $next($request); // Si es Administrador, permitir todo
+            return $next($request);
         }
 
-        // Verificar si es socio
+        // Verificar si es 'Socio'.
         if ($user->roles->contains('name', 'Socio')) {
             // Permitir solicitudes GET
             if ($request->isMethod('get')) {

@@ -1,10 +1,10 @@
 <?php
 
-namespace App\Http\Requests\Worker;
+namespace App\Http\Requests\Employee;
 
 use Illuminate\Foundation\Http\FormRequest;
 
-class UpdateOWorkerRequest extends FormRequest
+class StoreEmployeeRequest extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.
@@ -21,11 +21,9 @@ class UpdateOWorkerRequest extends FormRequest
      */
     public function rules(): array
     {
-        $workerId = $this->route('worker');
-
         return [
-            'user_id' => 'required|exists:users,id|unique:workers,user_id,' . $workerId,
-            'department_id' => 'nullable|exists:departments,id'
+            'user_id' => 'required|unique:employee,user_id|exists:users,id',
+            'department_id' => 'required|exists:departments,id'
         ];
     }
 }

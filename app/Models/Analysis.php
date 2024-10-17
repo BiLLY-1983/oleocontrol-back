@@ -23,9 +23,9 @@ class Analysis extends Model
         return $this->belongsTo(Entry::class);
     }
 
-    public function worker(): BelongsTo
+    public function employee(): BelongsTo
     {
-        return $this->belongsTo(Worker::class);
+        return $this->belongsTo(Employee::class);
     }
 
     public function oil(): BelongsTo

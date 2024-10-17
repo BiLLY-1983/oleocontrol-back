@@ -122,7 +122,7 @@ class UserController extends Controller
         $user = User::findOrFail($id);
 
         // Verificación: el usuario autenticado solo puede actualizar su propio perfil
-        if (Auth::id() !== $user->id) {
+        if (Auth::id() !== (int)$id) {
             return response()->json([
                 'status' => 'error',
                 'message' => 'No tienes permisos para actualizar este perfil.'

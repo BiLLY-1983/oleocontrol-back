@@ -8,7 +8,7 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Laravel\Sanctum\HasApiTokens;
 
-class Worker extends Model
+class Employee extends Model
 {
     use HasFactory, HasApiTokens;
 
@@ -18,6 +18,7 @@ class Worker extends Model
     /* ---------- */
     /* Relaciones */
     /* ---------- */
+    
     public function user()
     {
         return $this->belongsTo(User::class);

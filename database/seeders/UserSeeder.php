@@ -73,7 +73,7 @@ class UserSeeder extends Seeder
 
         /* ------------------------- */
 
-        /* Crear un usuario Trabajador */
+        /* Crear un usuario Empleado */
         $worker = User::create([
             'username' => 'Worker',
             'first_name' => 'Worker',
@@ -86,7 +86,7 @@ class UserSeeder extends Seeder
             'profile_picture' => 'profile_pictures/guess.jpg'
         ]);
    
-        $workerRole = Role::where('name', 'Trabajador')->first();
+        $workerRole = Role::where('name', 'Empleado')->first();
         $worker->roles()->attach($workerRole);
 
         /* ------------------------- */
@@ -96,7 +96,7 @@ class UserSeeder extends Seeder
 
         // Asignación de roles aleatoriamente
         $memberRole = Role::where('name', 'Socio')->first();
-        $workerRole = Role::where('name', 'Trabajador')->first();
+        $workerRole = Role::where('name', 'Empleado')->first();
 
         foreach ($usersCreated as $user) {
 

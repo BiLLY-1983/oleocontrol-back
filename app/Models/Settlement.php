@@ -23,8 +23,8 @@ class Settlement extends Model
         return $this->belongsTo(Member::class);
     }
 
-    public function worker(): BelongsTo
+    public function employee(): BelongsTo
     {
-        return $this->belongsTo(Worker::class);
+        return $this->belongsTo(Employee::class);
     }
 }

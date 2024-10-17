@@ -1,10 +1,10 @@
 <?php
 
-namespace App\Http\Requests\Worker;
+namespace App\Http\Requests\Settlement;
 
 use Illuminate\Foundation\Http\FormRequest;
 
-class StoreWorkerRequest extends FormRequest
+class UpdateSettlementRequest extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.
@@ -21,9 +21,14 @@ class StoreWorkerRequest extends FormRequest
      */
     public function rules(): array
     {
+        $settlementId = $this->route('settlement');
+
         return [
-            'user_id' => 'required|unique:workers,user_id|exists:users,id',
-            'department_id' => 'required|exists:departments,id'
+            'amount' => 'nullable|numeric|min:0',
+            'price' => 'nullable|numeric|min:0',
+            'settlement_status' => 'nullable|in:Pendiente,Aceptada,Cancelada',
+            'member_id' => 'nullable|exists:members,id',
+            'employee_id' => 'nullable|exists:employee,id'
         ];
     }
 }

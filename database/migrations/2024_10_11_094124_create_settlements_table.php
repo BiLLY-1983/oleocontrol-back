@@ -17,13 +17,13 @@ return new class extends Migration
             $table->decimal('price', 10, 2)->nullable();
             $table->enum('settlement_status', ['Pendiente', 'Aceptada', 'Cancelada'])->default('Pendiente');
             $table->unsignedBigInteger('member_id');
-            $table->unsignedBigInteger('worker_id')->nullable();
+            $table->unsignedBigInteger('employee_id')->nullable();
             $table->foreign('member_id')
                 ->references('id')->on('members')
                 ->onUpdate('cascade')
                 ->onDelete('cascade');
-            $table->foreign('worker_id')->
-                references('id')->on('workers')
+            $table->foreign('employee_id')->
+                references('id')->on('employees')
                 ->onUpdate('cascade');
             $table->timestamps();
         });

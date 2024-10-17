@@ -26,7 +26,7 @@ class StoreSettlementRequest extends FormRequest
             'price' => 'nullable|numeric|min:0',
             'settlement_status' => 'required|in:Pendiente,Aceptada,Cancelada', 
             'member_id' => 'required|exists:members,id',
-            'worker_id' => 'nullable|exists:workers,id',
+            'employee_id' => 'nullable|exists:employee,id',
         ];
     }
 }
