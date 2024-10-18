@@ -106,7 +106,7 @@ class EntryController extends Controller
         ], 200);
     }
 
-    public function getEntriesMember($memberId): JsonResponse
+    public function indexForMember($memberId): JsonResponse
     {     
         $member = Member::findOrFail($memberId);
         $entries = $member->entries;
