@@ -20,7 +20,6 @@ return new class extends Migration
             $table->unsignedBigInteger('entry_id')->unique(); //? 
             $table->unsignedBigInteger('employee_id')->nullable();
             $table->unsignedBigInteger('oil_id')->nullable();
-            $table->decimal('oil_quantity', 10, 2)->nullable();
             $table->foreign('entry_id')
                 ->references('id')->on('entries')
                 ->onUpdate('cascade')

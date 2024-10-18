@@ -14,7 +14,7 @@ class UserResource extends JsonResource
      */
     public function toArray(Request $request): array
     {
-        return [
+        $data = [
             'id' => $this->id,
             'username' => $this->username,
             'first_name' => $this->first_name,
@@ -31,5 +31,17 @@ class UserResource extends JsonResource
                 ];
             }),
         ];
+
+        // Agregar el número de socio si es un 'Socio'
+        if ($this->roles->contains('name', 'Socio')) {
+            $data['member_number'] = $this->members->member_number;
+        }
+
+        // Agregar el departamento si es un 'Empleado'
+        if ($this->roles->contains('name', 'Empleado')) {
+            $data['department'] = $this->employees->department->name;
+        }
+
+        return $data;
     }
 }

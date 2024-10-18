@@ -29,11 +29,13 @@ class OilController extends Controller
         ], 201);
     }
 
-    public function show($id): JsonResponse
+    public function show($oilId): JsonResponse
     {
+        $oil = Oil::findOrFail($oilId);
+
         return response()->json([
             'status' => 'success',
-            'data' => new OilResource(Oil::findOrFail($id))
+            'data' => new OilResource($oil)
         ], 200);
     }
 
@@ -55,6 +57,7 @@ class OilController extends Controller
 
         return response()->json([
             'status' => 'success',
+            'message' => 'Aceite eliminado satisfactoriamente.'
         ], 200);
     }
 }

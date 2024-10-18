@@ -14,7 +14,8 @@ return new class extends Migration
         Schema::create('entries', function (Blueprint $table) {
             $table->id();
             $table->date('entry_date');
-            $table->integer('quantity');
+            $table->decimal('olive_quantity', 10, 2);
+            $table->decimal('oil_quantity', 10, 2)->nullable();
             $table->enum('analysis_status', ['Pendiente', 'Completo'])->default('Pendiente');
             $table->unsignedBigInteger('member_id');
             $table->foreign('member_id')

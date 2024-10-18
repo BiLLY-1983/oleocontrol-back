@@ -22,7 +22,8 @@ class EntryFactory extends Factory
 
         return [
             'entry_date' => $this->faker->date(),
-            'quantity' => $this->faker->numberBetween(1, 10000),
+            'olive_quantity' => $this->faker->randomFloat(2, 1, 10000),
+            'oil_quantity' => null,
             'analysis_status' => 'Pendiente',
             'member_id' => $member->id, 
         ];

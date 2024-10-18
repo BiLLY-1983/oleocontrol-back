@@ -31,9 +31,11 @@ class RoleController extends Controller
 
     public function show($id): JsonResponse
     {
+        $role = Role::findOrFail($id);
+
         return response()->json([
             'status' => 'success',
-            'data' => new RoleResource(Role::findOrFail($id))
+            'data' => new RoleResource($role)
         ], 200);
     }
 
@@ -55,6 +57,7 @@ class RoleController extends Controller
 
         return response()->json([
             'status' => 'success',
+            'message' => 'Rol eliminado satisfactoriamente'
         ], 200);
     }
 }

@@ -31,9 +31,11 @@ class DepartmentController extends Controller
 
     public function show($id): JsonResponse
     {
+        $department = Department::findOrFail($id);
+
         return response()->json([
             'status' => 'success',
-            'data' => new DepartmentResource(Department::findOrFail($id))
+            'data' => new DepartmentResource($department)
         ], 200);
     }
 
@@ -55,6 +57,7 @@ class DepartmentController extends Controller
 
         return response()->json([
             'status' => 'success',
+            'message' => 'Departamento eliminado satisfactoriamente'
         ], 200);
     }
 }

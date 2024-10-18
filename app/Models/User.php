@@ -71,7 +71,7 @@ class User extends Authenticatable
         return $this->hasOne(Member::class, 'user_id');
     }
 
-    public function employee(): HasOne
+    public function employees(): HasOne
     {
         return $this->hasOne(Employee::class, 'user_id');
     }

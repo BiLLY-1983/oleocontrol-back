@@ -17,7 +17,8 @@ class EntryResource extends JsonResource
         return [
             'id' => $this->id,
             'entry_date' => $this->entry_date,
-            'quantity' => $this->quantity,
+            'olive_quantity' => $this->olive_quantity,
+            'oil_quantity' => $this->oil_quantity,
             'analysis_status' => $this->analysis_status,
             'member' => [
                 'id' => $this->member->id,

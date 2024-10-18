@@ -26,7 +26,6 @@ class AnalysisResource extends JsonResource
                 'name' => $this->employee->user->first_name . ' ' . $this->employee->user->last_name,
             ] : null,
             'oil_id' => $this->oil_id,
-            'oil_quantity' => $this->oil_quantity,
         ];
     }
 }

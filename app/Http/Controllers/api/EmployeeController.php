@@ -4,10 +4,12 @@ namespace App\Http\Controllers\api;
 
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Employee\StoreEmployeeRequest;
-use App\Http\Requests\Employee\UpdateOEmployeeRequest;
+use App\Http\Requests\Employee\UpdateEmployeeRequest;
 use App\Http\Resources\EmployeeResource;
 use App\Models\Employee;
 use Illuminate\Http\JsonResponse;
+use Illuminate\Support\Facades\Auth;
+
 
 class EmployeeController extends Controller
 {
@@ -31,9 +33,11 @@ class EmployeeController extends Controller
 
     public function show($id): JsonResponse
     {
+        $employee = Employee::findOrFail($id);
+
         return response()->json([
             'status' => 'success',
-            'data' => new EmployeResource(Employee::findOrFail($id))
+            'data' => new EmployeeResource($employee)
         ], 200);
     }
 
@@ -56,5 +60,26 @@ class EmployeeController extends Controller
         return response()->json([
             'status' => 'success',
         ], 204);
+    }
+
+    public function showProfile(): JsonResponse
+    {
+        $employee = Auth::user()->employee;
+
+        return response()->json([
+            'status' => 'success',
+            'data' => new EmployeeResource($employee)
+        ], 200);
+    }
+
+    public function updateProfile(UpdateEmployeeRequest $request): JsonResponse
+    {
+        $employee = Auth::user()->employee;
+        $employee->update($request->validated());
+
+        return response()->json([
+            'status' => 'success',
+            'data' => new EmployeeResource($employee)
+        ], 200);
     }
 }

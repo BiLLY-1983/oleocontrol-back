@@ -2,8 +2,8 @@
 
 namespace Database\Seeders;
 
+use App\Models\Analysis;
 use App\Models\Entry;
-use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
 
 class EntrySeeder extends Seeder
@@ -13,6 +13,12 @@ class EntrySeeder extends Seeder
      */
     public function run(): void
     {
-        Entry::factory()->count(100)->create();
+        // Generar 100 entradas de aceituna
+        Entry::factory()->count(100)->create()->each(function ($entry) {
+            // Para cada entrada, generar un análisis y asociarlo a la entrada
+            Analysis::factory()->create([
+                'entry_id' => $entry->id,
+            ]);
+        });
     }
 }

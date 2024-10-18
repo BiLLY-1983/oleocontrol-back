@@ -3,8 +3,6 @@
 namespace Database\Factories;
 
 use App\Models\Entry;
-use App\Models\Oil;
-use App\Models\employee;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 /**
@@ -33,7 +31,6 @@ class AnalysisFactory extends Factory
             'entry_id' => $entryId,
             'employee_id' => null,
             'oil_id' => null, 
-            'oil_quantity' => null,
         ];
     }
 }

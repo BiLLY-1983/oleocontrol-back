@@ -8,6 +8,7 @@ use App\Http\Requests\Member\UpdateMemberRequest;
 use App\Http\Resources\MemberResource;
 use App\Models\Member;
 use Illuminate\Http\JsonResponse;
+use Illuminate\Support\Facades\Auth;
 
 class MemberController extends Controller
 {
@@ -31,9 +32,11 @@ class MemberController extends Controller
 
     public function show($id): JsonResponse
     {
+        $member = Member::findOrFail($id);
+
         return response()->json([
             'status' => 'success',
-            'data' => new MemberResource(Member::findOrFail($id))
+            'data' => new MemberResource($member)
         ], 200);
     }
 
@@ -55,6 +58,28 @@ class MemberController extends Controller
 
         return response()->json([
             'status' => 'success',
-        ], 204);
+            'message' => 'Socio eliminado satisfactoriamente'
+        ], 200);
+    }
+
+    public function showProfile(): JsonResponse
+    {
+        $member = Auth::user()->member;
+
+        return response()->json([
+            'status' => 'success',
+            'data' => new MemberResource($member)
+        ], 200);
+    }
+
+    public function updateProfile(UpdateMemberRequest $request): JsonResponse
+    {
+        $member = Auth::user()->member;
+        $member->update($request->validated());
+
+        return response()->json([
+            'status' => 'success',
+            'data' => new MemberResource($member)
+        ], 200);
     }
 }

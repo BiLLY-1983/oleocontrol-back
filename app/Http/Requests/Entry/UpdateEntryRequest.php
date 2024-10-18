@@ -25,7 +25,8 @@ class UpdateEntryRequest extends FormRequest
 
         return [
             'entry_date' => 'nullable|date', 
-            'quantity' => 'nullable|integer|min:1',
+            'olive_quantity' => 'nullable|numeric|min:1',
+            'oil_quantity' => 'nullable|numeric|min:1',
             'analysis_status' => 'nullable|in:Pendiente,Completo',
             'member_id' => 'nullable|exists:members,id|unique:entries,member_id,' . $entryId,
         ];

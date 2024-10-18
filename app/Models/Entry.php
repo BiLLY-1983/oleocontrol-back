@@ -24,7 +24,7 @@ class Entry extends Model
         return $this->belongsTo(Member::class);
     }
 
-    public function analyses(): HasOne
+    public function analysis(): HasOne
     {
         return $this->hasOne(Analysis::class);
     }

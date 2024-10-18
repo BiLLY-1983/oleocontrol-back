@@ -29,7 +29,6 @@ class StoreAnalysisRequest extends FormRequest
             'entry_id'      => 'required|exists:entries,id|unique:analyses,entry_id',
             'employee_id'     => 'nullable|exists:employees,id',
             'oil_id'        => 'nullable|exists:oils,id',
-            'oil_quantity'  => 'nullable|numeric|min:0',
         ];
     }
 }
