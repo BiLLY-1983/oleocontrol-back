@@ -8,7 +8,7 @@ use Illuminate\Support\Facades\Route;
 /* ================================ */
 
 Route::get('/users/{userId}/sent-notifications',  [NotificationController::class, 'indexSent']);
-Route::get('/users/{userId}/notifications', [NotificationController::class, 'indexReceived']);
+Route::get('/users/{userId}/received-notifications', [NotificationController::class, 'indexReceived']);
 
 Route::get('/users/{userId}/notifications/{notificationId}', [NotificationController::class, 'show']);
 

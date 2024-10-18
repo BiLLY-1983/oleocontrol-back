@@ -104,11 +104,8 @@ class SettlementController extends Controller
         $employee = Employee::findOrFail($employeeId);
         $settlement = $employee->settlements()->findOrFail($settlementId);
 
-        $validatedData = $request->validate([
-            // Definir las reglas de validación aquí
-        ]);
-
-        $settlement->update($validatedData);
+        $settlement->update($request->validated());
+        
         return response()->json([
             'status' => 'success',
             'data' => new SettlementResource($settlement)

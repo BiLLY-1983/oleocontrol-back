@@ -28,7 +28,7 @@ class UpdateSettlementRequest extends FormRequest
             'price' => 'nullable|numeric|min:0',
             'settlement_status' => 'nullable|in:Pendiente,Aceptada,Cancelada',
             'member_id' => 'nullable|exists:members,id',
-            'employee_id' => 'nullable|exists:employee,id'
+            'employee_id' => 'nullable|exists:employees,id'
         ];
     }
 }

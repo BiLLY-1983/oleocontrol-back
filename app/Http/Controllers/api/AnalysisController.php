@@ -90,6 +90,19 @@ class AnalysisController extends Controller
         ], 200);
     }
 
+    public function updateForEmployee(UpdateAnalysisRequest $request, $employeeId, $analysisId): JsonResponse
+    {
+        $employee = Employee::findOrFail($employeeId);
+        $analysis = $employee->analyses()->findOrFail($analysisId);
+
+        $analysis->update($request->validated());
+
+        return response()->json([
+            'status' => 'success',
+            'data' => new AnalysisResource($analysis)
+        ], 200);
+    }
+
     public function showForEmployee($employeeId, $analysisId): JsonResponse
     {
         $employee = Employee::findOrFail($employeeId);
@@ -104,12 +117,16 @@ class AnalysisController extends Controller
     public function indexForMember($memberId): JsonResponse
     {
         $member = Member::findOrFail($memberId);
-        $analyses = $member->entries()->with('analysis')->get()->pluck('analysis');
+        
+        $analyses = $member->entries->map(function ($entry) {
+            return $entry->analysis; 
+        })->filter();
+        
 
         return response()->json([
             'status' => 'success',
             'data' => AnalysisResource::collection($analyses)
-        ], 200);
+        ], 200); 
     }
 
     public function showForMember($memberId, $entryId): JsonResponse
