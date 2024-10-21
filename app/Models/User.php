@@ -57,6 +57,17 @@ class User extends Authenticatable
     }
 
 
+    /**
+     * Verificar si el usuario tiene un rol específico
+     * 
+     * @param string $role
+     * @return bool
+     */
+    public function hasRole(string $role): bool
+    {
+        return $this->roles->contains('name', $role);
+    }
+
     /* ---------- */
     /* Relaciones */
     /* ---------- */

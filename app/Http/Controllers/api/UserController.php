@@ -8,14 +8,19 @@ use App\Http\Requests\User\UpdateUserRequest;
 use App\Http\Resources\UserResource;
 use App\Models\User;
 use Illuminate\Http\JsonResponse;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Log;
 
 class UserController extends Controller
 {
     /**
-     *   Función que muestra los usuarios del sistema.
+     * Muestra una lista de todos los usuarios.
      * 
-     *   @return JsonResponse Respuesta JSON con un mensaje de éxito
-     *   y una colección con todos los usuarios de la aplicación.
+     * Este método recupera todos los usuarios de la base de datos y los devuelve
+     * como una colección de recursos UserResource. La respuesta incluye un estado
+     * de éxito y los datos de los usuarios en formato JSON.
+     *
+     * @return \Illuminate\Http\JsonResponse Respuesta JSON con la lista de usuarios
      */
     public function index(): JsonResponse
     {
@@ -26,11 +31,14 @@ class UserController extends Controller
     }
 
     /**
-    *   Función para agregar un nuevo usuario.
-    *
-    *   @param StoreUserRequest Solicitud validada con los datos del nuevo usuario.
-    *   @return JsonResponse Respuesta JSON con un mensaje de éxito y los datos del usuario creado.
-    */
+     * Crea un nuevo usuario.
+     * 
+     * Este método recibe una solicitud de creación de usuario, valida los datos y crea un nuevo usuario en la base de datos.
+     * La respuesta incluye un estado de éxito y los datos del usuario creado en formato JSON.
+     *
+     * @param StoreUserRequest $request La solicitud de creación de usuario.
+     * @return \Illuminate\Http\JsonResponse Respuesta JSON con el estado de éxito y los datos del usuario creado.
+     */
     public function store(StoreUserRequest $request): JsonResponse
     {
         $user = User::create($request->validated());
@@ -42,11 +50,14 @@ class UserController extends Controller
     }
 
     /**
-    *   Función para mostrar un usuario en concreto.
-    *
-    *   @param int ID del usuario a mostrar.
-    *   @return JsonResponse Respuesta JSON con un mensaje de éxito y los datos del usuario.
-    */
+     * Muestra un usuario en concreto.
+     * 
+     * Este método recibe un ID de usuario, busca el usuario en la base de datos y devuelve los datos del usuario en formato JSON.
+     * La respuesta incluye un estado de éxito y los datos del usuario en formato JSON.
+     *
+     * @param int $id El ID del usuario a mostrar.
+     * @return \Illuminate\Http\JsonResponse Respuesta JSON con el estado de éxito y los datos del usuario.
+     */
     public function show($id): JsonResponse
     {
         $user = User::findOrFail($id);
@@ -57,15 +68,60 @@ class UserController extends Controller
         ], 200);
     }
 
+    /** 
+     * Muestra el perfil de un socio.
+     *
+     * Este método recupera el usuario autenticado y devuelve los datos del socio en formato JSON.
+     * La respuesta incluye un estado de éxito y los datos del socio en formato JSON.
+     *
+     * @return \Illuminate\Http\JsonResponse Respuesta JSON con el estado de éxito y los datos del socio.
+     */
+    public function showMemberProfile(): JsonResponse
+    {
+        Log::info('Iniciando showMemberProfile');
+        $user = Auth::user();
+        Log::info('Usuario autenticado:', ['user' => $user]);
+        if (!$user) {
+            return response()->json([
+                'status' => 'error',
+                'message' => 'Usuario no autenticado'
+            ], 401);
+        }
+
+        return response()->json([
+            'status' => 'success',
+            'data' => new UserResource($user)
+        ], 200);
+    }
+
+    /** 
+     * Muestra el perfil de un empleado.
+     * 
+     * Este método recupera el usuario autenticado y devuelve los datos del empleado en formato JSON.
+     * La respuesta incluye un estado de éxito y los datos del empleado en formato JSON.
+     *
+     * @return \Illuminate\Http\JsonResponse Respuesta JSON con el estado de éxito y los datos del empleado.
+     */
+    public function showEmployeeProfile(): JsonResponse
+    {
+        $user = Auth::user();
+
+        return response()->json([
+            'status' => 'success',
+            'data' => new UserResource($user)
+        ], 200);
+    }
+
     /**
-    *   Función para actualizar un usuario.
-    *
-    *   @param UpdateUserRequest Solicitud validada con los datos del
-    *   nuevo usuario.
-    *   @param int ID del usuario a actualizar.
-    *   @return JsonResponse Respuesta JSON con un mensaje de éxito y los 
-    *   datos del usuario.
-    */
+     * Actualiza un usuario.
+     * 
+     * Este método recibe una solicitud de actualización de usuario, valida los datos y actualiza el usuario en la base de datos.
+     * La respuesta incluye un estado de éxito y los datos del usuario actualizado en formato JSON.
+     *
+     * @param UpdateUserRequest $request La solicitud de actualización de usuario.
+     * @param int $id El ID del usuario a actualizar.
+     * @return \Illuminate\Http\JsonResponse Respuesta JSON con el estado de éxito y los datos del usuario actualizado.
+     */
     public function update(UpdateUserRequest $request, $id): JsonResponse
     {
         $user = User::findOrFail($id);
@@ -78,11 +134,56 @@ class UserController extends Controller
     }
 
     /**
-    *   Función para eliminar un usuario.
-    *
-    *   @param int ID del usuario a eliminar.
-    *   @return JsonResponse Respuesta JSON con un mensaje de éxito.
-    */
+     * Actualiza el perfil de un socio.
+     * 
+     * Este método recibe una solicitud de actualización de usuario, valida los datos y actualiza el usuario en la base de datos.
+     * La respuesta incluye un estado de éxito y los datos del usuario actualizado en formato JSON.
+     *
+     * @param UpdateUserRequest $request La solicitud de actualización de usuario.
+     * @return \Illuminate\Http\JsonResponse Respuesta JSON con el estado de éxito y los datos del usuario actualizado.
+     */
+    public function updateMemberProfile(UpdateUserRequest $request): JsonResponse
+    {
+        $authUser = Auth::user();
+        $user = User::findOrFail($authUser->id);
+        $user->update($request->validated());
+
+        return response()->json([
+            'status' => 'success',
+            'data' => new UserResource($user)
+        ], 200);
+    }
+
+    /**
+     * Actualiza el perfil de un empleado.
+     * 
+     * Este método recibe una solicitud de actualización de usuario, valida los datos y actualiza el usuario en la base de datos.
+     * La respuesta incluye un estado de éxito y los datos del usuario actualizado en formato JSON.
+     *
+     * @param UpdateUserRequest $request La solicitud de actualización de usuario.
+     * @return \Illuminate\Http\JsonResponse Respuesta JSON con el estado de éxito y los datos del usuario actualizado.
+     */
+    public function updateEmployeeProfile(UpdateUserRequest $request): JsonResponse
+    {
+        $authUser = Auth::user();
+        $user = User::findOrFail($authUser->id);
+        $user->update($request->validated());
+
+        return response()->json([
+            'status' => 'success',
+            'data' => new UserResource($user)
+        ], 200);
+    }
+
+    /**
+     * Elimina un usuario.
+     * 
+     * Este método recibe un ID de usuario, busca el usuario en la base de datos y elimina el usuario.
+     * La respuesta incluye un estado de éxito y un mensaje de éxito en formato JSON.
+     *
+     * @param int $id El ID del usuario a eliminar.
+     * @return \Illuminate\Http\JsonResponse Respuesta JSON con el estado de éxito y un mensaje de éxito.
+     */
     public function destroy($id): JsonResponse
     {
         $user = User::findOrFail($id);

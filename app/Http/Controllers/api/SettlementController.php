@@ -15,10 +15,11 @@ use Illuminate\Support\Facades\Auth;
 class SettlementController extends Controller
 {
     /**
-     *   Función que muestra las liquidaciones de aceite.
+     * Muestra todas las liquidaciones de aceite.
      * 
-     *   @return JsonResponse Respuesta JSON con un mensaje de éxito
-     *   y una colección con todos las liquidaciones de aceite de la aplicación.
+     * Este método obtiene todas las liquidaciones de aceite de la base de datos y devuelve una respuesta JSON con un estado de éxito y los datos de las liquidaciones.
+     *
+     * @return JsonResponse Respuesta JSON con el estado de éxito y los datos de las liquidaciones.
      */
     public function index(): JsonResponse
     {
@@ -30,6 +31,15 @@ class SettlementController extends Controller
         ], 200);
     }
 
+    /**
+     * Crea una nueva liquidación de aceite.
+     * 
+     * Este método recibe una solicitud de creación de liquidación, valida los datos y crea una nueva liquidación en la base de datos.
+     * La respuesta incluye un estado de éxito y los datos de la liquidación creada en formato JSON.
+     *
+     * @param StoreSettlementRequest $request La solicitud de creación de liquidación.
+     * @return JsonResponse Respuesta JSON con el estado de éxito y los datos de la liquidación creada.
+     */
     public function store(StoreSettlementRequest $request): JsonResponse
     {
         $settlement = Settlement::create($request->validated());
@@ -41,11 +51,13 @@ class SettlementController extends Controller
     }
 
     /**
-    *   Función para mostrar una liquidación en concreto.
-    *
-    *   @param int ID de la liquidación a mostrar.
-    *   @return JsonResponse Respuesta JSON con un mensaje de éxito y los datos de la liquidación.
-    */
+     * Muestra una liquidación específica por su ID.
+     * 
+     * Este método recibe un ID de liquidación, busca la liquidación en la base de datos y devuelve una respuesta JSON con un estado de éxito y los datos de la liquidación.
+     *
+     * @param int $id El ID de la liquidación.
+     * @return JsonResponse Respuesta JSON con el estado de éxito y los datos de la liquidación.
+     */
     public function show($id): JsonResponse
     {
         $settlement = Settlement::findOrFail($id);
@@ -56,6 +68,16 @@ class SettlementController extends Controller
         ], 200);
     }
 
+    /**
+     * Actualiza una liquidación específica por su ID.
+     * 
+     * Este método recibe una solicitud de actualización de liquidación, valida los datos y actualiza la liquidación en la base de datos.
+     * La respuesta incluye un estado de éxito y los datos de la liquidación actualizada en formato JSON.
+     *
+     * @param UpdateSettlementRequest $request La solicitud de actualización de liquidación.
+     * @param int $id El ID de la liquidación.
+     * @return JsonResponse Respuesta JSON con el estado de éxito y los datos de la liquidación actualizada.
+     */
     public function update(UpdateSettlementRequest $request, $id): JsonResponse
     {
         $settlement = Settlement::findOrFail($id);
@@ -67,6 +89,15 @@ class SettlementController extends Controller
         ], 200);
     }
 
+    /**
+     * Elimina una liquidación específica por su ID.
+     * 
+     * Este método recibe un ID de liquidación, busca la liquidación en la base de datos y elimina la liquidación.
+     * La respuesta incluye un estado de éxito y un mensaje de éxito en formato JSON.
+     *
+     * @param int $id El ID de la liquidación.
+     * @return JsonResponse Respuesta JSON con el estado de éxito y un mensaje de éxito.
+     */
     public function destroy($id): JsonResponse
     {
         $settlement = Settlement::findOrFail($id);
@@ -77,6 +108,14 @@ class SettlementController extends Controller
         ], 200);
     }
 
+    /**
+     * Muestra las liquidaciones de aceite de un empleado específico por su ID.
+     * 
+     * Este método recibe un ID de empleado, busca el empleado en la base de datos y devuelve una respuesta JSON con un estado de éxito y las liquidaciones de aceite del empleado.
+     *
+     * @param int $employeeId El ID del empleado.
+     * @return JsonResponse Respuesta JSON con el estado de éxito y las liquidaciones de aceite del empleado.
+     */
     public function indexForEmployee($employeeId): JsonResponse
     {
         $employee = Employee::findOrFail($employeeId);
@@ -88,6 +127,15 @@ class SettlementController extends Controller
         ], 200);
     }
 
+    /**
+     * Muestra una liquidación específica de un empleado por su ID.
+     * 
+     * Este método recibe un ID de empleado y un ID de liquidación, busca la liquidación asociada al empleado en la base de datos y devuelve una respuesta JSON con un estado de éxito y los datos de la liquidación.
+     *
+     * @param int $employeeId El ID del empleado.
+     * @param int $settlementId El ID de la liquidación.
+     * @return JsonResponse Respuesta JSON con el estado de éxito y los datos de la liquidación.
+     */
     public function showForEmployee($employeeId, $settlementId): JsonResponse
     {
         $employee = Employee::findOrFail($employeeId);
@@ -99,6 +147,17 @@ class SettlementController extends Controller
         ], 200);
     }
 
+    /**
+     * Actualiza una liquidación específica de un empleado por su ID.
+     * 
+     * Este método recibe una solicitud de actualización de liquidación, valida los datos y actualiza la liquidación en la base de datos.
+     * La respuesta incluye un estado de éxito y los datos de la liquidación actualizada en formato JSON.
+     *
+     * @param UpdateSettlementRequest $request La solicitud de actualización de liquidación.
+     * @param int $employeeId El ID del empleado.
+     * @param int $settlementId El ID de la liquidación.
+     * @return JsonResponse Respuesta JSON con el estado de éxito y los datos de la liquidación actualizada.
+     */
     public function updateForEmployee(UpdateSettlementRequest $request, $employeeId, $settlementId): JsonResponse
     {
         $employee = Employee::findOrFail($employeeId);
@@ -112,6 +171,14 @@ class SettlementController extends Controller
         ], 200);
     }
 
+    /**
+     * Muestra las liquidaciones de aceite de un socio específico por su ID.
+     * 
+     * Este método recibe un ID de socio, busca el socio en la base de datos y devuelve una respuesta JSON con un estado de éxito y las liquidaciones de aceite del socio.
+     *
+     * @param int $memberId El ID del socio.
+     * @return JsonResponse Respuesta JSON con el estado de éxito y las liquidaciones de aceite del socio.
+     */
     public function indexForMember($memberId): JsonResponse
     {
         $member = Member::findOrFail($memberId);
@@ -123,6 +190,15 @@ class SettlementController extends Controller
         ], 200);
     }
 
+    /**
+     * Muestra una liquidación específica de un socio por su ID.
+     * 
+     * Este método recibe un ID de socio y un ID de liquidación, busca la liquidación asociada al socio en la base de datos y devuelve una respuesta JSON con un estado de éxito y los datos de la liquidación.
+     *
+     * @param int $memberId El ID del socio.
+     * @param int $settlementId El ID de la liquidación.
+     * @return JsonResponse Respuesta JSON con el estado de éxito y los datos de la liquidación.
+     */
     public function showForMember($memberId, $settlementId): JsonResponse
     {
         $member = Member::findOrFail($memberId);
@@ -133,4 +209,5 @@ class SettlementController extends Controller
             'data' => new SettlementResource($settlement)
         ], 200);
     }
+
 }

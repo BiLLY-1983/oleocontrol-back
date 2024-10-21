@@ -14,10 +14,11 @@ use Illuminate\Support\Facades\Auth;
 class AnalysisController extends Controller
 {
     /**
-     *   Función que muestra los análisis.
+     * Muestra los análisis.
      * 
-     *   @return JsonResponse Respuesta JSON con un mensaje de éxito
-     *   y una colección con todos los análisis de la aplicación.
+     * Este método recupera todos los análisis de la base de datos y devuelve una respuesta JSON con un estado de éxito y los datos de los análisis.
+     *
+     * @return JsonResponse Respuesta JSON con el estado de éxito y los datos de los análisis.
      */
     public function index(): JsonResponse
     {
@@ -28,11 +29,13 @@ class AnalysisController extends Controller
     }
 
     /**
-    *   Función para mostrar un análisis en concreto.
-    *
-    *   @param int ID del análisis a mostrar.
-    *   @return JsonResponse Respuesta JSON con un mensaje de éxito y los datos del análisis.
-    */
+     * Muestra un análisis en concreto.
+     * 
+     * Este método recibe un ID de análisis, busca el análisis en la base de datos y devuelve una respuesta JSON con un estado de éxito y los datos del análisis.
+     *
+     * @param int $id El ID del análisis a mostrar.
+     * @return JsonResponse Respuesta JSON con el estado de éxito y los datos del análisis.
+     */
     public function show($id): JsonResponse
     {
         $analysis = Analysis::findOrFail($id);
@@ -44,11 +47,14 @@ class AnalysisController extends Controller
     }
 
     /**
-    *   Función para actualizar un análisis.
-    *
-    *   @param UpdateUserRequest Solicitud validada con los datos del nuevo análisis.
-    *   @param int ID del análisis a actualizar.
-    *   @return JsonResponse Respuesta JSON con un mensaje de éxito y los datos del nuevo análisis.
+     * Actualiza un análisis.
+     * 
+     * Este método recibe una solicitud de actualización de análisis, valida los datos y actualiza el análisis en la base de datos.
+     * La respuesta incluye un estado de éxito y los datos del análisis actualizado en formato JSON.
+     *
+     * @param UpdateAnalysisRequest $request La solicitud de actualización de análisis.
+     * @param int $id El ID del análisis a actualizar.
+     * @return JsonResponse Respuesta JSON con el estado de éxito y los datos del análisis actualizado.
     */
     public function update(UpdateAnalysisRequest $request, $id): JsonResponse
     {
@@ -63,11 +69,14 @@ class AnalysisController extends Controller
     }
 
     /**
-    *   Función para eliminar un análisis.
-    *
-    *   @param int ID del análisis a eliminar.
-    *   @return JsonResponse Respuesta JSON con un mensaje de éxito.
-    */
+     * Elimina un análisis.
+     * 
+     * Este método recibe un ID de análisis, busca el análisis en la base de datos y elimina el análisis.
+     * La respuesta incluye un estado de éxito y un mensaje de éxito en formato JSON.
+     *
+     * @param int $id El ID del análisis a eliminar.
+     * @return JsonResponse Respuesta JSON con el estado de éxito y un mensaje de éxito.
+     */
     public function destroy($id): JsonResponse
     {
         $analysis = Analysis::findOrFail($id);
@@ -79,6 +88,14 @@ class AnalysisController extends Controller
         ], 200);
     }
 
+    /**
+     * Muestra los análisis de un empleado.
+     * 
+     * Este método recibe un ID de empleado, busca el empleado en la base de datos y devuelve una respuesta JSON con un estado de éxito y los datos de los análisis del empleado.
+     *
+     * @param int $employeeId El ID del empleado.
+     * @return JsonResponse Respuesta JSON con el estado de éxito y los datos de los análisis del empleado.
+     */
     public function indexForEmployee($employeeId): JsonResponse
     {
         $employee = Employee::findOrFail($employeeId);
@@ -90,6 +107,17 @@ class AnalysisController extends Controller
         ], 200);
     }
 
+    /**
+     * Actualiza un análisis de un empleado.
+     * 
+     * Este método recibe una solicitud de actualización de análisis, valida los datos y actualiza el análisis en la base de datos.
+     * La respuesta incluye un estado de éxito y los datos del análisis actualizado en formato JSON.
+     *
+     * @param UpdateAnalysisRequest $request La solicitud de actualización de análisis.
+     * @param int $employeeId El ID del empleado.
+     * @param int $analysisId El ID del análisis.
+     * @return JsonResponse Respuesta JSON con el estado de éxito y los datos del nuevo análisis.
+    */
     public function updateForEmployee(UpdateAnalysisRequest $request, $employeeId, $analysisId): JsonResponse
     {
         $employee = Employee::findOrFail($employeeId);
@@ -103,6 +131,15 @@ class AnalysisController extends Controller
         ], 200);
     }
 
+    /**
+     * Muestra un análisis de un empleado.
+     * 
+     * Este método recibe un ID de empleado y un ID de análisis, busca el análisis en la base de datos y devuelve una respuesta JSON con un estado de éxito y los datos del análisis.
+     *
+     * @param int $employeeId El ID del empleado.
+     * @param int $analysisId El ID del análisis.
+     * @return JsonResponse Respuesta JSON con el estado de éxito y los datos del análisis.
+     */
     public function showForEmployee($employeeId, $analysisId): JsonResponse
     {
         $employee = Employee::findOrFail($employeeId);
@@ -114,6 +151,14 @@ class AnalysisController extends Controller
         ], 200);
     }
 
+    /**
+     * Muestra los análisis de un socio.
+     * 
+     * Este método recibe un ID de socio, busca el socio en la base de datos y devuelve una respuesta JSON con un estado de éxito y los datos de los análisis del socio.
+     *
+     * @param int $memberId El ID del socio.
+     * @return JsonResponse Respuesta JSON con el estado de éxito y los datos de los análisis del socio.
+     */
     public function indexForMember($memberId): JsonResponse
     {
         $member = Member::findOrFail($memberId);
@@ -129,6 +174,15 @@ class AnalysisController extends Controller
         ], 200); 
     }
 
+    /**
+     * Muestra un análisis de un socio.
+     * 
+     * Este método recibe un ID de socio y un ID de entrada, busca la entrada en la base de datos y devuelve una respuesta JSON con un estado de éxito y los datos del análisis.
+     *
+     * @param int $memberId El ID del socio.
+     * @param int $entryId El ID de la entrada.
+     * @return JsonResponse Respuesta JSON con el estado de éxito y los datos del análisis.
+     */
     public function showForMember($memberId, $entryId): JsonResponse
     {
         $member = Member::findOrFail($memberId);

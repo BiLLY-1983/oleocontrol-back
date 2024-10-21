@@ -17,9 +17,11 @@ use Illuminate\Support\Facades\DB;
 class EntryController extends Controller
 {
     /**
-     *   Función que muestra las entradas de aceituna.
+     * Muestra todas las entradas de aceituna.
      * 
-     *   @return JsonResponse Respuesta JSON con un mensaje de éxito
+     * Este método obtiene todas las entradas de aceituna de la base de datos y devuelve una respuesta JSON con un estado de éxito y los datos de las entradas.
+     *
+     * @return JsonResponse Respuesta JSON con el estado de éxito y los datos de las entradas.
      */
     public function index(): JsonResponse
     {
@@ -30,12 +32,14 @@ class EntryController extends Controller
     }
 
     /**
-    *   Función para agregar una nueva entrada de aceituna.
-    *   Cuando se crea una entrada, se crea automaticamente una análisis.
-    *
-    *   @param StoreUserRequest Solicitud validada con los datos de la nueva entrada.
-    *   @return JsonResponse Respuesta JSON con un mensaje de éxito y los datos de la entrada creada.
-    */
+     * Crea una nueva entrada de aceituna.
+     * 
+     * Este método recibe una solicitud de creación de entrada, valida los datos y crea una nueva entrada en la base de datos.
+     * La respuesta incluye un estado de éxito y los datos de la entrada creada en formato JSON.
+     *
+     * @param StoreEntryRequest $request La solicitud de creación de entrada.
+     * @return JsonResponse Respuesta JSON con el estado de éxito y los datos de la entrada creada.
+     */
     public function store(StoreEntryRequest $request): JsonResponse
     {
         DB::beginTransaction();
@@ -73,12 +77,33 @@ class EntryController extends Controller
     }
 
     /**
-    *   Función para actualizar una entrada.
-    *
-    *   @param UpdateUserRequest Solicitud validada con los datos de la nueva entrada.
-    *   @param int ID de la entrada a actualizar.
-    *   @return JsonResponse Respuesta JSON con un mensaje de éxito y los datos de la entrada.
-    */
+     * Muestra una entrada específica por su ID.
+     * 
+     * Este método recibe un ID de entrada, busca la entrada en la base de datos y devuelve una respuesta JSON con un estado de éxito y los datos de la entrada.
+     *
+     * @param int $id El ID de la entrada.
+     * @return JsonResponse Respuesta JSON con el estado de éxito y los datos de la entrada.
+     */
+    public function show($id): JsonResponse
+    {
+        $entry = Entry::findOrFail($id);
+
+        return response()->json([
+            'status' => 'success',
+            'data' => new EntryResource($entry)
+        ], 200);
+    }
+
+    /**
+     * Actualiza una entrada específica por su ID.
+     * 
+     * Este método recibe una solicitud de actualización de entrada, valida los datos y actualiza la entrada en la base de datos.
+     * La respuesta incluye un estado de éxito y los datos de la entrada actualizada en formato JSON.
+     *
+     * @param UpdateEntryRequest $request La solicitud de actualización de entrada.
+     * @param int $id El ID de la entrada.
+     * @return JsonResponse Respuesta JSON con el estado de éxito y los datos de la entrada actualizada.
+     */
     public function update(UpdateEntryRequest $request, $id): JsonResponse
     {
         $entry = Entry::findOrFail($id);
@@ -91,11 +116,14 @@ class EntryController extends Controller
     }
 
     /**
-    *   Función para eliminar una entrada.
-    *
-    *   @param int ID de la entrada a eliminar.
-    *   @return JsonResponse Respuesta JSON con un mensaje de éxito.
-    */
+     * Elimina una entrada específica por su ID.
+     * 
+     * Este método recibe un ID de entrada, busca la entrada en la base de datos y elimina la entrada.
+     * La respuesta incluye un estado de éxito y un mensaje de éxito en formato JSON.
+     *
+     * @param int $id El ID de la entrada.
+     * @return JsonResponse Respuesta JSON con el estado de éxito y un mensaje de éxito.
+     */
     public function destroy($id): JsonResponse
     {
         $entry = Entry::findOrFail($id);
@@ -106,6 +134,14 @@ class EntryController extends Controller
         ], 200);
     }
 
+    /**
+     * Muestra todas las entradas de un miembro específico por su ID.
+     * 
+     * Este método recibe un ID de miembro, busca los entradas asociadas al miembro en la base de datos y devuelve una respuesta JSON con un estado de éxito y los datos de las entradas.
+     *
+     * @param int $memberId El ID del miembro.
+     * @return JsonResponse Respuesta JSON con el estado de éxito y los datos de las entradas.
+     */
     public function indexForMember($memberId): JsonResponse
     {     
         $member = Member::findOrFail($memberId);
@@ -117,6 +153,15 @@ class EntryController extends Controller
         ], 200);
     }
 
+    /**
+     * Muestra una entrada específica de un miembro por su ID.
+     * 
+     * Este método recibe un ID de miembro y un ID de entrada, busca la entrada asociada al miembro en la base de datos y devuelve una respuesta JSON con un estado de éxito y los datos de la entrada.
+     *
+     * @param int $memberId El ID del miembro.
+     * @param int $entryId El ID de la entrada.
+     * @return JsonResponse Respuesta JSON con el estado de éxito y los datos de la entrada.
+     */
     public function showForMember($memberId, $entryId): JsonResponse
     {
         $member = Member::findOrFail($memberId);

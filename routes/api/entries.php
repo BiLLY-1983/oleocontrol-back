@@ -8,13 +8,20 @@ use Illuminate\Support\Facades\Route;
 /* ========================== */
 
 // Rutas para administradores
-Route::get('/entries', [EntryController::class, 'index']);
-Route::delete('/entries/{entryId}', [EntryController::class, 'destroy']);
+Route::middleware('admin')->group(function () {
+    Route::get('/entries', [EntryController::class, 'index']);
+    Route::get('/entries/{entryId}', [EntryController::class, 'show']);
+    Route::delete('/entries/{entryId}', [EntryController::class, 'destroy']);
+});
 
 // Rutas para empleados (y administradores)
-Route::post('/entries', [EntryController::class, 'store']);
-Route::put('/entries/{entryId}', [EntryController::class, 'update']);
+Route::middleware('department:Control de entradas')->group(function () {
+    Route::post('/entries', [EntryController::class, 'store']);
+    Route::put('/entries/{entryId}', [EntryController::class, 'update']);
+});
 
 // Rutas para socios (y administradores)
-Route::get('/members/{memberId}/entries', [EntryController::class, 'indexForMember']);
-Route::get('/members/{memberId}/entries/{entryId}', [EntryController::class, 'showForMember']);
+Route::middleware('member')->group(function () {
+    Route::get('/members/{memberId}/entries', [EntryController::class, 'indexForMember']);
+    Route::get('/members/{memberId}/entries/{entryId}', [EntryController::class, 'showForMember']);
+});

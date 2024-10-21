@@ -8,10 +8,12 @@ use Illuminate\Support\Facades\Route;
 /* ======================= */
 
 // Rutas solo para administradores
-Route::post('/oils', [OilController::class, 'store']);
-Route::put('/oils/{oilId}', [OilController::class, 'update']);
-Route::delete('/oils/{oilId}', [OilController::class, 'destroy']);
+Route::middleware('admin')->group(function () {
+    Route::post('/oils', [OilController::class, 'store']);
+    Route::put('/oils/{oilId}', [OilController::class, 'update']);
+    Route::delete('/oils/{oilId}', [OilController::class, 'destroy']);
+});
 
-// Rutas para todos los usuarios
 Route::get('/oils', [OilController::class, 'index']);
 Route::get('/oils/{oilId}', [OilController::class, 'show']);
+

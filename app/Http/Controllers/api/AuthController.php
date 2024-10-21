@@ -3,34 +3,27 @@
 namespace App\Http\Controllers\api;
 
 use App\Http\Controllers\Controller;
+use App\Http\Requests\LoginRequest;
+use App\Http\Requests\RegisterRequest;
 use App\Models\User;
-use Illuminate\Http\Request;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Request;
 use Illuminate\Validation\ValidationException;
 
 class AuthController extends Controller
 {
-    public function register(Request $request)
+    /**
+     * Registro de un nuevo usuario.
+     *
+     * @param RegisterRequest $request La solicitud de registro con los datos del usuario.
+     * @return JsonResponse Respuesta JSON con el token de autenticación y el usuario registrado.
+     */
+    public function register(RegisterRequest $request): JsonResponse
     {
-        $request->validate([
-            'username' => 'required|string|max:255|unique:users',
-            'first_name' => 'required|string|max:255',
-            'last_name' => 'required|string|max:255',
-            'dni' => 'required|string|max:20|unique:users',
-            'email' => 'required|string|email|max:255|unique:users',
-            'password' => 'required|string|min:8|confirmed',
-            'phone' => 'required|string|max:20',
-        ]);
-
-        $user = User::create([
-            'username' => $request->username,
-            'first_name' => $request->first_name,
-            'last_name' => $request->last_name,
-            'dni' => $request->dni,
-            'email' => $request->email,
+        $user = User::create($request->validated() + [
             'password' => Hash::make($request->password),
-            'phone' => $request->phone,
             'status' => true,
         ]);
 
@@ -43,13 +36,15 @@ class AuthController extends Controller
         ], 201);
     }
 
-    public function login(Request $request)
+    /**
+     * Inicio de sesión de un usuario.
+     *
+     * @param LoginRequest $request La solicitud de inicio de sesión con el nombre de usuario y la contraseña.
+     * @return JsonResponse Respuesta JSON con el token de autenticación y los datos del usuario.
+     * @throws ValidationException Si las credenciales proporcionadas son incorrectas.
+     */
+    public function login(LoginRequest $request): JsonResponse
     {
-        $request->validate([
-            'username' => 'required|string',
-            'password' => 'required|string',
-        ]);
-
         $user = User::where('username', $request->username)->first();
 
         if (!$user || !Hash::check($request->password, $user->password)) {
@@ -73,6 +68,12 @@ class AuthController extends Controller
         ]);
     }
 
+    /**
+     * Cierre de sesión de un usuario.
+     *
+     * @param Request $request La solicitud de cierre de sesión.
+     * @return JsonResponse Respuesta JSON con un mensaje de éxito o denegado.
+     */
     public function logout(Request $request)
     {
         if (Auth::check()) {
