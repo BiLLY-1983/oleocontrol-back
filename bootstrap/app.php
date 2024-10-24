@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Middleware\CheckRoleMiddleware;
 use App\Http\Middleware\CheckAdminRoleMiddleware;
 use App\Http\Middleware\CheckMemberRoleMiddleware;
 use App\Http\Middleware\CheckEmployeeRoleMiddleware;
@@ -18,6 +19,7 @@ return Application::configure(basePath: dirname(__DIR__))
     )
     ->withMiddleware(function (Middleware $middleware) {
         $middleware->alias([
+            'role' => CheckRoleMiddleware::class,  
             'admin' => CheckAdminRoleMiddleware::class,
             'member' => CheckMemberRoleMiddleware::class,
             'employee' => CheckEmployeeRoleMiddleware::class,

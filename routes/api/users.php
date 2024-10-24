@@ -16,15 +16,6 @@ Route::middleware('admin')->group(function () {
     Route::delete('/users/{id}', [UserController::class, 'destroy']);
 });
 
-// Rutas para socios (y administradores)
-Route::middleware('member')->group(function () {
-    Route::get('/members/profile', [UserController::class, 'showMemberProfile']);
-    Route::put('/members/profile', [UserController::class, 'updateMemberProfile']);
-});
-
-// Rutas para empleados (y administradores)
-Route::middleware('employee')->group(function () {
-    Route::get('/employees/profile', [UserController::class, 'showEmployeeProfile']);
-    Route::put('/employees/profile', [UserController::class, 'updateEmployeeProfile']);
-});
-
+// Ruta común para todos los usuarios autenticados (acceder y editar su propio perfil)
+Route::get('/profile', [UserController::class, 'showProfile']);
+Route::put('/profile', [UserController::class, 'updateProfile']);
