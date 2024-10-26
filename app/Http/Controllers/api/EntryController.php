@@ -35,6 +35,7 @@ class EntryController extends Controller
      * Crea una nueva entrada de aceituna.
      * 
      * Este método recibe una solicitud de creación de entrada, valida los datos y crea una nueva entrada en la base de datos.
+     * Si se ha creado la entrada de aceituna satisfactoriamente, se genera un análisis asociado a esa entrada.
      * La respuesta incluye un estado de éxito y los datos de la entrada creada en formato JSON.
      *
      * @param StoreEntryRequest $request La solicitud de creación de entrada.
