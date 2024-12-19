@@ -13,7 +13,7 @@ Route::middleware('admin')->group(function () {
     Route::delete('/entries/{entryId}', [EntryController::class, 'destroy']);
 });
 
-// Rutas para empleados (y administradores)
+// Rutas para empleados que pertenecen al departamento "Control de entradas" (y administradores)
 Route::middleware('department:Control de entradas')->group(function () {
     Route::get('/entries', [EntryController::class, 'index']);
     Route::post('/entries', [EntryController::class, 'store']);

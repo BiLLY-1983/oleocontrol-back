@@ -23,6 +23,11 @@ class Analysis extends Model
         return $this->belongsTo(Entry::class);
     }
 
+    public function member(): BelongsTo
+    {
+        return $this->belongsTo(Member::class);
+    }
+
     public function employee(): BelongsTo
     {
         return $this->belongsTo(Employee::class);

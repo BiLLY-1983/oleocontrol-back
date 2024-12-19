@@ -8,11 +8,11 @@ use App\Http\Requests\Entry\StoreEntryRequest;
 use App\Http\Requests\Entry\UpdateEntryRequest;
 use App\Http\Resources\AnalysisResource;
 use App\Http\Resources\EntryResource;
-use App\Models\Analysis;
 use App\Models\Entry;
 use App\Models\Member;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Auth;
 
 class EntryController extends Controller
 {
@@ -140,7 +140,7 @@ class EntryController extends Controller
      * 
      * Este método recibe un ID de miembro, busca los entradas asociadas al miembro en la base de datos y devuelve una respuesta JSON con un estado de éxito y los datos de las entradas.
      *
-     * @param int $memberId El ID del miembro.
+     * @param int $memberId El ID del socio.
      * @return JsonResponse Respuesta JSON con el estado de éxito y los datos de las entradas.
      */
     public function indexForMember($memberId): JsonResponse
@@ -159,7 +159,7 @@ class EntryController extends Controller
      * 
      * Este método recibe un ID de miembro y un ID de entrada, busca la entrada asociada al miembro en la base de datos y devuelve una respuesta JSON con un estado de éxito y los datos de la entrada.
      *
-     * @param int $memberId El ID del miembro.
+     * @param int $memberId El ID del socio.
      * @param int $entryId El ID de la entrada.
      * @return JsonResponse Respuesta JSON con el estado de éxito y los datos de la entrada.
      */

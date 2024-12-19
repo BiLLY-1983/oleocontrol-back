@@ -7,8 +7,8 @@ use Illuminate\Support\Facades\Route;
 /* Rutas acceso tabla Employees */
 /* ============================ */
 
-// Rutas para administradores
-Route::middleware('admin')->group(function () {
+// Rutas para empleados del departamento de Recursos Humanos (RRHH) y administradores
+Route::middleware('department:RRHH')->group(function () {
     Route::get('/employees', [EmployeeController::class, 'index']);
     Route::post('/employees', [EmployeeController::class, 'store']);
     Route::get('/employees/{id}', [EmployeeController::class, 'show']);

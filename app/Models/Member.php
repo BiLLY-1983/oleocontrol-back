@@ -33,4 +33,9 @@ class Member extends Model
     {
         return $this->hasMany(Settlement::class);
     }
+
+    public function analyses(): HasMany
+    {
+        return $this->hasMany(Analysis::class);
+    }
 }

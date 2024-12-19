@@ -49,15 +49,17 @@ class AuthController extends Controller
         $user = User::where('username', $request->username)->first();
 
         if (!$user || !Hash::check($request->password, $user->password)) {
-            throw ValidationException::withMessages([
-                'username' => ['Las credenciales proporcionadas son incorrectas.'],
-            ]);
+            return response()->json([
+                'status' => 'error',
+                'message' => 'Credenciales incorrectas.'
+            ], 401); 
         }
-
+    
         if (!$user->status) {
-            throw ValidationException::withMessages([
-                'username' => ['Esta cuenta está desactivada.'],
-            ]);
+            return response()->json([
+                'status' => 'error',
+                'message' => 'Esta cuenta está desactivada.'
+            ], 403); 
         }
 
         $token = $user->createToken('auth_token')->plainTextToken;

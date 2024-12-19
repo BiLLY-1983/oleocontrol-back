@@ -18,6 +18,7 @@ class EntrySeeder extends Seeder
             // Para cada entrada, generar un análisis y asociarlo a la entrada
             Analysis::factory()->create([
                 'entry_id' => $entry->id,
+                'member_id' => $entry->member->id, 
             ]);
         });
     }

@@ -7,8 +7,8 @@ use Illuminate\Support\Facades\Route;
 /* Rutas acceso tabla Members */
 /* ========================== */
 
-// Rutas para administradores
-Route::middleware('admin')->group(function () {
+// Rutas para empleados del departamento de "Administración" y administradores
+Route::middleware('department:Administración')->group(function () {
     Route::get('/members', [MemberController::class, 'index']);
     Route::post('/members', [MemberController::class, 'store']);
     Route::get('/members/{id}', [MemberController::class, 'show']);

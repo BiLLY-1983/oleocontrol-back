@@ -21,6 +21,10 @@ class AnalysisResource extends JsonResource
             'humidity' => $this->humidity,
             'yield' => $this->yield,
             'entry_id' => $this->entry_id,
+            'member' => [
+                'member_id' => $this->member_id,
+                'name' => $this->member->user->first_name . ' ' . $this->member->user->last_name,
+            ],
             'employee' => $this->employee ? [
                 'employee_id' => $this->employee_id,
                 'name' => $this->employee->user->first_name . ' ' . $this->employee->user->last_name,

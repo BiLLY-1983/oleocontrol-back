@@ -27,7 +27,8 @@ class StoreAnalysisRequest extends FormRequest
             'humidity'      => 'nullable|numeric|min:0|max:100.00',
             'yield'         => 'nullable|numeric|min:0|max:100.00',
             'entry_id'      => 'required|exists:entries,id|unique:analyses,entry_id',
-            'employee_id'     => 'nullable|exists:employees,id',
+            'member_id' => 'required|exists:members,id',
+            'employee_id' => 'nullable|exists:employee,id',
             'oil_id'        => 'nullable|exists:oils,id',
         ];
     }

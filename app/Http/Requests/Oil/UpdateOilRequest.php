@@ -24,6 +24,7 @@ class UpdateOilRequest extends FormRequest
         return [
             'name' => 'nullable|string|max:255',
             'description' => 'nullable|string|max:500',
+            'price' => 'nullable|numeric|min:0',
         ];
     }
 }

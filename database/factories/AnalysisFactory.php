@@ -20,15 +20,12 @@ class AnalysisFactory extends Factory
         // Obtener todos los IDs de las entradas
         $entryIds = Entry::pluck('id')->toArray();
 
-        // Elegir un ID aleatorio y único
-        $entryId = $this->faker->unique()->randomElement($entryIds);
-
         return [
             'analysis_date' => null,
             'acidity' => null,
             'humidity' => null,
             'yield' => null,
-            'entry_id' => $entryId,
+            'entry_id' => null,
             'employee_id' => null,
             'oil_id' => null, 
         ];

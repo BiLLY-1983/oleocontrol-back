@@ -29,7 +29,8 @@ class UpdateAnalysisRequest extends FormRequest
             'humidity'      => 'nullable|numeric|min:0|max:100.00',
             'yield'         => 'nullable|numeric|min:0|max:100.00',
             'entry_id'      => 'nullable|exists:entries,id|unique:analyses,entry_id,' . $analysisId,
-            'employee_id'     => 'nullable|exists:employees,id',
+            'member_id' => 'nullable|exists:members,id',
+            'employee_id' => 'nullable|exists:employees,id',
             'oil_id'        => 'nullable|exists:oils,id',
         ];
     }
