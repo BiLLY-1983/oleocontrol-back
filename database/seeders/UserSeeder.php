@@ -23,7 +23,6 @@ class UserSeeder extends Seeder
             'password' => bcrypt('password'),
             'phone' => '687853157',
             'status' => true,
-            'profile_picture' => 'profile_pictures/admin.jpg'
         ]);
     
         $adminRole = Role::where('name', 'Administrador')->first();
@@ -42,7 +41,6 @@ class UserSeeder extends Seeder
             'password' => bcrypt('password'),
             'phone' => '111111111',
             'status' => true,
-            'profile_picture' => 'profile_pictures/guess.jpg'
         ]);
    
         $guessRole = Role::where('name', 'Invitado')->first();
@@ -62,7 +60,6 @@ class UserSeeder extends Seeder
             'password' => bcrypt('password'),
             'phone' => '111111111',
             'status' => true,
-            'profile_picture' => 'profile_pictures/guess.jpg'
         ]);
    
         $memberRole = Role::where('name', 'Socio')->first();
@@ -80,7 +77,6 @@ class UserSeeder extends Seeder
             'password' => bcrypt('password'),
             'phone' => '111111111',
             'status' => true,
-            'profile_picture' => 'profile_pictures/guess.jpg'
         ]);
    
         $workerRole = Role::where('name', 'Empleado')->first();

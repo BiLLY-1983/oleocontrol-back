@@ -23,7 +23,7 @@ class UserResource extends JsonResource
             'email' => $this->email,
             'phone' => $this->phone,
             'status' => $this->status,
-            'profile_picture' => asset('storage/' . $this->profile_picture), 
+
             'roles' => $this->roles->map(function($role) {
                 return [
                     'id' => $role->id,
@@ -35,16 +35,16 @@ class UserResource extends JsonResource
         // Agregar el número de socio si es un 'Socio'
         if ($this->roles->contains('name', 'Socio')) {
             $data['member'] = [
-                'id' => $this->members->id,
-                'member_number' => $this->members->member_number,
+                'id' => $this->member->id,
+                'member_number' => $this->member->member_number,
             ];
         }
 
         // Agregar el departamento si es un 'Empleado'
         if ($this->roles->contains('name', 'Empleado')) {
             $data['employee'] = [
-                'id' => $this->employees->id,
-                'department' => $this->employees->department->name,
+                'id' => $this->employee->id,
+                'department' => $this->employee->department->name,
             ];
         }
 

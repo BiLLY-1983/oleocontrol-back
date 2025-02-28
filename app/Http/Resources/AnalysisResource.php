@@ -20,7 +20,10 @@ class AnalysisResource extends JsonResource
             'acidity' => $this->acidity,
             'humidity' => $this->humidity,
             'yield' => $this->yield,
-            'entry_id' => $this->entry_id,
+            'entry' => [
+                'entry_id' => $this->entry_id,
+                'olive_quantity' => $this->entry->olive_quantity
+            ],
             'member' => [
                 'member_id' => $this->member_id,
                 'name' => $this->member->user->first_name . ' ' . $this->member->user->last_name,
@@ -29,7 +32,10 @@ class AnalysisResource extends JsonResource
                 'employee_id' => $this->employee_id,
                 'name' => $this->employee->user->first_name . ' ' . $this->employee->user->last_name,
             ] : null,
-            'oil_id' => $this->oil_id,
+            'oil' => $this->oil_id ? [
+                'oil_id' => $this->oil_id,
+                'name' => $this->oil->name,
+            ] : null,
         ];
     }
 }

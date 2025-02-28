@@ -9,17 +9,17 @@ use Illuminate\Support\Facades\Route;
 
 // Rutas para administradores
 Route::middleware('admin')->group(function () {
-    Route::get('/settlements', [SettlementController::class, 'index']);
-    Route::get('/settlements/{settlementId}', [SettlementController::class, 'show']);
-    Route::put('/settlements/{settlementId}', [SettlementController::class, 'update']);
-    Route::delete('/settlements/{settlementId}', [SettlementController::class, 'destroy']);
+    Route::get('/employees/{employeeId}/settlements', [SettlementController::class, 'indexForEmployee']);
+    Route::get('/employees/{employeeId}/settlements/{settlementId}', [SettlementController::class, 'showForEmployee']);
+    //Route::put('/employees/{employeeId}/settlements/{settlementId}', [SettlementController::class, 'updateForEmployee']);   
 });
 
 // Rutas para empleados (y administradores)
 Route::middleware('department:Contabilidad')->group(function () {
-    Route::get('/employees/{employeeId}/settlements', [SettlementController::class, 'indexForEmployee']);
-    Route::get('/employees/{employeeId}/settlements/{settlementId}', [SettlementController::class, 'showForEmployee']);
-    Route::put('/employees/{employeeId}/settlements/{settlementId}', [SettlementController::class, 'updateForEmployee']);
+    Route::get('/settlements', [SettlementController::class, 'index']);
+    Route::get('/settlements/{settlementId}', [SettlementController::class, 'show']);
+    Route::put('/settlements/{settlementId}', [SettlementController::class, 'update']);
+    Route::delete('/settlements/{settlementId}', [SettlementController::class, 'destroy']);
 });
 
 // Rutas para socios (y administradores)

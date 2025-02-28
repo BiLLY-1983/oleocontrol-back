@@ -7,17 +7,13 @@ use Illuminate\Support\Facades\Route;
 /* Rutas acceso tabla Entries */
 /* ========================== */
 
-// Rutas para administradores
-Route::middleware('admin')->group(function () {
-    Route::get('/entries/{entryId}', [EntryController::class, 'show']);
-    Route::delete('/entries/{entryId}', [EntryController::class, 'destroy']);
-});
-
 // Rutas para empleados que pertenecen al departamento "Control de entradas" (y administradores)
 Route::middleware('department:Control de entradas')->group(function () {
     Route::get('/entries', [EntryController::class, 'index']);
+    Route::get('/entries/{entryId}', [EntryController::class, 'show']);
     Route::post('/entries', [EntryController::class, 'store']);
     Route::put('/entries/{entryId}', [EntryController::class, 'update']);
+    Route::delete('/entries/{entryId}', [EntryController::class, 'destroy']);
 });
 
 // Rutas para socios (y administradores)

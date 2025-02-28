@@ -21,7 +21,7 @@ class UpdateUserRequest extends FormRequest
      */
     public function rules(): array
     {
-        $userId = $this->route('user');
+        $userId = $this->route('id');
 
         return [
             'username' => 'nullable|string|max:255|unique:users,username,' . $userId,
@@ -32,7 +32,6 @@ class UpdateUserRequest extends FormRequest
             'password' => 'nullable|string|min:8', 
             'phone' => 'nullable|string|max:20',
             'status' => 'nullable|boolean', 
-            'profile_picture' => 'nullable|string|max:255', 
         ];
     }
 }

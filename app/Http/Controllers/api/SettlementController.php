@@ -158,7 +158,7 @@ class SettlementController extends Controller
      * @param int $settlementId El ID de la liquidación.
      * @return JsonResponse Respuesta JSON con el estado de éxito y los datos de la liquidación actualizada.
      */
-    public function updateForEmployee(UpdateSettlementRequest $request, $employeeId, $settlementId): JsonResponse
+    /* public function updateForEmployee(UpdateSettlementRequest $request, $employeeId, $settlementId): JsonResponse
     {
         $employee = Employee::findOrFail($employeeId);
         $settlement = $employee->settlements()->findOrFail($settlementId);
@@ -169,7 +169,7 @@ class SettlementController extends Controller
             'status' => 'success',
             'data' => new SettlementResource($settlement)
         ], 200);
-    }
+    } */
 
     /**
      * Muestra las liquidaciones de aceite de un socio específico por su ID.

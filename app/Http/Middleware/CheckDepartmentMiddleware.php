@@ -41,7 +41,7 @@ class CheckDepartmentMiddleware
             abort(403, 'Acceso denegado. Se requiere rol de Empleado.');
         }
 
-        $employee = $user->employees;
+        $employee = $user->employee;
 
         if (!$employee || !in_array($employee->department->name, $departments)) {
             abort(403, 'Acceso denegado. No tienes permiso para acceder a esta sección.');

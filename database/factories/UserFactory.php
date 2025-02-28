@@ -32,7 +32,6 @@ class UserFactory extends Factory
             'password' => bcrypt('password'),
             'phone' => $this->faker->phoneNumber,
             'status' => true,
-            'profile_picture' => 'profile_pictures/guess.jpg'
         ];
     }
 

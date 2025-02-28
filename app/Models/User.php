@@ -30,7 +30,6 @@ class User extends Authenticatable
         'password',
         'phone',
         'status',
-        'profile_picture'
     ];
 
     /**
@@ -65,7 +64,7 @@ class User extends Authenticatable
      */
     public function hasRole(string $role): bool
     {
-        return $this->roles->contains('name', $role);
+        return $this->roles()->where('name', $role)->exists();
     }
 
     /* ---------- */
@@ -77,12 +76,12 @@ class User extends Authenticatable
         return $this->belongsToMany(Role::class);
     }
 
-    public function members(): HasOne
+    public function member(): HasOne
     {
         return $this->hasOne(Member::class, 'user_id');
     }
 
-    public function employees(): HasOne
+    public function employee(): HasOne
     {
         return $this->hasOne(Employee::class, 'user_id');
     }

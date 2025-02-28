@@ -21,7 +21,6 @@ return new class extends Migration
             $table->string('password', 255);
             $table->string('phone', 20);
             $table->boolean('status')->default(true);
-            $table->string('profile_picture', 255)->nullable();
             $table->timestamps();
         });
 

@@ -165,12 +165,34 @@ class EntryController extends Controller
      */
     public function showForMember($memberId, $entryId): JsonResponse
     {
-        $member = Member::findOrFail($memberId);
-        $entry = $member->entries()->findOrFail($entryId);
+        $user = Auth::user();
 
+        // Verificar si el usuario tiene el rol 'Socio'
+        if (!$user->roles->contains('name', 'Socio')) {
+            return response()->json(['message' => 'No eres un Socio.'], 403);
+        }
+
+        // Obtener el miembro asociado al usuario
+        $member = $user->member;
+
+        // Verificar si el miembro está asociado al usuario y si el ID coincide con el memberId proporcionado
+        if (!$member || $member->id != $memberId) {
+            return response()->json(['message' => 'No tienes permiso para ver esta entrada.'], 403);
+        }
+
+        // Obtener la entrada asociada al miembro
+        $entry = $member->entries()->find($entryId);
+
+        // Verificar si la entrada existe y si pertenece al miembro
+        if (!$entry || $entry->member_id != $member->id) {
+            return response()->json(['message' => 'Esta entrada no pertenece al socio.'], 403);
+        }
+
+        // Si todo es correcto, devolver la entrada
         return response()->json([
             'status' => 'success',
             'data' => new EntryResource($entry)
         ], 200);
     }
+
 }

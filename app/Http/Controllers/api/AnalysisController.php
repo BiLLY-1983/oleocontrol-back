@@ -9,7 +9,6 @@ use App\Models\Analysis;
 use App\Models\Employee;
 use App\Models\Member;
 use Illuminate\Http\JsonResponse;
-use Illuminate\Support\Facades\Auth;
 
 class AnalysisController extends Controller
 {
@@ -118,7 +117,7 @@ class AnalysisController extends Controller
      * @param int $analysisId El ID del análisis.
      * @return JsonResponse Respuesta JSON con el estado de éxito y los datos del nuevo análisis.
     */
-    public function updateForEmployee(UpdateAnalysisRequest $request, $employeeId, $analysisId): JsonResponse
+    /* public function updateForEmployee(UpdateAnalysisRequest $request, $employeeId, $analysisId): JsonResponse
     {
         $employee = Employee::findOrFail($employeeId);
         $analysis = $employee->analyses()->findOrFail($analysisId);
@@ -129,7 +128,7 @@ class AnalysisController extends Controller
             'status' => 'success',
             'data' => new AnalysisResource($analysis)
         ], 200);
-    }
+    } */
 
     /**
      * Muestra un análisis de un empleado.
