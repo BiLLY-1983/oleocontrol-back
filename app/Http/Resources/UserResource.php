@@ -33,7 +33,7 @@ class UserResource extends JsonResource
         ];
 
         // Agregar el número de socio si es un 'Socio'
-        if ($this->roles->contains('name', 'Socio')) {
+        if ($this->roles->contains('name', 'Socio') && $this->member) {
             $data['member'] = [
                 'id' => $this->member->id,
                 'member_number' => $this->member->member_number,
@@ -41,7 +41,7 @@ class UserResource extends JsonResource
         }
 
         // Agregar el departamento si es un 'Empleado'
-        if ($this->roles->contains('name', 'Empleado')) {
+        if ($this->roles->contains('name', 'Empleado') && $this->employee && $this->employee->department) {
             $data['employee'] = [
                 'id' => $this->employee->id,
                 'department' => $this->employee->department->name,

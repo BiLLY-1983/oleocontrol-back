@@ -6,9 +6,13 @@ use App\Http\Controllers\Controller;
 use App\Http\Requests\User\StoreUserRequest;
 use App\Http\Requests\User\UpdateUserRequest;
 use App\Http\Resources\UserResource;
+use App\Models\Employee;
+use App\Models\Member;
+use App\Models\Role;
 use App\Models\User;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
 
 class UserController extends Controller
 {
@@ -38,14 +42,89 @@ class UserController extends Controller
      * @param StoreUserRequest $request La solicitud de creación de usuario.
      * @return \Illuminate\Http\JsonResponse Respuesta JSON con el estado de éxito y los datos del usuario creado.
      */
-    public function store(StoreUserRequest $request): JsonResponse
+    /* public function storeOld(StoreUserRequest $request): JsonResponse
     {
         $user = User::create($request->validated());
-        
+
         return response()->json([
             'status' => 'success',
             'data' => new UserResource($user)
         ], 201);
+    } */
+
+    public function store(StoreUserRequest $request): JsonResponse
+    {
+        DB::beginTransaction(); // Iniciar la transacción
+
+        try {
+            // Crear el usuario
+            $user = User::create($request->only([
+                'username',
+                'first_name',
+                'last_name',
+                'dni',
+                'email',
+                'password',
+                'phone',
+            ]));
+
+            // Asignar rol al usuario
+            $roleName = $request->user_type; // Puede ser 'Administrador', 'Invitado', 'Socio', o 'Empleado'
+
+            // Buscar el rol en la base de datos
+            $role = Role::where('name', $roleName)->first();
+
+            if (!$role) {
+                throw new \Exception("El rol '{$roleName}' no existe.");
+            }
+
+            // Asociar el rol al usuario
+            $user->roles()->attach($role->id);
+
+            // Manejar roles específicos
+            if ($roleName === 'Socio') {
+                // Crear el socio
+                $member = Member::create([
+                    'user_id' => $user->id,
+                    'member_number' => 1000 + $user->id,
+                ]);
+
+                // Verificar si el socio se creó correctamente
+                if (!$member) {
+                    throw new \Exception('No se pudo crear el socio.');
+                }
+            } elseif ($roleName === 'Empleado') {
+                // Validar que el departamento esté presente
+                if (!$request->has('department_id')) {
+                    throw new \Exception('El campo department_id es obligatorio para empleados.');
+                }
+
+                // Crear el empleado
+                $employee = Employee::create([
+                    'user_id' => $user->id,
+                    'department_id' => $request->department_id,
+                ]);
+
+                // Verificar si el empleado se creó correctamente
+                if (!$employee) {
+                    throw new \Exception('No se pudo crear el empleado.');
+                }
+            }
+
+            DB::commit(); // Confirmar la transacción
+
+            return response()->json([
+                'status' => 'success',
+                'data' => new UserResource($user),
+            ], 201);
+        } catch (\Exception $e) {
+            DB::rollBack(); // Hacer rollback si ocurre un error
+
+            return response()->json([
+                'status' => 'error',
+                'message' => $e->getMessage(),
+            ], 500);
+        }
     }
 
     /**
@@ -160,4 +239,7 @@ class UserController extends Controller
             'message' => 'Usuario eliminado satisfactoriamente'
         ], 200);
     }
+
+
+    
 }

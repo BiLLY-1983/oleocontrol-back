@@ -22,7 +22,7 @@ class StoreMemberRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'member_number' => 'required|unique|integer|min:1',
+            'member_number' => 'required|integer|min:1|unique:members,member_number',
             'user_id' => 'required|exists:users,id|unique:members,user_id',
         ];
     }

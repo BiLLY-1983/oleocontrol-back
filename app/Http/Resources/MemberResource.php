@@ -22,7 +22,9 @@ class MemberResource extends JsonResource
                 'username' => $this->user->username,
                 'first_name' => $this->user->first_name,
                 'last_name' => $this->user->last_name,
-                'profile_picture' => asset('storage/' . $this->user->profile_picture), 
+                'email' => $this->user->email,
+                'phone' => $this->user->phone,
+                'status' => $this->user->status,
             ]
         ];
     }
