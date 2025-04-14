@@ -22,8 +22,16 @@ class StoreMemberRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'member_number' => 'required|integer|min:1|unique:members,member_number',
-            'user_id' => 'required|exists:users,id|unique:members,user_id',
+            'username' => 'required|string|max:255|unique:users',
+            'first_name' => 'required|string|max:255',
+            'last_name' => 'required|string|max:255',
+            'dni' => 'required|string|max:20|unique:users',
+            'email' => 'required|string|email|max:255|unique:users', 
+            'password' => 'required|string|min:8|confirmed',
+            'phone' => 'required|string|max:20',
+            'status' => 'required|boolean',
+            'member_number' => 'integer|min:1|unique:members,member_number',
+            'user_id' => 'exists:users,id|unique:members,user_id',
         ];
     }
 }

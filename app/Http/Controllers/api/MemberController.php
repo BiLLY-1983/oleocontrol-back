@@ -6,9 +6,13 @@ use App\Http\Controllers\Controller;
 use App\Http\Requests\Member\StoreMemberRequest;
 use App\Http\Requests\Member\UpdateMemberRequest;
 use App\Http\Resources\MemberResource;
+use App\Http\Resources\UserResource;
 use App\Models\Member;
+use App\Models\Role;
+use App\Models\User;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
 
 class MemberController extends Controller
 {
@@ -36,14 +40,70 @@ class MemberController extends Controller
      * @param StoreMemberRequest $request La solicitud de creación de socio.
      * @return JsonResponse Respuesta JSON con el estado de éxito y los datos del socio creado.
      */
-    public function store(StoreMemberRequest $request): JsonResponse
+    public function storeOld(StoreMemberRequest $request): JsonResponse
     {
         $member = Member::create($request->validated());
-        
+
         return response()->json([
             'status' => 'success',
             'data' => new MemberResource($member)
         ], 201);
+    }
+
+    public function store(StoreMemberRequest $request): JsonResponse
+    {
+        DB::beginTransaction(); // Iniciar la transacción
+
+        try {
+            // Crear el usuario
+            $user = User::create($request->only([
+                'username',
+                'first_name',
+                'last_name',
+                'dni',
+                'email',
+                'password',
+                'phone',
+            ]));
+
+            // Asignar rol al usuario
+            $roleName = 'Socio';
+
+            // Buscar el rol en la base de datos
+            $role = Role::where('name', $roleName)->first();
+
+            if (!$role) {
+                throw new \Exception("El rol '{$roleName}' no existe.");
+            }
+
+            // Asociar el rol al usuario
+            $user->roles()->attach($role->id);
+
+            // Crear el socio
+            $member = Member::create([
+                'user_id' => $user->id,
+                'member_number' => 1000 + $user->id,
+            ]);
+
+            // Verificar si el socio se creó correctamente
+            if (!$member) {
+                throw new \Exception('No se pudo crear el socio.');
+            }
+
+            DB::commit(); // Confirmar la transacción
+
+            return response()->json([
+                'status' => 'success',
+                'data' => new UserResource($user),
+            ], 201);
+        } catch (\Exception $e) {
+            DB::rollBack(); // Hacer rollback si ocurre un error
+
+            return response()->json([
+                'status' => 'error',
+                'message' => $e->getMessage(),
+            ], 500);
+        }
     }
 
     /**
@@ -74,7 +134,7 @@ class MemberController extends Controller
      * @param int $id El ID del socio.
      * @return JsonResponse Respuesta JSON con el estado de éxito y los datos del socio actualizado.
      */
-    public function update(UpdateMemberRequest $request, $id): JsonResponse
+    public function updateOld(UpdateMemberRequest $request, $id): JsonResponse
     {
         $member = Member::findOrFail($id);
         $member->update($request->validated());
@@ -83,6 +143,54 @@ class MemberController extends Controller
             'status' => 'success',
             'data' => new MemberResource($member)
         ], 200);
+    }
+
+    public function update(UpdateMemberRequest $request, $id): JsonResponse
+    {
+        DB::beginTransaction(); // Inicia la transacción
+
+        try {
+            // Buscar el miembro por su ID
+            $member = Member::findOrFail($id);
+
+            // Actualizar los datos del miembro
+            $member->update($request->only(['member_number', 'status']));
+
+            // Obtener los datos del usuario del request
+            $userData = $request->input('user');
+            $user = $member->user; // Obtener el usuario asociado al miembro
+
+            // Actualizar los campos del usuario
+            if ($user) {
+                $user->update([
+                    'username' => $userData['username'],
+                    'first_name' => $userData['first_name'],
+                    'last_name' => $userData['last_name'],
+                    'dni' => $userData['dni'],
+                    'email' => $userData['email'],
+                    'phone' => $userData['phone'],
+                    'status' => $userData['status']
+                ]);
+            }
+
+            // Si todo ha ido bien, confirmar la transacción
+            DB::commit();
+
+            // Devolver la respuesta con el miembro actualizado
+            return response()->json([
+                'status' => 'success',
+                'data' => new MemberResource($member)
+            ], 200);
+        } catch (\Exception $e) {
+            // Si ocurre algún error, revertir la transacción
+            DB::rollBack();
+
+            // Devolver un error
+            return response()->json([
+                'status' => 'error',
+                'message' => 'Hubo un error al actualizar el miembro. Por favor, intente nuevamente.'
+            ], 500);
+        }
     }
 
     /**
@@ -96,7 +204,7 @@ class MemberController extends Controller
      */
     public function destroy($id): JsonResponse
     {
-        $member = Member::findOrFail($id);
+        $member = User::findOrFail($id);
         $member->delete();
 
         return response()->json([

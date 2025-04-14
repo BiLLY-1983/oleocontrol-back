@@ -22,6 +22,7 @@ class MemberResource extends JsonResource
                 'username' => $this->user->username,
                 'first_name' => $this->user->first_name,
                 'last_name' => $this->user->last_name,
+                'dni' => $this->user->dni,
                 'email' => $this->user->email,
                 'phone' => $this->user->phone,
                 'status' => $this->user->status,
