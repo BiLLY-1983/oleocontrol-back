@@ -4,31 +4,22 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Laravel\Sanctum\HasApiTokens;
 
-class Settlement extends Model
+class OilSettlement extends Model
 {
     use HasFactory, HasApiTokens;
 
     protected $guarded = [];
 
-
-    /* ---------- */
-    /* Relaciones */
-    /* ---------- */
-
-    public function member(): BelongsTo
+    // Relación con los miembros (socios)
+    public function member()
     {
         return $this->belongsTo(Member::class);
     }
 
-    public function employee(): BelongsTo
-    {
-        return $this->belongsTo(Employee::class);
-    }
-
-    public function oil(): BelongsTo
+    // Relación con los tipos de aceite
+    public function oil()
     {
         return $this->belongsTo(Oil::class);
     }

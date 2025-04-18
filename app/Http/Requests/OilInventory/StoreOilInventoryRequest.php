@@ -1,10 +1,10 @@
 <?php
 
-namespace App\Http\Requests\Entry;
+namespace App\Http\Requests\OilInventory;
 
 use Illuminate\Foundation\Http\FormRequest;
 
-class UpdateEntryRequest extends FormRequest
+class StoreOilInventoryRequest extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.
@@ -21,14 +21,10 @@ class UpdateEntryRequest extends FormRequest
      */
     public function rules(): array
     {
-        $entryId = $this->route('entry');
-
         return [
-            'entry_date' => 'nullable|date', 
-            'olive_quantity' => 'nullable|numeric|min:0',
-            'oil_quantity' => 'nullable|numeric|min:0',
-            'analysis_status' => 'nullable|in:Pendiente,Completo',
-            'member_id' => 'nullable|exists:members,id|unique:entries,member_id,' . $entryId,
+            'member_id' => 'required|exists:members,id',
+            'oil_id' => 'required|exists:oils,id',
+            'quantity' => 'required|numeric|min:0',
         ];
     }
 }

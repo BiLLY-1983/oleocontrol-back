@@ -22,8 +22,10 @@ class StoreSettlementRequest extends FormRequest
     public function rules(): array
     {
         return [
+            'settlement_date' => 'required|date',
+            'oil_id' => 'required|exists:oils,id',
             'amount' => 'required|numeric|min:0', 
-            'price' => 'nullable|numeric|min:0',
+            'price' => 'required|numeric|min:0',
             'settlement_status' => 'required|in:Pendiente,Aceptada,Cancelada', 
             'member_id' => 'required|exists:members,id',
             'employee_id' => 'nullable|exists:employee,id',

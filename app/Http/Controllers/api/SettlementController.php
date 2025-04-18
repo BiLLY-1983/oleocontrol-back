@@ -8,9 +8,11 @@ use App\Http\Requests\Settlement\UpdateSettlementRequest;
 use App\Http\Resources\SettlementResource;
 use App\Models\Employee;
 use App\Models\Member;
+use App\Models\OilInventory;
 use App\Models\Settlement;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
 
 class SettlementController extends Controller
 {
@@ -43,12 +45,67 @@ class SettlementController extends Controller
     public function store(StoreSettlementRequest $request): JsonResponse
     {
         $settlement = Settlement::create($request->validated());
-        
+
         return response()->json([
             'status' => 'success',
             'data' => new SettlementResource($settlement)
         ], 201);
     }
+
+    public function storeAvailable(StoreSettlementRequest $request): JsonResponse
+    {
+        $validated = $request->validated();
+
+        // Iniciar la transacción
+        DB::beginTransaction();
+
+        try {
+            // Paso 1: Total de aceite que tiene en el inventario
+            $totalInventory = OilInventory::where('member_id', $validated['member_id'])
+                ->where('oil_id', $validated['oil_id'])
+                ->sum('quantity');
+
+            // Paso 2: Total ya liquidado
+            $totalSettled = Settlement::where('member_id', $validated['member_id'])
+                ->where('oil_id', $validated['oil_id'])
+                ->sum('amount');
+
+            // Paso 3: Disponible = Inventario - Liquidado
+            $availableOil = $totalInventory - $totalSettled;
+
+            if ($availableOil < $validated['amount']) {
+                DB::rollBack();
+                return response()->json([
+                    'status' => 'error',
+                    'message' => 'No hay suficiente aceite disponible para esta liquidación. Disponible: ' . $availableOil . ' litros.'
+                ], 400);
+            }
+
+            // Crear la liquidación (sin tocar el inventario)
+            $settlement = Settlement::create([
+                'settlement_date' => $validated['settlement_date'],
+                'oil_id' => $validated['oil_id'],
+                'amount' => $validated['amount'],
+                'price' => $validated['price'],
+                'settlement_status' => $validated['settlement_status'],
+                'member_id' => $validated['member_id'],
+            ]);
+
+            DB::commit();
+
+            return response()->json([
+                'status' => 'success',
+                'data' => new SettlementResource($settlement)
+            ], 201);
+        } catch (\Exception $e) {
+            DB::rollBack();
+            return response()->json([
+                'status' => 'error',
+                'message' => 'Error al crear la liquidación: ' . $e->getMessage()
+            ], 500);
+        }
+    }
+
 
     /**
      * Muestra una liquidación específica por su ID.
@@ -89,6 +146,9 @@ class SettlementController extends Controller
         ], 200);
     }
 
+
+
+
     /**
      * Elimina una liquidación específica por su ID.
      * 
@@ -120,7 +180,7 @@ class SettlementController extends Controller
     {
         $employee = Employee::findOrFail($employeeId);
         $settlements = $employee->settlements;
-        
+
         return response()->json([
             'status' => 'success',
             'data' => SettlementResource::collection($settlements)
@@ -209,5 +269,4 @@ class SettlementController extends Controller
             'data' => new SettlementResource($settlement)
         ], 200);
     }
-
 }

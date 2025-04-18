@@ -20,7 +20,7 @@ class DatabaseSeeder extends Seeder
             EmployeeSeeder::class,
             MemberSeeder::class,
             EntrySeeder::class,
-            SettlementSeeder::class,
+            //SettlementSeeder::class,
             NotificationSeeder::class,
         ]);
     }

@@ -4,6 +4,7 @@ namespace Database\Factories;
 
 use App\Models\Member;
 use App\Models\employee;
+use App\Models\Oil;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 /**
@@ -20,9 +21,12 @@ class SettlementFactory extends Factory
     {
         // Obtener un miembro aleatorio, asegurando que existen miembros
         $member = Member::inRandomOrder()->first();
+        $oil = Oil::inRandomOrder()->first();
 
         return [
-            'amount' => $this->faker->randomFloat(2, 100, 10000), 
+            'oil_id' => $oil->id, 
+            'settlement_date' => $this->faker->date(),
+            'amount' => $this->faker->randomFloat(2, 100, 1000), 
             'price' => $this->faker->randomFloat(2, 10, 500),    
             'settlement_status' => 'Pendiente',
             'member_id' => $member->id, 

@@ -24,11 +24,13 @@ class UpdateSettlementRequest extends FormRequest
         $settlementId = $this->route('settlement');
 
         return [
+            'settlement_date_res' => 'required|date',
+            'oil_id' => 'nullable|exists:oil,id',
             'amount' => 'nullable|numeric|min:0',
             'price' => 'nullable|numeric|min:0',
-            'settlement_status' => 'nullable|in:Pendiente,Aceptada,Cancelada',
+            'settlement_status' => 'required|in:Pendiente,Aceptada,Cancelada',
             'member_id' => 'nullable|exists:members,id',
-            'employee_id' => 'nullable|exists:employees,id'
+            'employee_id' => 'required|exists:employees,id'
         ];
     }
 }

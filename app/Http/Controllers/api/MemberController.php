@@ -31,6 +31,25 @@ class MemberController extends Controller
         ], 200);
     }
 
+    public function indexByUser($userId)
+    {
+        // Buscar el empleado cuyo user_id coincida con el id proporcionado
+        $member = Member::where('user_id', $userId)->first();
+
+        // Verificar si el empleado existe
+        if ($member) {
+            return response()->json([
+                'status' => 'success',
+                'data' => new MemberResource($member) 
+            ], 200);
+        } else {
+            return response()->json([
+                'status' => 'error',
+                'message' => 'Socio no encontrado'
+            ], 404);
+        }
+    }
+
     /**
      * Crea un nuevo socio.
      * 
@@ -153,8 +172,13 @@ class MemberController extends Controller
             // Buscar el miembro por su ID
             $member = Member::findOrFail($id);
 
-            // Actualizar los datos del miembro
-            $member->update($request->only(['member_number', 'status']));
+            // Preparar los datos a actualizar
+            $updateData = $request->only(['status']); // Deja 'member_number' fuera si está vacío
+
+            // Si 'member_number' no está vacío, lo agregamos a la actualización
+            if ($request->has('member_number') && !is_null($request->input('member_number'))) {
+                $updateData['member_number'] = $request->input('member_number');
+            }
 
             // Obtener los datos del usuario del request
             $userData = $request->input('user');
@@ -163,13 +187,13 @@ class MemberController extends Controller
             // Actualizar los campos del usuario
             if ($user) {
                 $user->update([
-                    'username' => $userData['username'],
-                    'first_name' => $userData['first_name'],
-                    'last_name' => $userData['last_name'],
-                    'dni' => $userData['dni'],
-                    'email' => $userData['email'],
-                    'phone' => $userData['phone'],
-                    'status' => $userData['status']
+                    'username' => $userData['username'] ?? $user->username,
+                    'first_name' => $userData['first_name'] ?? $user->first_name,
+                    'last_name' => $userData['last_name'] ?? $user->last_name,
+                    'dni' => $userData['dni'] ?? $user->dni,
+                    'email' => $userData['email'] ?? $user->email,
+                    'phone' => $userData['phone'] ?? $user->phone,
+                    'status' => $userData['status'] ?? $user->status,
                 ]);
             }
 
@@ -188,7 +212,7 @@ class MemberController extends Controller
             // Devolver un error
             return response()->json([
                 'status' => 'error',
-                'message' => 'Hubo un error al actualizar el miembro. Por favor, intente nuevamente.'
+                'message' => 'Hubo un error al actualizar el miembro. Por favor, intente nuevamente. '
             ], 500);
         }
     }

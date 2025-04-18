@@ -27,4 +27,5 @@ Route::middleware('member')->group(function () {
     Route::get('/members/{memberId}/settlements', [SettlementController::class, 'indexForMember']);
     Route::get('/members/{memberId}/settlements/{settlementId}', [SettlementController::class, 'showForMember']);
     Route::post('/settlements', [SettlementController::class, 'store']);
+    Route::post('/settlementsAvailable', [SettlementController::class, 'storeAvialiable']);
 });

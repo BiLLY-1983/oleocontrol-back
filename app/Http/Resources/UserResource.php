@@ -44,7 +44,7 @@ class UserResource extends JsonResource
         if ($this->roles->contains('name', 'Empleado') && $this->employee && $this->employee->department) {
             $data['employee'] = [
                 'id' => $this->employee->id,
-                'department' => $this->employee->department->name,
+                'department_id' => $this->employee->department->id,
             ];
         }
 

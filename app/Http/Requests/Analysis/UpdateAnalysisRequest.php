@@ -32,6 +32,7 @@ class UpdateAnalysisRequest extends FormRequest
             'member_id' => 'nullable|exists:members,id',
             'employee_id' => 'nullable|exists:employees,id',
             'oil_id'        => 'nullable|exists:oils,id',
+            'oil_quantity'  => 'nullable|numeric|min:0',
         ];
     }
 }

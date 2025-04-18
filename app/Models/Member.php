@@ -38,4 +38,14 @@ class Member extends Model
     {
         return $this->hasMany(Analysis::class);
     }
+
+    public function oilSettlements()
+    {
+        return $this->hasMany(OilSettlement::class);
+    }
+
+    public function oilInventories()
+    {
+        return $this->hasMany(OilInventory::class);
+    }
 }

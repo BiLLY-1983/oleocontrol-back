@@ -27,7 +27,7 @@ class EmployeeResource extends JsonResource
                 'status' => $this->user->status,
             ],
             'department' => [
-                'id' => $this->department_id,
+                'id' => $this->department->id,
                 'name' => $this->department->name
             ],
         ];

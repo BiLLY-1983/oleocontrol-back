@@ -24,7 +24,7 @@ class StoreEntryRequest extends FormRequest
         return [
             'entry_date' => 'required|date',
             'olive_quantity' => 'required|numeric|min:1',
-            'oil_quantity' => 'nullable|numeric|min:1',
+            'oil_quantity' => 'nullable|numeric|min:0',
             'analysis_status' => 'required|in:Pendiente,Completo',
             'member_id' => 'required|exists:members,id',
         ];

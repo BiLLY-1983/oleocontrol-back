@@ -7,8 +7,11 @@ use App\Http\Requests\Analysis\UpdateAnalysisRequest;
 use App\Http\Resources\AnalysisResource;
 use App\Models\Analysis;
 use App\Models\Employee;
+use App\Models\Entry;
 use App\Models\Member;
+use App\Models\OilInventory;
 use Illuminate\Http\JsonResponse;
+use Illuminate\Support\Facades\DB;
 
 class AnalysisController extends Controller
 {
@@ -40,7 +43,7 @@ class AnalysisController extends Controller
         $analysis = Analysis::findOrFail($id);
 
         return response()->json([
-                'status' => 'success',
+            'status' => 'success',
             'data' => new AnalysisResource($analysis)
         ], 200);
     }
@@ -54,8 +57,8 @@ class AnalysisController extends Controller
      * @param UpdateAnalysisRequest $request La solicitud de actualización de análisis.
      * @param int $id El ID del análisis a actualizar.
      * @return JsonResponse Respuesta JSON con el estado de éxito y los datos del análisis actualizado.
-    */
-    public function update(UpdateAnalysisRequest $request, $id): JsonResponse
+     */
+    /* public function updateOld(UpdateAnalysisRequest $request, $id): JsonResponse
     {
         $analysis = Analysis::findOrFail($id);
 
@@ -65,6 +68,58 @@ class AnalysisController extends Controller
             'status' => 'success',
             'data' => new AnalysisResource($analysis)
         ], 200);
+    } */
+
+    public function update(UpdateAnalysisRequest $request, $id): JsonResponse
+    {
+        // Iniciar la transacción
+        DB::beginTransaction();
+
+        try {
+            $analysis = Analysis::findOrFail($id);
+
+            $data = $request->validated();
+
+            $analysis->update([
+                'analysis_date' => $data['analysis_date'],
+                'humidity' => $data['humidity'],
+                'acidity' => $data['acidity'],
+                'yield' => $data['yield'],
+                'oil_id' => $data['oil_id'],
+                'employee_id' => $data['employee_id']
+            ]);
+
+            $entry = Entry::findOrFail($analysis->entry_id);
+
+            // Actualizar la entrada asociada
+            $entry->update([
+                'oil_quantity' => $data['oil_quantity'],
+                'analysis_status' => 'Completo'
+            ]);
+
+            // Crear entrada en el inventario
+            OilInventory::create([
+                'member_id' => $entry->member_id,
+                'oil_id' => $data['oil_id'],
+                'quantity' => $data['oil_quantity'],
+            ]);
+
+            // Si todo ha ido bien, confirmamos la transacción
+            DB::commit();
+
+            return response()->json([
+                'status' => 'success',
+                'data' => new AnalysisResource($analysis)
+            ], 200);
+        } catch (\Exception $e) {
+            DB::rollBack();
+
+            return response()->json([
+                'status' => 'error',
+                'message' => 'Error al actualizar el análisis y la entrada',
+                'error' => $e->getMessage()
+            ], 500);
+        }
     }
 
     /**
@@ -99,7 +154,7 @@ class AnalysisController extends Controller
     {
         $employee = Employee::findOrFail($employeeId);
         $analyses = $employee->analyses;
-        
+
         return response()->json([
             'status' => 'success',
             'data' => AnalysisResource::collection($analyses)
@@ -116,7 +171,7 @@ class AnalysisController extends Controller
      * @param int $employeeId El ID del empleado.
      * @param int $analysisId El ID del análisis.
      * @return JsonResponse Respuesta JSON con el estado de éxito y los datos del nuevo análisis.
-    */
+     */
     /* public function updateForEmployee(UpdateAnalysisRequest $request, $employeeId, $analysisId): JsonResponse
     {
         $employee = Employee::findOrFail($employeeId);
@@ -161,16 +216,16 @@ class AnalysisController extends Controller
     public function indexForMember($memberId): JsonResponse
     {
         $member = Member::findOrFail($memberId);
-        
+
         $analyses = $member->entries->map(function ($entry) {
-            return $entry->analysis; 
+            return $entry->analysis;
         })->filter();
-        
+
 
         return response()->json([
             'status' => 'success',
             'data' => AnalysisResource::collection($analyses)
-        ], 200); 
+        ], 200);
     }
 
     /**
@@ -192,5 +247,5 @@ class AnalysisController extends Controller
             'status' => 'success',
             'data' => new AnalysisResource($analysis)
         ], 200);
-    }           
+    }
 }

@@ -10,6 +10,7 @@ use Illuminate\Support\Facades\Route;
 // Rutas para empleados del departamento de "Administración" y administradores
 Route::middleware('department:Administración')->group(function () {
     Route::get('/members', [MemberController::class, 'index']);
+    Route::get('/memberByUser/{id}', [MemberController::class, 'indexByUser']);
     Route::post('/members', [MemberController::class, 'store']);
     Route::get('/members/{id}', [MemberController::class, 'show']);
     Route::put('/members/{id}', [MemberController::class, 'update']);

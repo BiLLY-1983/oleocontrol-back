@@ -22,7 +22,15 @@ class StoreEmployeeRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'user_id' => 'required|unique:employee,user_id|exists:users,id',
+            'username' => 'required|string|max:255|unique:users',
+            'first_name' => 'required|string|max:255',
+            'last_name' => 'required|string|max:255',
+            'dni' => 'required|string|max:20|unique:users',
+            'email' => 'required|string|email|max:255|unique:users', 
+            'password' => 'required|string|min:8|confirmed',
+            'phone' => 'required|string|max:20',
+            'status' => 'required|boolean',
+            'user_id' => 'exists:users,id|unique:members,user_id',
             'department_id' => 'required|exists:departments,id'
         ];
     }

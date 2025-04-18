@@ -26,6 +26,7 @@ class AnalysisResource extends JsonResource
             ],
             'member' => [
                 'member_id' => $this->member_id,
+                'member_number' => $this->member->member_number,
                 'name' => $this->member->user->first_name . ' ' . $this->member->user->last_name,
             ],
             'employee' => $this->employee ? [

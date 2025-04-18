@@ -47,17 +47,10 @@ class EntryController extends Controller
 
         try {
             $entry = Entry::create($request->validated());
-            
-            // Crear automáticamente un análisis asociado
-            $analysisData = [
-                'entry_id' => $entry->id,
-                'analysis_date' => now(),
-            ];
-
-            $analysisRequest = new StoreAnalysisRequest($analysisData);
-            $validatedAnalysisData = $analysisRequest->validated();
-            
-            $analysis = $entry->analysis()->create($validatedAnalysisData);
+           
+            $analysis = $entry->analysis()->create([
+                'member_id' => $request->member_id,
+            ]);
 
             DB::commit();
 

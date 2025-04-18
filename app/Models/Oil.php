@@ -25,4 +25,19 @@ class Oil extends Model
     {
         return $this->hasMany(Analysis::class);
     }
+
+    public function settlements(): HasMany
+    {
+        return $this->hasMany(Settlement::class);
+    }
+
+    public function oilSettlements()
+    {
+        return $this->hasMany(OilSettlement::class);
+    }
+
+    public function oilInventories()
+    {
+        return $this->hasMany(OilInventory::class);
+    }
 }
