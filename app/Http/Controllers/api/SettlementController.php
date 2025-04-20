@@ -168,6 +168,53 @@ class SettlementController extends Controller
         ], 200);
     }
 
+    public function destroyOwn($memberId, $settlementId): JsonResponse
+    {
+        $user = Auth::user();
+
+        // Verificar si el usuario tiene el rol 'Socio'
+        if (!$user->roles->contains('name', 'Socio')) {
+            return response()->json(['message' => 'No eres un Socio.'], 403);
+        }
+
+        // Obtener el miembro asociado al usuario
+        $member = $user->member;
+
+        // Verificar si el miembro está asociado al usuario y si el ID coincide con el memberId proporcionado
+        if (!$member || $member->id != $memberId) {
+            return response()->json(['message' => 'No tienes permiso para eliminar esta liquidación.'], 403);
+        }
+
+        // Obtener la liquidación asociada al socio
+        $settlement = $member->settlements()->find($settlementId);
+
+        // Verificar si la liquidación existe y si pertenece al miembro
+        if (!$settlement || $settlement->member_id != $member->id) {
+            return response()->json(['message' => 'Esta liquidación no pertenece al socio.'], 403);
+        }
+
+        // Buscar la liquidación y asegurarse de que pertenece al socio
+        $settlementToDelete = Settlement::where('id', $settlementId)
+            ->where('member_id', $memberId)
+            ->first();
+
+        if (!$settlementToDelete) {
+            return response()->json([
+                'status' => 'error',
+                'message' => 'Liquidación no encontrada.',
+            ], 404);
+        }
+
+        // Eliminar la liquidación
+        $settlementToDelete->delete();
+
+        return response()->json([
+            'status' => 'success',
+            'message' => 'Liquidación eliminada correctamente.',
+        ], 200);
+    }
+
+
     /**
      * Muestra las liquidaciones de aceite de un empleado específico por su ID.
      * 

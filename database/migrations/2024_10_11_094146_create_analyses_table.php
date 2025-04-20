@@ -34,7 +34,8 @@ return new class extends Migration
                 ->onUpdate('cascade');
             $table->foreign('oil_id')
                 ->references('id')->on('oils')
-                ->onUpdate('cascade');
+                ->onUpdate('cascade')
+                ->onDelete('set null');
             $table->timestamps();
         });
     }

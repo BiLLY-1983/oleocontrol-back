@@ -24,7 +24,7 @@ class UserResource extends JsonResource
             'phone' => $this->phone,
             'status' => $this->status,
 
-            'roles' => $this->roles->map(function($role) {
+            'roles' => $this->roles->map(function ($role) {
                 return [
                     'id' => $role->id,
                     'name' => $role->name,
@@ -44,7 +44,10 @@ class UserResource extends JsonResource
         if ($this->roles->contains('name', 'Empleado') && $this->employee && $this->employee->department) {
             $data['employee'] = [
                 'id' => $this->employee->id,
-                'department_id' => $this->employee->department->id,
+                'department' => [
+                    'id' => $this->employee->department->id,
+                    'name' => $this->employee->department->name,
+                ],
             ];
         }
 
