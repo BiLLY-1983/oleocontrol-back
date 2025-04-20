@@ -62,6 +62,9 @@ class AuthController extends Controller
             ], 403); 
         }
 
+        // Eliminar todos los tokens anteriores
+        $user->tokens()->delete();
+
         $token = $user->createToken('auth_token')->plainTextToken;
 
         // Cargar los roles del usuario
