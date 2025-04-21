@@ -24,10 +24,13 @@ class UserSeeder extends Seeder
             'phone' => '687853157',
             'status' => true,
         ]);
-    
-        $adminRole = Role::where('name', 'Administrador')->first();
-        $admin->roles()->attach($adminRole);
+
+        // El Admin tendrá todos los roles
+        $adminRoles = Role::whereIn('name', ['Administrador', 'Socio', 'Empleado'])->get();
+        $admin->roles()->attach($adminRoles);
+
         
+
 
         /* ------------------------- */
 
@@ -42,7 +45,7 @@ class UserSeeder extends Seeder
             'phone' => '111111111',
             'status' => true,
         ]);
-   
+
         $guessRole = Role::where('name', 'Invitado')->first();
         $guess->roles()->attach($guessRole);
 
@@ -61,7 +64,7 @@ class UserSeeder extends Seeder
             'phone' => '111111111',
             'status' => true,
         ]);
-   
+
         $memberRole = Role::where('name', 'Socio')->first();
         $member->roles()->attach($memberRole);
 
@@ -78,7 +81,7 @@ class UserSeeder extends Seeder
             'phone' => '111111111',
             'status' => true,
         ]);
-   
+
         $workerRole = Role::where('name', 'Empleado')->first();
         $worker->roles()->attach($workerRole);
 
@@ -96,7 +99,7 @@ class UserSeeder extends Seeder
             if (rand(0, 1) == 0) {
                 $user->roles()->attach($memberRole);
             } else {
-                $user->roles()->attach($workerRole);  
+                $user->roles()->attach($workerRole);
             }
         }
     }
