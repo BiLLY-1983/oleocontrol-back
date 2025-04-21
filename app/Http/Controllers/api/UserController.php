@@ -4,6 +4,7 @@ namespace App\Http\Controllers\api;
 
 use App\Http\Controllers\Controller;
 use App\Http\Requests\User\StoreUserRequest;
+use App\Http\Requests\User\UpdateProfileRequest;
 use App\Http\Requests\User\UpdateUserRequest;
 use App\Http\Resources\UserResource;
 use App\Models\Employee;
@@ -200,19 +201,20 @@ class UserController extends Controller
      * @param UpdateUserRequest $request La solicitud de actualización de usuario.
      * @return \Illuminate\Http\JsonResponse Respuesta JSON con el estado de éxito y los datos del usuario actualizado.
      */
-    public function updateProfile(UpdateUserRequest $request): JsonResponse
+    public function updateProfile(UpdateProfileRequest $request): JsonResponse
     {
-        $authUser = Auth::user();
-        $user = User::findOrFail($authUser->id);
+        $user = Auth::user();
 
-        if (!$user) {
-            return response()->json([
-                'status' => 'error',
-                'message' => 'Usuario no autenticado'
-            ], 401);
+        $data = $request->validated();
+
+        // Si viene la contraseña, encriptarla
+        if (!empty($data['password'])) {
+            $data['password'] = bcrypt($data['password']);
+        } else {
+            unset($data['password']);
         }
 
-        $user->update($request->validated());
+        $user->update($data);
 
         return response()->json([
             'status' => 'success',
@@ -239,7 +241,4 @@ class UserController extends Controller
             'message' => 'Usuario eliminado satisfactoriamente'
         ], 200);
     }
-
-
-    
 }
