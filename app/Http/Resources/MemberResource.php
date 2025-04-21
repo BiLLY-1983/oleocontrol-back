@@ -26,6 +26,12 @@ class MemberResource extends JsonResource
                 'email' => $this->user->email,
                 'phone' => $this->user->phone,
                 'status' => $this->user->status,
+                'roles' => $this->user->roles->map(function ($role) {
+                    return [
+                        'id' => $role->id,
+                        'name' => $role->name,
+                    ];
+                }),
             ]
         ];
     }
