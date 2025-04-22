@@ -16,12 +16,12 @@ class UserSeeder extends Seeder
         /* Crear un usuario Admin */
         $admin = User::create([
             'username' => 'Admin',
-            'first_name' => 'Pedro',
-            'last_name' => 'Berzosa Ogallar',
-            'dni' => '77342536E',
-            'email' => 'pberzosa83@gmail.com',
+            'first_name' => 'Admin',
+            'last_name' => 'Admin',
+            'dni' => '00000000A',
+            'email' => 'oleocontrol.back@gmail.com',
             'password' => bcrypt('password'),
-            'phone' => '687853157',
+            'phone' => '0000000000',
             'status' => true,
         ]);
 
