@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\api\AuthController;
+use App\Http\Controllers\api\UserController;
 use Illuminate\Support\Facades\Route;
 
 /* ========================== */
@@ -22,5 +23,5 @@ Route::middleware('auth:sanctum')->group(function () {
     require __DIR__.'/api/notifications.php';
 });
 
-
+Route::post('/reset-password-request', [UserController::class, 'resetPasswordRequest']);
 

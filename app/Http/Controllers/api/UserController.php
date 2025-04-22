@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\api;
 
 use App\Http\Controllers\Controller;
+use App\Http\Requests\User\ResetPasswordRequest;
 use App\Http\Requests\User\StoreUserRequest;
 use App\Http\Requests\User\UpdateProfileRequest;
 use App\Http\Requests\User\UpdateUserRequest;
@@ -14,6 +15,10 @@ use App\Models\User;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Str;
+use App\Mail\PasswordResetEmail;
+use Illuminate\Support\Facades\Mail;
 
 class UserController extends Controller
 {
@@ -240,5 +245,55 @@ class UserController extends Controller
             'status' => 'success',
             'message' => 'Usuario eliminado satisfactoriamente'
         ], 200);
+    }
+
+
+    public function resetPasswordRequest(ResetPasswordRequest $request)
+    {
+        $user = User::where('email', $request->email)
+            ->where('username', $request->username)
+            ->first();
+
+        if (!$user) {
+            return response()->json([
+                'status' => 'error',
+                'message' => 'Credenciales no válidas'
+            ], 404);
+        }
+
+        // Generar una contraseña aleatoria que cumpla con las reglas
+        $newPassword = $this->generateSecurePassword();
+
+        // Guardar la nueva contraseña
+        $user->password = Hash::make($newPassword);
+        $user->save();
+
+        // Enviar el email con la nueva contraseña
+        Mail::to($user->email)->send(new PasswordResetEmail($user->username, $newPassword));
+
+        return response()->json([
+            'status' => 'success',
+            'message' => 'Contraseña restablecida con éxito, se ha enviado la nueva contraseña por correo.',
+            'data' => $newPassword,
+        ]);
+    }
+
+
+    private function generateSecurePassword($length = 10)
+    {
+        $lower = 'abcdefghijklmnopqrstuvwxyz';
+        $upper = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
+        $numbers = '0123456789';
+        $all = $lower . $upper . $numbers;
+
+        $password = $lower[random_int(0, 25)];
+        $password .= $upper[random_int(0, 25)];
+        $password .= $numbers[random_int(0, 9)];
+
+        for ($i = 3; $i < $length; $i++) {
+            $password .= $all[random_int(0, strlen($all) - 1)];
+        }
+
+        return str_shuffle($password);
     }
 }
