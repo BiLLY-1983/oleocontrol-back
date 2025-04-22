@@ -39,10 +39,12 @@ class AuthController extends Controller
 
     /**
      * Inicio de sesión de un usuario.
+     * 
+     * Este método recibe una solicitud de inicio de sesión con el nombre de usuario y la contraseña. Si las credenciales son válidas y el usuario está activo, se genera un token de autenticación para el usuario. Si las credenciales no son correctas o la cuenta está desactivada, se devuelve un mensaje de error adecuado.
      *
      * @param LoginRequest $request La solicitud de inicio de sesión con el nombre de usuario y la contraseña.
-     * @return JsonResponse Respuesta JSON con el token de autenticación y los datos del usuario.
-     * @throws ValidationException Si las credenciales proporcionadas son incorrectas.
+     * @return JsonResponse Respuesta JSON con el token de autenticación y los datos del usuario si el inicio de sesión es exitoso. En caso de error, devuelve un mensaje con el código de estado correspondiente.
+     * @throws ValidationException Si las credenciales proporcionadas son incorrectas o el usuario está desactivado.
      */
     public function login(LoginRequest $request): JsonResponse
     {
@@ -52,22 +54,20 @@ class AuthController extends Controller
             return response()->json([
                 'status' => 'error',
                 'message' => 'Credenciales incorrectas.'
-            ], 401); 
+            ], 401);
         }
-    
+
         if (!$user->status) {
             return response()->json([
                 'status' => 'error',
                 'message' => 'Esta cuenta está desactivada.'
-            ], 403); 
+            ], 403);
         }
 
-        // Eliminar todos los tokens anteriores
         $user->tokens()->delete();
 
         $token = $user->createToken('auth_token')->plainTextToken;
 
-        // Cargar los roles del usuario
         $user->load('roles');
 
         return response()->json([
@@ -89,7 +89,7 @@ class AuthController extends Controller
             $request->user()->currentAccessToken()->delete();
             return response()->json(['message' => 'Logout exitoso']);
         }
-    
+
         return response()->json(['message' => 'Acceso denegado'], 403);
     }
 }

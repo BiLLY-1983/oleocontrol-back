@@ -32,7 +32,6 @@ class CheckDepartmentMiddleware
             abort(403, 'Acceso denegado. Usuario no autenticado.');
         }
 
-        // Si el usuario es administrador, permitir acceso sin verificar el departamento
         if ($user->hasRole('Administrador')) {
             return $next($request);
         }

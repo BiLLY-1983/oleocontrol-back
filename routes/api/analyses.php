@@ -12,7 +12,6 @@ use Illuminate\Support\Facades\Route;
 Route::middleware('admin')->group(function () {
     Route::get('/employees/{employeeId}/analyses', [AnalysisController::class, 'indexForEmployee']);
     Route::get('/employees/{employeeId}/analyses/{analysisId}', [AnalysisController::class, 'showForEmployee']);
-    //Route::put('/employees/{employeeId}/analyses/{analysisId}', [AnalysisController::class, 'updateForEmployee']);
 });
 
 // Rutas para empleados que pertenecen al departamento de laboratorio (y administradores)

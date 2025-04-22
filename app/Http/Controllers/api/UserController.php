@@ -40,30 +40,23 @@ class UserController extends Controller
     }
 
     /**
-     * Crea un nuevo usuario.
-     * 
-     * Este método recibe una solicitud de creación de usuario, valida los datos y crea un nuevo usuario en la base de datos.
-     * La respuesta incluye un estado de éxito y los datos del usuario creado en formato JSON.
+     * Crea y almacena un nuevo usuario en la base de datos y asigna un rol y perfil específico (Socio o Empleado).
      *
-     * @param StoreUserRequest $request La solicitud de creación de usuario.
-     * @return \Illuminate\Http\JsonResponse Respuesta JSON con el estado de éxito y los datos del usuario creado.
+     * Este método maneja la creación de un nuevo usuario, asignación de roles y creación de un perfil dependiendo del tipo de rol. 
+     * Si el rol es 'Socio', se crea un miembro con un número de socio único. Si el rol es 'Empleado', se asigna el departamento correspondiente.
+     * El proceso se maneja dentro de una transacción para asegurar la integridad de los datos.
+     * 
+     * @param  \App\Http\Requests\StoreUserRequest  $request  La solicitud que contiene los datos del usuario a crear.
+     * 
+     * @return \Illuminate\Http\JsonResponse  La respuesta JSON con el estado de la operación y los datos del usuario creado.
+     * 
+     * @throws \Exception  Lanza una excepción si ocurre algún error al crear el usuario, rol, miembro o empleado.
      */
-    /* public function storeOld(StoreUserRequest $request): JsonResponse
-    {
-        $user = User::create($request->validated());
-
-        return response()->json([
-            'status' => 'success',
-            'data' => new UserResource($user)
-        ], 201);
-    } */
-
     public function store(StoreUserRequest $request): JsonResponse
     {
-        DB::beginTransaction(); // Iniciar la transacción
+        DB::beginTransaction();
 
         try {
-            // Crear el usuario
             $user = User::create($request->only([
                 'username',
                 'first_name',
@@ -74,57 +67,48 @@ class UserController extends Controller
                 'phone',
             ]));
 
-            // Asignar rol al usuario
-            $roleName = $request->user_type; // Puede ser 'Administrador', 'Invitado', 'Socio', o 'Empleado'
+            $roleName = $request->user_type;
 
-            // Buscar el rol en la base de datos
             $role = Role::where('name', $roleName)->first();
 
             if (!$role) {
                 throw new \Exception("El rol '{$roleName}' no existe.");
             }
 
-            // Asociar el rol al usuario
             $user->roles()->attach($role->id);
 
-            // Manejar roles específicos
             if ($roleName === 'Socio') {
-                // Crear el socio
                 $member = Member::create([
                     'user_id' => $user->id,
                     'member_number' => 1000 + $user->id,
                 ]);
 
-                // Verificar si el socio se creó correctamente
                 if (!$member) {
                     throw new \Exception('No se pudo crear el socio.');
                 }
             } elseif ($roleName === 'Empleado') {
-                // Validar que el departamento esté presente
                 if (!$request->has('department_id')) {
                     throw new \Exception('El campo department_id es obligatorio para empleados.');
                 }
 
-                // Crear el empleado
                 $employee = Employee::create([
                     'user_id' => $user->id,
                     'department_id' => $request->department_id,
                 ]);
 
-                // Verificar si el empleado se creó correctamente
                 if (!$employee) {
                     throw new \Exception('No se pudo crear el empleado.');
                 }
             }
 
-            DB::commit(); // Confirmar la transacción
+            DB::commit();
 
             return response()->json([
                 'status' => 'success',
                 'data' => new UserResource($user),
             ], 201);
         } catch (\Exception $e) {
-            DB::rollBack(); // Hacer rollback si ocurre un error
+            DB::rollBack();
 
             return response()->json([
                 'status' => 'error',
@@ -247,7 +231,14 @@ class UserController extends Controller
         ], 200);
     }
 
-
+    /**
+     * Solicita el restablecimiento de la contraseña para un usuario.
+     * 
+     * Este método recibe una solicitud con el correo electrónico y nombre de usuario, verifica que las credenciales sean correctas, genera una nueva contraseña aleatoria y la guarda en la base de datos. Además, envía un correo electrónico al usuario con la nueva contraseña.
+     *
+     * @param ResetPasswordRequest $request La solicitud de restablecimiento de contraseña.
+     * @return \Illuminate\Http\JsonResponse Respuesta JSON con el estado de éxito, mensaje y nueva contraseña.
+     */
     public function resetPasswordRequest(ResetPasswordRequest $request)
     {
         $user = User::where('email', $request->email)
@@ -278,7 +269,14 @@ class UserController extends Controller
         ]);
     }
 
-
+    /**
+     * Genera una contraseña segura aleatoria.
+     * 
+     * Este método genera una contraseña aleatoria cumpliendo con los requisitos de incluir al menos una letra minúscula, una mayúscula y un número. La longitud por defecto es de 10 caracteres.
+     *
+     * @param int $length La longitud deseada para la contraseña (por defecto es 10).
+     * @return string La contraseña generada aleatoriamente.
+     */
     private function generateSecurePassword($length = 10)
     {
         $lower = 'abcdefghijklmnopqrstuvwxyz';

@@ -31,16 +31,22 @@ class MemberController extends Controller
         ], 200);
     }
 
+    /**
+     * Muestra el socio asociado a un usuario específico.
+     * 
+     * Este método recibe un ID de usuario, busca el socio correspondiente y devuelve una respuesta JSON con un estado de éxito y los datos del socio.
+     *
+     * @param int $userId El ID del usuario.
+     * @return JsonResponse Respuesta JSON con el estado de éxito y los datos del socio.
+     */
     public function indexByUser($userId)
     {
-        // Buscar el empleado cuyo user_id coincida con el id proporcionado
         $member = Member::where('user_id', $userId)->first();
 
-        // Verificar si el empleado existe
         if ($member) {
             return response()->json([
                 'status' => 'success',
-                'data' => new MemberResource($member) 
+                'data' => new MemberResource($member)
             ], 200);
         } else {
             return response()->json([
@@ -51,30 +57,19 @@ class MemberController extends Controller
     }
 
     /**
-     * Crea un nuevo socio.
+     * Crea un nuevo socio y un usuario asociado.
      * 
-     * Este método recibe una solicitud de creación de socio, valida los datos y crea un nuevo socio en la base de datos.
-     * La respuesta incluye un estado de éxito y los datos del socio creado en formato JSON.
+     * Este método recibe una solicitud de creación de socio, valida los datos, crea un nuevo usuario y asigna el rol de "Socio". Luego, crea un socio asociado al usuario y devuelve los datos del usuario creado.
+     * En caso de error, se realiza un rollback de la transacción y se devuelve un mensaje de error.
      *
      * @param StoreMemberRequest $request La solicitud de creación de socio.
-     * @return JsonResponse Respuesta JSON con el estado de éxito y los datos del socio creado.
+     * @return JsonResponse Respuesta JSON con el estado de éxito y los datos del usuario creado. En caso de error, se devuelve el mensaje de error.
      */
-    public function storeOld(StoreMemberRequest $request): JsonResponse
-    {
-        $member = Member::create($request->validated());
-
-        return response()->json([
-            'status' => 'success',
-            'data' => new MemberResource($member)
-        ], 201);
-    }
-
     public function store(StoreMemberRequest $request): JsonResponse
     {
-        DB::beginTransaction(); // Iniciar la transacción
+        DB::beginTransaction();
 
         try {
-            // Crear el usuario
             $user = User::create($request->only([
                 'username',
                 'first_name',
@@ -85,7 +80,6 @@ class MemberController extends Controller
                 'phone',
             ]));
 
-            // Asignar rol al usuario
             $roleName = 'Socio';
 
             // Buscar el rol en la base de datos
@@ -95,28 +89,25 @@ class MemberController extends Controller
                 throw new \Exception("El rol '{$roleName}' no existe.");
             }
 
-            // Asociar el rol al usuario
             $user->roles()->attach($role->id);
 
-            // Crear el socio
             $member = Member::create([
                 'user_id' => $user->id,
                 'member_number' => 1000 + $user->id,
             ]);
 
-            // Verificar si el socio se creó correctamente
             if (!$member) {
                 throw new \Exception('No se pudo crear el socio.');
             }
 
-            DB::commit(); // Confirmar la transacción
+            DB::commit();
 
             return response()->json([
                 'status' => 'success',
                 'data' => new UserResource($user),
             ], 201);
         } catch (\Exception $e) {
-            DB::rollBack(); // Hacer rollback si ocurre un error
+            DB::rollBack();
 
             return response()->json([
                 'status' => 'error',
@@ -146,24 +137,14 @@ class MemberController extends Controller
     /**
      * Actualiza un socio específico por su ID.
      * 
-     * Este método recibe una solicitud de actualización de socio, valida los datos y actualiza el socio en la base de datos.
-     * La respuesta incluye un estado de éxito y los datos del socio actualizado en formato JSON.
+     * Este método recibe una solicitud de actualización de socio, valida los datos y actualiza tanto el miembro como el usuario asociado en la base de datos.
+     * La respuesta incluye un estado de éxito y los datos del socio actualizado.
+     * Si ocurre algún error, se realiza un rollback de la transacción y se devuelve un mensaje de error.
      *
      * @param UpdateMemberRequest $request La solicitud de actualización de socio.
      * @param int $id El ID del socio.
-     * @return JsonResponse Respuesta JSON con el estado de éxito y los datos del socio actualizado.
+     * @return JsonResponse Respuesta JSON con el estado de éxito y los datos del socio actualizado. En caso de error, se devuelve el mensaje de error.
      */
-    public function updateOld(UpdateMemberRequest $request, $id): JsonResponse
-    {
-        $member = Member::findOrFail($id);
-        $member->update($request->validated());
-
-        return response()->json([
-            'status' => 'success',
-            'data' => new MemberResource($member)
-        ], 200);
-    }
-
     public function update(UpdateMemberRequest $request, $id): JsonResponse
     {
         DB::beginTransaction(); // Inicia la transacción

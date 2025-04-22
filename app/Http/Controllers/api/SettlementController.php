@@ -52,25 +52,30 @@ class SettlementController extends Controller
         ], 201);
     }
 
+    /**
+     * Crea una nueva liquidación de aceite disponible.
+     * 
+     * Este método recibe una solicitud de creación de liquidación disponible, valida los datos, realiza los cálculos de aceite disponible y crea una nueva liquidación sin modificar el inventario.
+     * Utiliza una transacción para asegurar que la liquidación se cree correctamente o se revierta en caso de error.
+     *
+     * @param StoreSettlementRequest $request La solicitud de creación de liquidación disponible.
+     * @return JsonResponse Respuesta JSON con el estado de éxito y los datos de la liquidación creada, o un error en caso de insuficiencia de aceite disponible.
+     */
     public function storeAvailable(StoreSettlementRequest $request): JsonResponse
     {
         $validated = $request->validated();
 
-        // Iniciar la transacción
         DB::beginTransaction();
 
         try {
-            // Paso 1: Total de aceite que tiene en el inventario
             $totalInventory = OilInventory::where('member_id', $validated['member_id'])
                 ->where('oil_id', $validated['oil_id'])
                 ->sum('quantity');
 
-            // Paso 2: Total ya liquidado
             $totalSettled = Settlement::where('member_id', $validated['member_id'])
                 ->where('oil_id', $validated['oil_id'])
                 ->sum('amount');
 
-            // Paso 3: Disponible = Inventario - Liquidado
             $availableOil = $totalInventory - $totalSettled;
 
             if ($availableOil < $validated['amount']) {
@@ -81,7 +86,6 @@ class SettlementController extends Controller
                 ], 400);
             }
 
-            // Crear la liquidación (sin tocar el inventario)
             $settlement = Settlement::create([
                 'settlement_date' => $validated['settlement_date'],
                 'oil_id' => $validated['oil_id'],
@@ -146,9 +150,6 @@ class SettlementController extends Controller
         ], 200);
     }
 
-
-
-
     /**
      * Elimina una liquidación específica por su ID.
      * 
@@ -168,32 +169,36 @@ class SettlementController extends Controller
         ], 200);
     }
 
+    /**
+     * Elimina una liquidación asociada al miembro que realizó la liquidación.
+     * 
+     * Este método permite a un socio eliminar una liquidación que haya creado, siempre y cuando el usuario esté autenticado como 'Socio' y la liquidación pertenezca al miembro correspondiente.
+     * La respuesta incluye un estado de éxito o un mensaje de error si no se tienen permisos o si la liquidación no se encuentra.
+     *
+     * @param int $memberId El ID del miembro.
+     * @param int $settlementId El ID de la liquidación a eliminar.
+     * @return JsonResponse Respuesta JSON con el estado de éxito o un mensaje de error.
+     */
     public function destroyOwn($memberId, $settlementId): JsonResponse
     {
         $user = Auth::user();
 
-        // Verificar si el usuario tiene el rol 'Socio'
         if (!$user->roles->contains('name', 'Socio')) {
             return response()->json(['message' => 'No eres un Socio.'], 403);
         }
 
-        // Obtener el miembro asociado al usuario
         $member = $user->member;
 
-        // Verificar si el miembro está asociado al usuario y si el ID coincide con el memberId proporcionado
         if (!$member || $member->id != $memberId) {
             return response()->json(['message' => 'No tienes permiso para eliminar esta liquidación.'], 403);
         }
 
-        // Obtener la liquidación asociada al socio
         $settlement = $member->settlements()->find($settlementId);
 
-        // Verificar si la liquidación existe y si pertenece al miembro
         if (!$settlement || $settlement->member_id != $member->id) {
             return response()->json(['message' => 'Esta liquidación no pertenece al socio.'], 403);
         }
 
-        // Buscar la liquidación y asegurarse de que pertenece al socio
         $settlementToDelete = Settlement::where('id', $settlementId)
             ->where('member_id', $memberId)
             ->first();
@@ -205,7 +210,6 @@ class SettlementController extends Controller
             ], 404);
         }
 
-        // Eliminar la liquidación
         $settlementToDelete->delete();
 
         return response()->json([
@@ -253,30 +257,6 @@ class SettlementController extends Controller
             'data' => new SettlementResource($settlement)
         ], 200);
     }
-
-    /**
-     * Actualiza una liquidación específica de un empleado por su ID.
-     * 
-     * Este método recibe una solicitud de actualización de liquidación, valida los datos y actualiza la liquidación en la base de datos.
-     * La respuesta incluye un estado de éxito y los datos de la liquidación actualizada en formato JSON.
-     *
-     * @param UpdateSettlementRequest $request La solicitud de actualización de liquidación.
-     * @param int $employeeId El ID del empleado.
-     * @param int $settlementId El ID de la liquidación.
-     * @return JsonResponse Respuesta JSON con el estado de éxito y los datos de la liquidación actualizada.
-     */
-    /* public function updateForEmployee(UpdateSettlementRequest $request, $employeeId, $settlementId): JsonResponse
-    {
-        $employee = Employee::findOrFail($employeeId);
-        $settlement = $employee->settlements()->findOrFail($settlementId);
-
-        $settlement->update($request->validated());
-        
-        return response()->json([
-            'status' => 'success',
-            'data' => new SettlementResource($settlement)
-        ], 200);
-    } */
 
     /**
      * Muestra las liquidaciones de aceite de un socio específico por su ID.

@@ -31,6 +31,14 @@ class EmployeeController extends Controller
         ], 200);
     }
 
+    /**
+     * Muestra el empleado asociado a un usuario específico.
+     * 
+     * Este método recibe un ID de usuario, busca el empleado correspondiente y devuelve una respuesta JSON con un estado de éxito y los datos del empleado.
+     *
+     * @param int $userId El ID del usuario.
+     * @return JsonResponse Respuesta JSON con el estado de éxito y los datos del empleado.
+     */
     public function indexByUser($userId)
     {
         // Buscar el empleado cuyo user_id coincida con el id proporcionado
@@ -40,7 +48,7 @@ class EmployeeController extends Controller
         if ($employee) {
             return response()->json([
                 'status' => 'success',
-                'data' => new EmployeeResource($employee) 
+                'data' => new EmployeeResource($employee)
             ], 200);
         } else {
             return response()->json([
@@ -49,7 +57,6 @@ class EmployeeController extends Controller
             ], 404);
         }
     }
-
 
     /**
      * Crea un nuevo empleado.
@@ -70,6 +77,15 @@ class EmployeeController extends Controller
         ], 201);
     }
 
+    /**
+     * Crea un nuevo empleado junto con el usuario y rol correspondiente.
+     * 
+     * Este método crea un nuevo empleado, su usuario asociado y le asigna el rol de "Empleado". La creación se realiza dentro de una transacción para garantizar la integridad de los datos.
+     * La respuesta incluye un estado de éxito y los datos del usuario creado.
+     *
+     * @param StoreEmployeeRequest $request La solicitud de creación de empleado.
+     * @return JsonResponse Respuesta JSON con el estado de éxito y los datos del usuario creado.
+     */
     public function store(StoreEmployeeRequest $request): JsonResponse
     {
         DB::beginTransaction(); // Iniciar la transacción
@@ -147,24 +163,13 @@ class EmployeeController extends Controller
     /**
      * Actualiza un empleado específico por su ID.
      * 
-     * Este método recibe una solicitud de actualización de empleado, valida los datos y actualiza el empleado en la base de datos.
+     * Este método recibe una solicitud de actualización de empleado, valida los datos y actualiza el empleado y su usuario asociado en la base de datos.
      * La respuesta incluye un estado de éxito y los datos del empleado actualizado en formato JSON.
      *
      * @param UpdateEmployeeRequest $request La solicitud de actualización de empleado.
      * @param int $id El ID del empleado.
      * @return JsonResponse Respuesta JSON con el estado de éxito y los datos del empleado actualizado.
      */
-    public function updateOld(UpdateEmployeeRequest $request, $id): JsonResponse
-    {
-        $employee = Employee::findOrFail($id);
-        $employee->update($request->validated());
-
-        return response()->json([
-            'status' => 'success',
-            'data' => new EmployeeResource($employee)
-        ], 200);
-    }
-
     public function update(UpdateEmployeeRequest $request, $id): JsonResponse
     {
         DB::beginTransaction(); // Inicia la transacción

@@ -29,8 +29,6 @@ class UserSeeder extends Seeder
         $adminRoles = Role::whereIn('name', ['Administrador', 'Socio', 'Empleado'])->get();
         $admin->roles()->attach($adminRoles);
 
-        
-
 
         /* ------------------------- */
 

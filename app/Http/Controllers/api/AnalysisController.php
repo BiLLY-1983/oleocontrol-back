@@ -52,24 +52,14 @@ class AnalysisController extends Controller
      * Actualiza un análisis.
      * 
      * Este método recibe una solicitud de actualización de análisis, valida los datos y actualiza el análisis en la base de datos.
+     * Una vez actualizado el análisis, se actualiza la entrada asociada en la tabla Entries y se genera una entrada en la
+     * tabla inventarios de aceite con la cantidad y el tipo de aceite perteneciente al socio al que pertenece ese análisis.
      * La respuesta incluye un estado de éxito y los datos del análisis actualizado en formato JSON.
      *
      * @param UpdateAnalysisRequest $request La solicitud de actualización de análisis.
      * @param int $id El ID del análisis a actualizar.
      * @return JsonResponse Respuesta JSON con el estado de éxito y los datos del análisis actualizado.
      */
-    /* public function updateOld(UpdateAnalysisRequest $request, $id): JsonResponse
-    {
-        $analysis = Analysis::findOrFail($id);
-
-        $analysis->update($request->validated());
-
-        return response()->json([
-            'status' => 'success',
-            'data' => new AnalysisResource($analysis)
-        ], 200);
-    } */
-
     public function update(UpdateAnalysisRequest $request, $id): JsonResponse
     {
         // Iniciar la transacción
@@ -160,30 +150,6 @@ class AnalysisController extends Controller
             'data' => AnalysisResource::collection($analyses)
         ], 200);
     }
-
-    /**
-     * Actualiza un análisis de un empleado.
-     * 
-     * Este método recibe una solicitud de actualización de análisis, valida los datos y actualiza el análisis en la base de datos.
-     * La respuesta incluye un estado de éxito y los datos del análisis actualizado en formato JSON.
-     *
-     * @param UpdateAnalysisRequest $request La solicitud de actualización de análisis.
-     * @param int $employeeId El ID del empleado.
-     * @param int $analysisId El ID del análisis.
-     * @return JsonResponse Respuesta JSON con el estado de éxito y los datos del nuevo análisis.
-     */
-    /* public function updateForEmployee(UpdateAnalysisRequest $request, $employeeId, $analysisId): JsonResponse
-    {
-        $employee = Employee::findOrFail($employeeId);
-        $analysis = $employee->analyses()->findOrFail($analysisId);
-
-        $analysis->update($request->validated());
-
-        return response()->json([
-            'status' => 'success',
-            'data' => new AnalysisResource($analysis)
-        ], 200);
-    } */
 
     /**
      * Muestra un análisis de un empleado.

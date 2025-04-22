@@ -71,29 +71,63 @@ class User extends Authenticatable
     /* Relaciones */
     /* ---------- */
 
+    /**
+     * Relación de muchos a muchos con el modelo Role.
+     *
+     * Un usuario puede tener múltiples roles.
+     *
+     * @return \Illuminate\Database\Eloquent\Relations\BelongsToMany
+     */
     public function roles(): BelongsToMany
     {
         return $this->belongsToMany(Role::class);
     }
 
+    /**
+     * Relación uno a uno con el modelo Member.
+     *
+     * Un usuario puede estar asociado a un miembro (socios).
+     *
+     * @return \Illuminate\Database\Eloquent\Relations\HasOne
+     */
     public function member(): HasOne
     {
         return $this->hasOne(Member::class, 'user_id');
     }
 
+    /**
+     * Relación uno a uno con el modelo Employee.
+     *
+     * Un usuario puede estar asociado a un empleado.
+     *
+     * @return \Illuminate\Database\Eloquent\Relations\HasOne
+     */
     public function employee(): HasOne
     {
         return $this->hasOne(Employee::class, 'user_id');
     }
 
+    /**
+     * Relación de uno a muchos con el modelo Notification (notificaciones enviadas).
+     *
+     * Un usuario puede enviar muchas notificaciones.
+     *
+     * @return \Illuminate\Database\Eloquent\Relations\HasMany
+     */
     public function sentNotifications(): HasMany
     {
         return $this->hasMany(Notification::class, 'sender_id');
     }
 
+    /**
+     * Relación de uno a muchos con el modelo Notification (notificaciones recibidas).
+     *
+     * Un usuario puede recibir muchas notificaciones.
+     *
+     * @return \Illuminate\Database\Eloquent\Relations\HasMany
+     */
     public function receivedNotifications(): HasMany
     {
         return $this->hasMany(Notification::class, 'receiver_id');
     }
-
 }
