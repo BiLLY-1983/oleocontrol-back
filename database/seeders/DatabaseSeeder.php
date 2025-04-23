@@ -21,7 +21,7 @@ class DatabaseSeeder extends Seeder
             MemberSeeder::class,
             EntrySeeder::class,
             //SettlementSeeder::class,
-            NotificationSeeder::class,
+            //NotificationSeeder::class,
         ]);
     }
 }
