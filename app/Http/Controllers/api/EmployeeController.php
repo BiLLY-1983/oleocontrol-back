@@ -13,6 +13,9 @@ use App\Models\User;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
+use App\Mail\NewUserWelcomeEmail;
+use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Mail;
 
 class EmployeeController extends Controller
 {
@@ -91,6 +94,23 @@ class EmployeeController extends Controller
         DB::beginTransaction(); // Iniciar la transacción
 
         try {
+
+
+            // Generar contraseña aleatoria
+            $generatedPassword = $this->generateSecurePassword();
+
+            $user = User::create([
+                'username' => $request->username,
+                'first_name' => $request->first_name,
+                'last_name' => $request->last_name,
+                'dni' => $request->dni,
+                'email' => $request->email,
+                'phone' => $request->phone,
+                'password' => Hash::make($generatedPassword),
+            ]);
+            
+
+/* 
             // Crear el usuario
             $user = User::create($request->only([
                 'username',
@@ -100,7 +120,7 @@ class EmployeeController extends Controller
                 'email',
                 'password',
                 'phone',
-            ]));
+            ])); */
 
             // Asignar rol al usuario
             $roleName = 'Empleado';
@@ -128,6 +148,9 @@ class EmployeeController extends Controller
 
             DB::commit(); // Confirmar la transacción
 
+            // Enviar el email con la nueva contraseña
+            Mail::to($user->email)->send(new NewUserWelcomeEmail($user->username, $generatedPassword));
+
             return response()->json([
                 'status' => 'success',
                 'data' => new UserResource($user),
@@ -140,6 +163,7 @@ class EmployeeController extends Controller
                 'message' => $e->getMessage(),
             ], 500);
         }
+         
     }
 
     /**
@@ -277,5 +301,31 @@ class EmployeeController extends Controller
             'status' => 'success',
             'data' => new EmployeeResource($employee)
         ], 200);
+    }
+
+    /**
+     * Genera una contraseña segura aleatoria.
+     * 
+     * Este método genera una contraseña aleatoria cumpliendo con los requisitos de incluir al menos una letra minúscula, una mayúscula y un número. La longitud por defecto es de 10 caracteres.
+     *
+     * @param int $length La longitud deseada para la contraseña (por defecto es 10).
+     * @return string La contraseña generada aleatoriamente.
+     */
+    private function generateSecurePassword($length = 10)
+    {
+        $lower = 'abcdefghijklmnopqrstuvwxyz';
+        $upper = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
+        $numbers = '0123456789';
+        $all = $lower . $upper . $numbers;
+
+        $password = $lower[random_int(0, 25)];
+        $password .= $upper[random_int(0, 25)];
+        $password .= $numbers[random_int(0, 9)];
+
+        for ($i = 3; $i < $length; $i++) {
+            $password .= $all[random_int(0, strlen($all) - 1)];
+        }
+
+        return str_shuffle($password);
     }
 }

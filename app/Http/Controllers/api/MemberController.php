@@ -13,6 +13,9 @@ use App\Models\User;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
+use App\Mail\NewUserWelcomeEmail;
+use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Mail;
 
 class MemberController extends Controller
 {
@@ -70,6 +73,22 @@ class MemberController extends Controller
         DB::beginTransaction();
 
         try {
+
+             
+            // Generar contraseña aleatoria
+            $generatedPassword = $this->generateSecurePassword();
+
+            $user = User::create([
+                'username' => $request->username,
+                'first_name' => $request->first_name,
+                'last_name' => $request->last_name,
+                'dni' => $request->dni,
+                'email' => $request->email,
+                'phone' => $request->phone,
+                'password' => Hash::make($generatedPassword),
+            ]);
+             
+/* 
             $user = User::create($request->only([
                 'username',
                 'first_name',
@@ -78,7 +97,7 @@ class MemberController extends Controller
                 'email',
                 'password',
                 'phone',
-            ]));
+            ])); */
 
             $roleName = 'Socio';
 
@@ -102,6 +121,9 @@ class MemberController extends Controller
 
             DB::commit();
 
+            // Enviar el email con la nueva contraseña
+            Mail::to($user->email)->send(new NewUserWelcomeEmail($user->username, $generatedPassword));
+
             return response()->json([
                 'status' => 'success',
                 'data' => new UserResource($user),
@@ -114,6 +136,7 @@ class MemberController extends Controller
                 'message' => $e->getMessage(),
             ], 500);
         }
+
     }
 
     /**
@@ -253,5 +276,31 @@ class MemberController extends Controller
             'status' => 'success',
             'data' => new MemberResource($member)
         ], 200);
+    }
+
+    /**
+     * Genera una contraseña segura aleatoria.
+     * 
+     * Este método genera una contraseña aleatoria cumpliendo con los requisitos de incluir al menos una letra minúscula, una mayúscula y un número. La longitud por defecto es de 10 caracteres.
+     *
+     * @param int $length La longitud deseada para la contraseña (por defecto es 10).
+     * @return string La contraseña generada aleatoriamente.
+     */
+    private function generateSecurePassword($length = 10)
+    {
+        $lower = 'abcdefghijklmnopqrstuvwxyz';
+        $upper = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
+        $numbers = '0123456789';
+        $all = $lower . $upper . $numbers;
+
+        $password = $lower[random_int(0, 25)];
+        $password .= $upper[random_int(0, 25)];
+        $password .= $numbers[random_int(0, 9)];
+
+        for ($i = 3; $i < $length; $i++) {
+            $password .= $all[random_int(0, strlen($all) - 1)];
+        }
+
+        return str_shuffle($password);
     }
 }

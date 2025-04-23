@@ -18,6 +18,7 @@ use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Str;
 use App\Mail\PasswordResetEmail;
+use App\Mail\NewUserWelcomeEmail;
 use Illuminate\Support\Facades\Mail;
 
 class UserController extends Controller
@@ -57,7 +58,24 @@ class UserController extends Controller
         DB::beginTransaction();
 
         try {
-            $user = User::create($request->only([
+
+            
+            // Generar contraseña aleatoria
+            $generatedPassword = $this->generateSecurePassword();
+
+            $user = User::create([
+                'username' => $request->username,
+                'first_name' => $request->first_name,
+                'last_name' => $request->last_name,
+                'dni' => $request->dni,
+                'email' => $request->email,
+                'phone' => $request->phone,
+                'password' => Hash::make($generatedPassword),
+            ]);
+
+            
+
+           /*  $user = User::create($request->only([
                 'username',
                 'first_name',
                 'last_name',
@@ -65,7 +83,7 @@ class UserController extends Controller
                 'email',
                 'password',
                 'phone',
-            ]));
+            ])); */
 
             $roleName = $request->user_type;
 
@@ -103,6 +121,9 @@ class UserController extends Controller
 
             DB::commit();
 
+            // Enviar el email con la nueva contraseña
+            Mail::to($user->email)->send(new NewUserWelcomeEmail($user->username, $generatedPassword));
+
             return response()->json([
                 'status' => 'success',
                 'data' => new UserResource($user),
@@ -115,6 +136,7 @@ class UserController extends Controller
                 'message' => $e->getMessage(),
             ], 500);
         }
+        
     }
 
     /**
