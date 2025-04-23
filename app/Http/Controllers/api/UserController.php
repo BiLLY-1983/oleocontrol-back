@@ -18,6 +18,7 @@ use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Str;
 use App\Mail\PasswordResetEmail;
+use App\Models\Department;
 use Illuminate\Support\Facades\Mail;
 
 class UserController extends Controller
@@ -68,38 +69,55 @@ class UserController extends Controller
             ]));
 
             $roleName = $request->user_type;
+            $rolesToAssign = collect();
 
-            $role = Role::where('name', $roleName)->first();
+            if ($roleName === 'Administrador') {
+                $rolesToAssign = Role::whereIn('name', ['Administrador', 'Socio', 'Empleado'])->get();
 
-            if (!$role) {
-                throw new \Exception("El rol '{$roleName}' no existe.");
-            }
-
-            $user->roles()->attach($role->id);
-
-            if ($roleName === 'Socio') {
-                $member = Member::create([
+                Member::create([
                     'user_id' => $user->id,
                     'member_number' => 1000 + $user->id,
                 ]);
 
-                if (!$member) {
-                    throw new \Exception('No se pudo crear el socio.');
-                }
-            } elseif ($roleName === 'Empleado') {
-                if (!$request->has('department_id')) {
-                    throw new \Exception('El campo department_id es obligatorio para empleados.');
+                // Obtener un departamento aleatorio
+                $randomDepartmentId = Department::inRandomOrder()->value('id');
+
+                if (!$randomDepartmentId) {
+                    throw new \Exception('No hay departamentos disponibles para asignar al Administrador.');
                 }
 
-                $employee = Employee::create([
+                // Crear entrada como Empleado
+                Employee::create([
                     'user_id' => $user->id,
-                    'department_id' => $request->department_id,
+                    'department_id' => $randomDepartmentId,
                 ]);
+            } else {
+                $role = Role::where('name', $roleName)->first();
+                if (!$role) {
+                    throw new \Exception("El rol '{$roleName}' no existe.");
+                }
 
-                if (!$employee) {
-                    throw new \Exception('No se pudo crear el empleado.');
+                $rolesToAssign->push($role);
+
+                if ($roleName === 'Socio') {
+                    Member::create([
+                        'user_id' => $user->id,
+                        'member_number' => 1000 + $user->id,
+                    ]);
+                } elseif ($roleName === 'Empleado') {
+                    if (!$request->has('department_id')) {
+                        throw new \Exception('El campo department_id es obligatorio para empleados.');
+                    }
+
+                    Employee::create([
+                        'user_id' => $user->id,
+                        'department_id' => $request->department_id,
+                    ]);
                 }
             }
+
+            // Asignar roles
+            $user->roles()->attach($rolesToAssign);
 
             DB::commit();
 
@@ -116,6 +134,8 @@ class UserController extends Controller
             ], 500);
         }
     }
+
+
 
     /**
      * Muestra un usuario en concreto.
