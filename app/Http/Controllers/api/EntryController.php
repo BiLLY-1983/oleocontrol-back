@@ -15,6 +15,7 @@ use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Mail;
+use Barryvdh\DomPDF\Facade\Pdf;
 
 class EntryController extends Controller
 {
@@ -59,8 +60,11 @@ class EntryController extends Controller
             $memberEmail = $entry->member->user->email;
             $entryResource = (new EntryResource($entry))->toArray($request);
 
-            // Enviar el email con la nueva entrada
-            Mail::to($memberEmail)->send(new NewEntryCreated($entryResource));
+            // Generar el PDF
+            $pdf = Pdf::loadView('pdf.new_entry', ['entry' => $entryResource]);
+
+            // Enviar el email con el PDF adjunto
+            Mail::to($memberEmail)->send(new NewEntryCreated($entryResource, $pdf->output()));
 
             return response()->json([
                 'status' => 'success',

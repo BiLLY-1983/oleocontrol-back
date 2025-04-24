@@ -1,9 +1,8 @@
 <!DOCTYPE html>
 <html lang="es">
-
 <head>
     <meta charset="UTF-8">
-    <title>Nueva Entrada de Aceituna</title>
+    <title>Informe de recepción de aceituna</title>
     <style>
         :root {
             --color-olive-50: #f8f9f3;
@@ -20,91 +19,82 @@
         }
 
         body {
-            font-family: 'Segoe UI', sans-serif;
-            background-color: var(--color-olive-100);
-            padding: 2rem;
+            font-family: Arial, sans-serif;
+            background-color: var(--color-olive-50);
+            padding: 20px;
             color: var(--color-olive-900);
         }
 
         .container {
-            background-color: var(--color-olive-50);
-            border-radius: 12px;
-            padding: 2rem;
+            background-color: #fff;
+            padding: 20px;
+            border-radius: 8px;
+            border: 1px solid var(--color-olive-100);
             max-width: 600px;
-            margin: auto;
-            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.08);
+            margin: 0 auto;
+        }
+
+        .header {
+            text-align: center;
         }
 
         .logo {
-            text-align: center;
-            margin-bottom: 1.5rem;
+            width: 80px;
+            margin-bottom: 10px;
         }
 
-        h2 {
+        .title {
+            font-size: 20px;
+            font-weight: bold;
             color: var(--color-olive-700);
-            text-align: center;
+            margin-bottom: 20px;
         }
 
-        ul {
-            background-color: var(--color-olive-200);
-            padding: 1rem;
-            border-radius: 8px;
+        .content {
+            font-size: 14px;
+            line-height: 1.6;
             color: var(--color-olive-800);
         }
 
-        ul li {
-            margin-bottom: 0.5rem;
-            font-weight: 500;
-        }
-
-        .btn-view {
-            display: inline-block;
-            background-color: var(--color-olive-500);
-            color: white;
-            padding: 0.75rem 1.5rem;
-            border-radius: 8px;
-            text-decoration: none;
-            font-weight: 600;
-            margin-top: 1.5rem;
-            transition: background-color 0.3s ease;
-            text-align: center;
-        }
-
-        .btn-view:hover {
-            background-color: var(--color-olive-600);
-        }
-
         .footer {
-            font-size: 0.9rem;
-            color: var(--color-olive-600);
-            margin-top: 2rem;
             text-align: center;
+            font-size: 12px;
+            color: var(--color-olive-600);
+            margin-top: 30px;
+        }
+
+        .highlight {
+            font-weight: bold;
+            color: var(--color-olive-700);
         }
     </style>
 </head>
-
 <body>
     <div class="container">
-        <div class="logo">
-            <img src="{{ asset('images/logo.png') }}" alt="Logo" style="height: 60px;">
+        <div class="header">
+            <img class="logo" src="{{ public_path('images/logo.png') }}" alt="Logo">
+            <div class="title">Informe de recepción de aceituna</div>
         </div>
-        <h2>Nueva entrada registrada</h2>
-        <p>Se ha registrado una nueva entrada de aceituna con los siguientes datos:</p>
 
-        <ul>
-            <li><strong>Fecha:</strong> {{ \Carbon\Carbon::parse($entry['entry_date'])->format('d/m/Y H:i') }}</li>
-            <li><strong>Agricultor:</strong> {{ $entry['member']['name'] }} (Socio Nº {{ $entry['member']['member_number'] }})</li>
-            <li><strong>Kilos de aceituna:</strong> {{ number_format($entry['olive_quantity'], 2) }} kg</li>
-        </ul>
+        <div class="content">
+            <p>Hola {{ $entry['member']['name'] }},</p>
 
-        <p style="text-align: center;">
-            <a href="{{ url('https://oleocontrol-front.alwaysdata.net/members/' . $entry['member']['id'] . '/entries/' . $entry['id']) }}" class="btn-view">Ver entrada</a>
-        </p>
+            <p>Te informamos de que se ha registrado una nueva entrada de aceituna en el sistema.</p>
+
+            <p>
+                <span class="highlight">Fecha de entrada:</span> {{ \Carbon\Carbon::parse($entry['entry_date'])->format('d/m/Y') }}<br>
+                <span class="highlight">Cantidad de aceituna:</span> {{ number_format($entry['olive_quantity'], 2) }} kg
+            </p>
+
+            <p>Adjunto a este correo encontrarás el informe en formato PDF con todos los detalles.</p>
+
+            <p>Gracias por utilizar nuestro sistema de gestión de almazara.</p>
+        </div>
 
         <div class="footer">
-            <p>Un saludo,<br><strong>El equipo de La Gota de Oro</strong></p>
+            OleoControl © {{ now()->year }}<br>
+            Este correo fue generado automáticamente, por favor no respondas directamente.
         </div>
     </div>
 </body>
-
 </html>

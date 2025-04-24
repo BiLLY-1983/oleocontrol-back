@@ -6,19 +6,19 @@ use Illuminate\Bus\Queueable;
 use Illuminate\Mail\Mailable;
 use Illuminate\Queue\SerializesModels;
 
-class NewEntryCreated extends Mailable
+class NewSettlementUpdated extends Mailable
 {
     use Queueable, SerializesModels;
 
-    public array $entry;
+    public array $settlement;
     public string $pdf;
 
     /**
      * Crea una nueva instancia del mensaje.
      */
-    public function __construct(array $entry, string $pdf)
+    public function __construct(array $settlement, string $pdf)
     {
-        $this->entry = $entry;
+        $this->settlement = $settlement;
         $this->pdf = $pdf;
     }
 
@@ -27,10 +27,10 @@ class NewEntryCreated extends Mailable
      */
     public function build()
     {
-        return $this->subject('Nueva entrada de aceituna registrada')
-            ->view('emails.new_entry_created')
-            ->with(['entry' => $this->entry])
-            ->attachData($this->pdf, 'informe-entrada.pdf', [
+        return $this->subject('Actualización de la liquidación solicitada')
+            ->view('emails.new_settlement_updated')
+            ->with(['settlement' => $this->settlement])
+            ->attachData($this->pdf, 'informe-liquidacion.pdf', [
                 'mime' => 'application/pdf',
             ]);
     }

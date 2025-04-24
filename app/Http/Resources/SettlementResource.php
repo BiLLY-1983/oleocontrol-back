@@ -30,6 +30,7 @@ class SettlementResource extends JsonResource
                 'member_id' => $this->member_id,
                 'name' => $this->member->user->first_name . ' ' . $this->member->user->last_name,
                 'member_number' => $this->member->member_number,
+                'member_email' => $this->member->user->email,
             ],
             'employee' => $this->employee ? [
                 'employee_id' => $this->employee_id,

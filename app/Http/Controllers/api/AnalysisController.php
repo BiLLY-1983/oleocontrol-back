@@ -5,6 +5,7 @@ namespace App\Http\Controllers\api;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Analysis\UpdateAnalysisRequest;
 use App\Http\Resources\AnalysisResource;
+use App\Mail\NewAnalysisUpdated;
 use App\Models\Analysis;
 use App\Models\Employee;
 use App\Models\Entry;
@@ -12,6 +13,8 @@ use App\Models\Member;
 use App\Models\OilInventory;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Mail;
+use Barryvdh\DomPDF\Facade\Pdf;
 
 class AnalysisController extends Controller
 {
@@ -96,6 +99,15 @@ class AnalysisController extends Controller
 
             // Si todo ha ido bien, confirmamos la transacción
             DB::commit();
+
+            $memberEmail = $entry->member->user->email;
+            $analysisResource = (new AnalysisResource($analysis))->toArray($request);
+
+            // Generar el PDF
+            $pdf = Pdf::loadView('pdf.new_analysis', ['analysis' => $analysisResource]);
+
+            // Enviar el email conel nuevo análisis
+            Mail::to($memberEmail)->send(new NewAnalysisUpdated($analysisResource, $pdf->output()));
 
             return response()->json([
                 'status' => 'success',

@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Http\Requests\Settlement\StoreSettlementRequest;
 use App\Http\Requests\Settlement\UpdateSettlementRequest;
 use App\Http\Resources\SettlementResource;
+use App\Mail\NewSettlementUpdated;
 use App\Models\Employee;
 use App\Models\Member;
 use App\Models\OilInventory;
@@ -13,6 +14,8 @@ use App\Models\Settlement;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Mail;
+use Barryvdh\DomPDF\Facade\Pdf;
 
 class SettlementController extends Controller
 {
@@ -143,6 +146,16 @@ class SettlementController extends Controller
     {
         $settlement = Settlement::findOrFail($id);
         $settlement->update($request->validated());
+
+
+        $memberEmail = $settlement->member->user->email;
+        $settlementResource = (new SettlementResource($settlement))->toArray($request);
+
+        // Generar el PDF
+        $pdf = Pdf::loadView('pdf.new_settlement', ['settlement' => $settlementResource]);
+
+        // Enviar el correo con el PDF adjunto
+        Mail::to($memberEmail)->send(new NewSettlementUpdated($settlementResource, $pdf->output()));
 
         return response()->json([
             'status' => 'success',
