@@ -25,12 +25,24 @@ class StoreUserRequest extends FormRequest
             //'username' => 'required|string|max:255|unique:users',
             'first_name' => 'required|string|max:255',
             'last_name' => 'required|string|max:255',
-            'dni' => 'required|string|max:20|unique:users',
-            'email' => 'required|string|email|max:255|unique:users', 
+            'dni' => ['required', 'string', 'max:20', 'unique:users', function ($attribute, $value, $fail) {
+                if (!preg_match('/^\d{8}[A-Z]$/i', $value)) {
+                    return $fail('El formato del DNI no es válido.');
+                }
+
+                $dniNumber = substr($value, 0, -1);
+                $dniLetter = strtoupper(substr($value, -1));
+                $letters = "TRWAGMYFPDXBNJZSQVHLCKE";
+                $expectedLetter = $letters[$dniNumber % 23] ?? null;
+
+                if ($expectedLetter !== $dniLetter) {
+                    $fail('La letra del DNI no es válida.');
+                }
+            }],
+            'email' => 'required|string|email|max:255|unique:users',
             //'password' => 'required|string|min:8|confirmed',
             'phone' => 'required|string|max:20',
             'status' => 'required|boolean',
         ];
-        
     }
 }

@@ -77,7 +77,7 @@ class UserController extends Controller
             // Formar nombre completo
             $full_name = trim("{$request->first_name} {$request->last_name}");
 
-            // Validar que la letra del DNI sea correcta
+/*             // Validar que la letra del DNI sea correcta
             $dniNumber = substr($request->dni, 0, -1);
             $dniLetter = strtoupper(substr($request->dni, -1));
             $letters = "TRWAGMYFPDXBNJZSQVHLCKE";
@@ -85,7 +85,7 @@ class UserController extends Controller
 
             if ($dniLetter !== $expectedLetter) {
                 throw new \Exception("La letra del DNI no es válida.");
-            }
+            } */
 
             $user = User::create([
                 'username' => $username,
