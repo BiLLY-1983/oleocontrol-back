@@ -24,6 +24,7 @@ class EntryResource extends JsonResource
                 'id' => $this->member->id,
                 'name' => $this->member->user->first_name . ' ' . $this->member->user->last_name,
                 'member_number' => $this->member->member_number,
+                'member_email' => $this->member->user->email,
             ]
         ];
     }

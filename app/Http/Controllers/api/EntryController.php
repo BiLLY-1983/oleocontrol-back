@@ -8,11 +8,13 @@ use App\Http\Requests\Entry\StoreEntryRequest;
 use App\Http\Requests\Entry\UpdateEntryRequest;
 use App\Http\Resources\AnalysisResource;
 use App\Http\Resources\EntryResource;
+use App\Mail\NewEntryCreated;
 use App\Models\Entry;
 use App\Models\Member;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Mail;
 
 class EntryController extends Controller
 {
@@ -47,12 +49,18 @@ class EntryController extends Controller
 
         try {
             $entry = Entry::create($request->validated());
-           
+
             $analysis = $entry->analysis()->create([
                 'member_id' => $request->member_id,
             ]);
 
             DB::commit();
+
+            $memberEmail = $entry->member->user->email;
+            $entryResource = (new EntryResource($entry))->toArray($request);
+
+            // Enviar el email con la nueva entrada
+            Mail::to($memberEmail)->send(new NewEntryCreated($entryResource));
 
             return response()->json([
                 'status' => 'success',
@@ -137,7 +145,7 @@ class EntryController extends Controller
      * @return JsonResponse Respuesta JSON con el estado de éxito y los datos de las entradas.
      */
     public function indexForMember($memberId): JsonResponse
-    {     
+    {
         $member = Member::findOrFail($memberId);
         $entries = $member->entries;
 
@@ -187,5 +195,4 @@ class EntryController extends Controller
             'data' => new EntryResource($entry)
         ], 200);
     }
-
 }
