@@ -84,6 +84,12 @@ class MemberController extends Controller
             $dniLetter = strtoupper(substr($request->dni, -1));
             $username = strtolower("{$first}.{$last}{$dniLetter}");
 
+            $username = strtolower("{$first}.{$last}{$dniLetter}");
+            $count = User::where('username', $username)->count();
+            if ($count > 0) {
+                $username .= rand(10, 99);
+            }
+
             // Formar nombre completo
             $full_name = trim("{$request->first_name} {$request->last_name}");
 

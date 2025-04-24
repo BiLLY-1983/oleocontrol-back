@@ -93,7 +93,7 @@
         <p>Por favor, cambia tu contraseña tras tu primer acceso.</p>
         <p>Para comenzar, puedes iniciar sesión desde el siguiente botón:</p>
         <p style="text-align: center;">
-            <a href="{{ url('/login') }}" class="btn-login">Iniciar sesión</a>
+            <a href="{{ url('https://oleocontrol-front.alwaysdata.net/') }}" class="btn-login">Iniciar sesión</a>
         </p>
         <p>Si necesitas asistencia, no dudes en contactar con nuestro equipo de soporte.</p>
         <div class="footer">

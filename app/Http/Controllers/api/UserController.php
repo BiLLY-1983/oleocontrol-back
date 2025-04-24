@@ -68,8 +68,24 @@ class UserController extends Controller
             $dniLetter = strtoupper(substr($request->dni, -1));
             $username = strtolower("{$first}.{$last}{$dniLetter}");
 
+            $username = strtolower("{$first}.{$last}{$dniLetter}");
+            $count = User::where('username', $username)->count();
+            if ($count > 0) {
+                $username .= rand(10, 99);
+            }
+
             // Formar nombre completo
             $full_name = trim("{$request->first_name} {$request->last_name}");
+
+            // Validar que la letra del DNI sea correcta
+            $dniNumber = substr($request->dni, 0, -1);
+            $dniLetter = strtoupper(substr($request->dni, -1));
+            $letters = "TRWAGMYFPDXBNJZSQVHLCKE";
+            $expectedLetter = $letters[$dniNumber % 23];
+
+            if ($dniLetter !== $expectedLetter) {
+                throw new \Exception("La letra del DNI no es válida.");
+            }
 
             $user = User::create([
                 'username' => $username,
