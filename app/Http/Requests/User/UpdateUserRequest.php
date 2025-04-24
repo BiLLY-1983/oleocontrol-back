@@ -44,7 +44,6 @@ class UpdateUserRequest extends FormRequest
                 }
             }],
             'email' => 'nullable|email|max:255|unique:users,email,' . $userId,
-            'password' => 'nullable|string|min:8', 
             'phone' => 'nullable|string|max:20',
             'status' => 'nullable|boolean', 
         ];

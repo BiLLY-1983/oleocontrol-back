@@ -45,7 +45,17 @@ class UpdateProfileRequest extends FormRequest
                 }
             }],
             'email' => 'nullable|email|max:255|unique:users,email,' . $userId,
-            'password' => 'nullable|string|min:8|confirmed',
+            'password' => [
+                'nullable',
+                'string',
+                'min:10',
+                'confirmed',
+                function ($attribute, $value, $fail) {
+                    if ($value && !preg_match('/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d).{10,}$/', $value)) {
+                        return $fail('La contraseña debe tener al menos 10 caracteres, una letra mayúscula, una letra minúscula y un número.');
+                    }
+                }
+            ],
             'phone' => 'nullable|string|max:20',
             'status' => 'nullable|boolean',
         ];
