@@ -102,7 +102,7 @@
         </p>
 
         <div class="footer">
-            <p>— Sistema de Gestión de Almazara</p>
+            <p>Un saludo,<br><strong>El equipo de La Gota de Oro</strong></p>
         </div>
     </div>
 </body>

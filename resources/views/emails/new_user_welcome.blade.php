@@ -97,7 +97,7 @@
         </p>
         <p>Si necesitas asistencia, no dudes en contactar con nuestro equipo de soporte.</p>
         <div class="footer">
-            <p>— El equipo de soporte</p>
+            <p>Un saludo,<br><strong>El equipo de soporte</strong></p>
         </div>
     </div>
 </body>
