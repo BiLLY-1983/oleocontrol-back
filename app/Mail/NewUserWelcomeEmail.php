@@ -19,7 +19,14 @@ class NewUserWelcomeEmail extends Mailable
     use Queueable, SerializesModels;
 
     /**
-     * Nombre del nuevo usuario.
+     * Nombre completo del nuevo usuario.
+     *
+     * @var string
+     */
+    public string $full_name;
+
+    /**
+     * Nombre de usuario del nuevo usuario.
      *
      * @var string
      */
@@ -38,86 +45,26 @@ class NewUserWelcomeEmail extends Mailable
      * @param string $username Nombre del nuevo usuario.
      * @param string $temporaryPassword Contraseña asignada temporalmente.
      */
-    public function __construct(string $username, string $temporaryPassword)
+    public function __construct(string $full_name, string $username, string $temporaryPassword)
     {
+        $this->full_name = $full_name;
         $this->username = $username;
         $this->temporaryPassword = $temporaryPassword;
-
-        $this->html($this->buildHtmlContent());
     }
 
     /**
      * Genera el contenido HTML del correo de bienvenida.
      *
-     * @return string HTML del correo.
+     * @return view HTML del correo.
      */
-    public function buildHtmlContent(): string
+    public function build()
     {
-        return <<<HTML
-<!DOCTYPE html>
-<html lang="es">
-<head>
-    <meta charset="UTF-8">
-    <title>Bienvenido al sistema</title>
-    <style>
-        body {
-            font-family: 'Segoe UI', sans-serif;
-            background: #f0f2f5;
-            padding: 2rem;
-            color: #333;
-        }
-
-        .container {
-            background: #ffffff;
-            border-radius: 10px;
-            padding: 2rem;
-            max-width: 600px;
-            margin: auto;
-            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
-        }
-
-        .credentials {
-            background: #f7f7f7;
-            border-radius: 6px;
-            padding: 1rem;
-            margin: 1rem 0;
-        }
-
-        .credentials p {
-            margin: 0.5rem 0;
-            font-weight: bold;
-        }
-
-        h2 {
-            color: #2c3e50;
-        }
-    </style>
-</head>
-<body>
-    <div class="container">
-        <h2>¡Bienvenido, {$this->username}!</h2>
-        <p>Nos alegra que te unas a nuestra plataforma. A continuación, te proporcionamos tus credenciales de acceso iniciales:</p>
-        <div class="credentials">
-            <p>Usuario: {$this->username}</p>
-            <p>Contraseña temporal: {$this->temporaryPassword}</p>
-        </div>
-        <p>Te recomendamos cambiar la contraseña en cuanto accedas al sistema por primera vez.</p>
-        <p>Si tienes alguna duda o necesitas ayuda, no dudes en ponerte en contacto con nuestro equipo de soporte.</p>
-        <p>¡Gracias por confiar en nosotros!</p>
-        <p><strong>El equipo de soporte</strong></p>
-    </div>
-</body>
-</html>
-HTML;
-    }
-
-    /**
-     * Define los archivos adjuntos que se incluirán en el correo.
-     *
-     * @return array
-     */
-    public function attachments(): array
-    {
-        return [];
+        return $this->subject('Bienvenido al sistema')
+            ->view('emails.new_user_welcome')
+            ->with([
+                'full_name' => $this->full_name,
+                'username' => $this->username,
+                'temporaryPassword' => $this->temporaryPassword,
+            ]);
     }
 }

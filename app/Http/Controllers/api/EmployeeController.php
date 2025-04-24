@@ -99,8 +99,17 @@ class EmployeeController extends Controller
             // Generar contraseña aleatoria
             $generatedPassword = $this->generateSecurePassword();
 
+            // Generar username automáticamente
+            $first = explode(' ', trim($request->first_name))[0];
+            $last = explode(' ', trim($request->last_name))[0];
+            $dniLetter = strtoupper(substr($request->dni, -1));
+            $username = strtolower("{$first}.{$last}{$dniLetter}");
+
+            // Formar nombre completo
+            $full_name = trim("{$request->first_name} {$request->last_name}");
+
             $user = User::create([
-                'username' => $request->username,
+                'username' => $username,
                 'first_name' => $request->first_name,
                 'last_name' => $request->last_name,
                 'dni' => $request->dni,
@@ -149,7 +158,7 @@ class EmployeeController extends Controller
             DB::commit(); // Confirmar la transacción
 
             // Enviar el email con la nueva contraseña
-            Mail::to($user->email)->send(new NewUserWelcomeEmail($user->username, $generatedPassword));
+            Mail::to($user->email)->send(new NewUserWelcomeEmail($full_name, $username, $generatedPassword));
 
             return response()->json([
                 'status' => 'success',

@@ -5,6 +5,7 @@ namespace Database\Seeders;
 use App\Models\Role;
 use App\Models\User;
 use Illuminate\Database\Seeder;
+use Illuminate\Support\Facades\Hash;
 
 class UserSeeder extends Seeder
 {
@@ -20,7 +21,7 @@ class UserSeeder extends Seeder
             'last_name' => 'Admin',
             'dni' => '00000000A',
             'email' => 'oleocontrol.back@gmail.com',
-            'password' => bcrypt('password'),
+            'password' => Hash::make('Password123'),
             'phone' => '0000000000',
             'status' => true,
         ]);
@@ -39,7 +40,7 @@ class UserSeeder extends Seeder
             'last_name' => '.',
             'dni' => 'Invitado',
             'email' => 'invitado@gmail.com',
-            'password' => bcrypt('password'),
+            'password' => Hash::make('Password123'),
             'phone' => '111111111',
             'status' => true,
         ]);
@@ -58,7 +59,7 @@ class UserSeeder extends Seeder
             'last_name' => '.',
             'dni' => 'member',
             'email' => 'socio@gmail.com',
-            'password' => bcrypt('password'),
+            'password' => Hash::make('Password123'),
             'phone' => '111111111',
             'status' => true,
         ]);
@@ -75,7 +76,7 @@ class UserSeeder extends Seeder
             'last_name' => '.',
             'dni' => 'worker',
             'email' => 'worker@gmail.com',
-            'password' => bcrypt('password'),
+            'password' => Hash::make('Password123'),
             'phone' => '111111111',
             'status' => true,
         ]);

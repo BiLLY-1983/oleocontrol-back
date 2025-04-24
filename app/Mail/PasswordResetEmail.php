@@ -42,9 +42,6 @@ class PasswordResetEmail extends Mailable
     {
         $this->username = $username;
         $this->newPassword = $newPassword;
-
-        // Establecer el HTML directamente
-        $this->html($this->buildHtmlContent());
     }
 
     /**
@@ -54,69 +51,13 @@ class PasswordResetEmail extends Mailable
      * 
      * @return string El contenido HTML del correo electrónico.
      */
-    public function buildHtmlContent(): string
+    public function build()
     {
-        return <<<HTML
-<!DOCTYPE html>
-<html lang="es">
-<head>
-    <meta charset="UTF-8">
-    <title>Restablecimiento de contraseña</title>
-    <style>
-        body {
-            font-family: 'Segoe UI', sans-serif;
-            background: #f9f9f9;
-            padding: 2rem;
-            color: #333;
-        }
-
-        .card {
-            background: #fff;
-            padding: 2rem;
-            border-radius: 8px;
-            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-            max-width: 600px;
-            margin: auto;
-        }
-
-        .password {
-            font-size: 1.5rem;
-            color: #111;
-            background: #f3f3f3;
-            padding: 1rem;
-            border-radius: 6px;
-            font-weight: bold;
-            text-align: center;
-        }
-
-        p {
-            margin-bottom: 1rem;
-        }
-    </style>
-</head>
-<body>
-    <div class="card">
-        <h2>Hola {$this->username},</h2>
-        <p>Tu contraseña ha sido restablecida correctamente.</p>
-        <p>Tu nueva contraseña es:</p>
-        <div class="password">{$this->newPassword}</div>
-        <p>Te recomendamos cambiarla una vez accedas a tu cuenta.</p>
-        <p>Un saludo,<br><strong>El equipo de soporte</strong></p>
-    </div>
-</body>
-</html>
-HTML;
-    }
-
-    /**
-     * Define los archivos adjuntos que se incluirán en el correo electrónico.
-     *
-     * En este caso, no se adjuntan archivos, por lo que el array está vacío.
-     * 
-     * @return array Un array de los archivos adjuntos (vacío en este caso).
-     */
-    public function attachments(): array
-    {
-        return [];
+        return $this->subject('Restablecimiento de contraseña')
+            ->view('emails.password_reset')
+            ->with([
+                'username' => $this->username,
+                'newPassword' => $this->newPassword,
+            ]);
     }
 }
