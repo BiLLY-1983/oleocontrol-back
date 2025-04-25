@@ -130,4 +130,27 @@ class User extends Authenticatable
     {
         return $this->hasMany(Notification::class, 'receiver_id');
     }
+
+    /**
+     * Función para generar un nombre de usuario único.
+     * Se obtiene un nombre de usuario basado en el primer nombre, apellido y DNI.
+     * 
+     * @param string $first
+     * @param string $last
+     * @param string $dni
+     * @return string
+     */
+    public static function generateUsername(string $first, string $last, string $dni): string
+    {
+        $dniLetter = substr($dni, -1);
+        $base = strtolower("{$first}.{$last}{$dniLetter}");
+        $username = $base;
+
+        $count = self::where('username', $username)->count();
+        if ($count > 0) {
+            $username .= rand(10, 99);
+        }
+
+        return $username;
+    }
 }

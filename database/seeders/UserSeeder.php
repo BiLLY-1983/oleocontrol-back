@@ -2,6 +2,7 @@
 
 namespace Database\Seeders;
 
+use App\Models\Department;
 use App\Models\Role;
 use App\Models\User;
 use Illuminate\Database\Seeder;
@@ -16,13 +17,29 @@ class UserSeeder extends Seeder
     {
         /* Crear un usuario Admin */
         $admin = User::create([
-            'username' => 'Admin',
-            'first_name' => 'Admin',
-            'last_name' => 'Admin',
+            'username' => 'BiLLY',
+            'first_name' => 'Pedro',
+            'last_name' => 'Berzosa Ogallar',
+            'dni' => '77342536E',
+            'email' => 'oleocontrol.info@gmail.com',
+            'password' => Hash::make('PasswordAdmin123'),
+            'phone' => '687853157',
+            'status' => true,
+        ]);
+
+        // El Admin tendrá todos los roles
+        $adminRoles = Role::whereIn('name', ['Administrador', 'Socio', 'Empleado'])->get();
+        $admin->roles()->attach($adminRoles);
+
+        /* Crear un usuario Admin */
+        $admin = User::create([
+            'username' => 'AdminPruebas',
+            'first_name' => 'Administrador',
+            'last_name' => 'Pruebas',
             'dni' => '00000000A',
-            'email' => 'oleocontrol.back@gmail.com',
+            'email' => 'admin.pruebas@gmail.com',
             'password' => Hash::make('Password123'),
-            'phone' => '0000000000',
+            'phone' => '000000000',
             'status' => true,
         ]);
 
@@ -37,11 +54,11 @@ class UserSeeder extends Seeder
         $guess = User::create([
             'username' => 'Guess',
             'first_name' => 'Invitado',
-            'last_name' => '.',
+            'last_name' => 'Pruebas',
             'dni' => 'Invitado',
             'email' => 'invitado@gmail.com',
             'password' => Hash::make('Password123'),
-            'phone' => '111111111',
+            'phone' => '000000000',
             'status' => true,
         ]);
 
@@ -54,13 +71,13 @@ class UserSeeder extends Seeder
 
         /* Crear un usuario Socio */
         $member = User::create([
-            'username' => 'Member',
-            'first_name' => 'Prueba',
-            'last_name' => '.',
+            'username' => 'SocioPruebas',
+            'first_name' => 'Socio',
+            'last_name' => 'Pruebas',
             'dni' => 'member',
-            'email' => 'socio@gmail.com',
+            'email' => 'socio.pruebas.oleocontrol@gmail.com',
             'password' => Hash::make('Password123'),
-            'phone' => '111111111',
+            'phone' => '000000000',
             'status' => true,
         ]);
 
@@ -69,20 +86,39 @@ class UserSeeder extends Seeder
 
         /* ------------------------- */
 
-        /* Crear un usuario Empleado */
-        $worker = User::create([
-            'username' => 'Worker',
-            'first_name' => 'Worker',
-            'last_name' => '.',
-            'dni' => 'worker',
-            'email' => 'worker@gmail.com',
-            'password' => Hash::make('Password123'),
-            'phone' => '111111111',
-            'status' => true,
-        ]);
+        /* Crear usuarios 'Empleado' */
 
-        $workerRole = Role::where('name', 'Empleado')->first();
-        $worker->roles()->attach($workerRole);
+        // Obtener los departamentos por nombre
+        $contabilidad = Department::where('name', 'Contabilidad')->first();
+        $laboratorio = Department::where('name', 'Laboratorio')->first();
+        $controlEntradas = Department::where('name', 'Control de entradas')->first();
+        $rrhh = Department::where('name', 'RRHH')->first();
+        $administracion = Department::where('name', 'Administración')->first();
+
+        // Crear empleados para cada departamento
+        $employeesByDepartment = [
+            ['username' => 'Contabilidad_Emp', 'first_name' => 'Empleado', 'last_name' => 'Contabilidad', 'email' => 'contabilidad@gmail.com', 'department_id' => $contabilidad->id],
+            ['username' => 'Laboratorio_Emp', 'first_name' => 'Empleado', 'last_name' => 'Laboratorio', 'email' => 'laboratorio@gmail.com', 'department_id' => $laboratorio->id],
+            ['username' => 'ControlEntradas_Emp', 'first_name' => 'Empleado', 'last_name' => 'Control Entradas', 'email' => 'entradas@gmail.com', 'department_id' => $controlEntradas->id],
+            ['username' => 'RRHH_Emp', 'first_name' => 'Empleado', 'last_name' => 'RRHH', 'email' => 'rrhh@gmail.com', 'department_id' => $rrhh->id],
+            ['username' => 'Administracion_Emp', 'first_name' => 'Empleado', 'last_name' => 'Administración', 'email' => 'control.entradas@gmail.com', 'department_id' => $administracion->id],
+        ];
+
+        foreach ($employeesByDepartment as $employee) {
+            $user = User::create([
+                'username' => $employee['username'],
+                'first_name' => $employee['first_name'],
+                'last_name' => $employee['last_name'],
+                'email' => $employee['email'],
+                'password' => Hash::make('Password123'),
+                'phone' => '654321987',
+                'status' => true,
+                'department_id' => $employee['department_id'],
+            ]);
+
+            $workerRole = Role::where('name', 'Empleado')->first();
+            $user->roles()->attach($workerRole);
+        }
 
         /* ------------------------- */
 

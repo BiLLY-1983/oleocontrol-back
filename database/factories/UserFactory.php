@@ -2,6 +2,7 @@
 
 namespace Database\Factories;
 
+use App\Models\User;
 use Illuminate\Database\Eloquent\Factories\Factory;
 use Illuminate\Support\Facades\Hash;
 
@@ -22,25 +23,42 @@ class UserFactory extends Factory
      */
     public function definition(): array
     {
+        $firstName = $this->faker->firstName();
+        $lastName = $this->faker->lastName();
+        $dni = $this->generarDNI();
+
         return [
-            'username' => $this->faker->unique()->userName,
-            'first_name' => $this->faker->firstName,
-            'last_name' => $this->faker->lastName,
-            'dni' => $this->faker->unique()->numerify('########') . 'A',
-            'email' => $this->faker->unique()->safeEmail,
+            'first_name' => $firstName,
+            'last_name' => $lastName,
+            'dni' => $dni,
+            'username' => User::generateUsername($firstName, $lastName, $dni),
+            'email' => $this->faker->unique()->safeEmail(),
             'password' => Hash::make('Password123'),
-            'phone' => $this->faker->phoneNumber,
+            'phone' => $this->faker->phoneNumber(),
             'status' => true,
         ];
     }
+
 
     /**
      * Indicate that the model's email address should be unverified.
      */
     public function unverified(): static
     {
-        return $this->state(fn (array $attributes) => [
+        return $this->state(fn(array $attributes) => [
             'email_verified_at' => null,
         ]);
+    }
+
+    /**
+     * Función para generar un DNI español aleatorio.
+     * @return string
+     */
+    private function generarDNI(): string
+    {
+        $numero = rand(10000000, 99999999);
+        $letras = 'TRWAGMYFPDXBNJZSQVHLCKE';
+        $letra = $letras[$numero % 23];
+        return $numero . $letra;
     }
 }
