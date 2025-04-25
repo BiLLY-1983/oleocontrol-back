@@ -10,6 +10,7 @@ use App\Mail\NewSettlementUpdated;
 use App\Models\Employee;
 use App\Models\Member;
 use App\Models\OilInventory;
+use App\Models\OilSettlement;
 use App\Models\Settlement;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Facades\Auth;
@@ -75,7 +76,7 @@ class SettlementController extends Controller
                 ->where('oil_id', $validated['oil_id'])
                 ->sum('quantity');
 
-            $totalSettled = Settlement::where('member_id', $validated['member_id'])
+            $totalSettled = OilSettlement::where('member_id', $validated['member_id'])
                 ->where('oil_id', $validated['oil_id'])
                 ->sum('amount');
 
@@ -144,23 +145,41 @@ class SettlementController extends Controller
      */
     public function update(UpdateSettlementRequest $request, $id): JsonResponse
     {
-        $settlement = Settlement::findOrFail($id);
-        $settlement->update($request->validated());
+        DB::beginTransaction();
 
+        try {
+            $settlement = Settlement::findOrFail($id);
+            $settlement->update($request->validated());
 
-        $memberEmail = $settlement->member->user->email;
-        $settlementResource = (new SettlementResource($settlement))->toArray($request);
+            if ($settlement->settlement_status === 'Aceptada') {
+                OilSettlement::create([
+                    'member_id' => $settlement->member_id,
+                    'oil_id' => $settlement->oil_id,
+                    'amount' => $settlement->amount,
+                    'settlement_date' => $settlement->settlement_date,
+                ]);
+            }
 
-        // Generar el PDF
-        $pdf = Pdf::loadView('pdf.new_settlement', ['settlement' => $settlementResource]);
+            DB::commit();
 
-        // Enviar el correo con el PDF adjunto
-        Mail::to($memberEmail)->send(new NewSettlementUpdated($settlementResource, $pdf->output()));
+            $memberEmail = $settlement->member->user->email;
+            $settlementResource = (new SettlementResource($settlement))->toArray($request);
 
-        return response()->json([
-            'status' => 'success',
-            'data' => new SettlementResource($settlement)
-        ], 200);
+            $pdf = Pdf::loadView('pdf.new_settlement', ['settlement' => $settlementResource]);
+
+            Mail::to($memberEmail)->send(new NewSettlementUpdated($settlementResource, $pdf->output()));
+
+            return response()->json([
+                'status' => 'success',
+                'data' => new SettlementResource($settlement)
+            ], 200);
+        } catch (\Exception $e) {
+            DB::rollBack();
+            return response()->json([
+                'status' => 'error',
+                'message' => 'Error al actualizar la liquidación: ' . $e->getMessage()
+            ], 500);
+        }
     }
 
     /**
