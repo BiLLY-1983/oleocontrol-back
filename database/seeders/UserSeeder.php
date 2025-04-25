@@ -113,7 +113,7 @@ class UserSeeder extends Seeder
                 'dni' => $employee['dni'],
                 'email' => $employee['email'],
                 'password' => Hash::make('Password123'),
-                'phone' => '654321987',
+                'phone' => '687853157',
                 'status' => true,
             ]);
 
