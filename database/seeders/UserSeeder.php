@@ -3,6 +3,7 @@
 namespace Database\Seeders;
 
 use App\Models\Department;
+use App\Models\Employee;
 use App\Models\Role;
 use App\Models\User;
 use Illuminate\Database\Seeder;
@@ -36,7 +37,7 @@ class UserSeeder extends Seeder
             'username' => 'AdminPruebas',
             'first_name' => 'Administrador',
             'last_name' => 'Pruebas',
-            'dni' => '00000000A',
+            'dni' => '00000000P',
             'email' => 'admin.pruebas@gmail.com',
             'password' => Hash::make('Password123'),
             'phone' => '000000000',
@@ -55,7 +56,7 @@ class UserSeeder extends Seeder
             'username' => 'Guess',
             'first_name' => 'Invitado',
             'last_name' => 'Pruebas',
-            'dni' => 'Invitado',
+            'dni' => '00000000Z',
             'email' => 'invitado@gmail.com',
             'password' => Hash::make('Password123'),
             'phone' => '000000000',
@@ -74,7 +75,7 @@ class UserSeeder extends Seeder
             'username' => 'SocioPruebas',
             'first_name' => 'Socio',
             'last_name' => 'Pruebas',
-            'dni' => 'member',
+            'dni' => '00000000S',
             'email' => 'socio.pruebas.oleocontrol@gmail.com',
             'password' => Hash::make('Password123'),
             'phone' => '000000000',
@@ -97,11 +98,11 @@ class UserSeeder extends Seeder
 
         // Crear empleados para cada departamento
         $employeesByDepartment = [
-            ['username' => 'Contabilidad_Emp', 'first_name' => 'Empleado', 'last_name' => 'Contabilidad', 'email' => 'contabilidad@gmail.com', 'department_id' => $contabilidad->id],
-            ['username' => 'Laboratorio_Emp', 'first_name' => 'Empleado', 'last_name' => 'Laboratorio', 'email' => 'laboratorio@gmail.com', 'department_id' => $laboratorio->id],
-            ['username' => 'ControlEntradas_Emp', 'first_name' => 'Empleado', 'last_name' => 'Control Entradas', 'email' => 'entradas@gmail.com', 'department_id' => $controlEntradas->id],
-            ['username' => 'RRHH_Emp', 'first_name' => 'Empleado', 'last_name' => 'RRHH', 'email' => 'rrhh@gmail.com', 'department_id' => $rrhh->id],
-            ['username' => 'Administracion_Emp', 'first_name' => 'Empleado', 'last_name' => 'Administración', 'email' => 'control.entradas@gmail.com', 'department_id' => $administracion->id],
+            ['username' => 'Contabilidad_Emp', 'first_name' => 'Empleado', 'last_name' => 'Contabilidad', 'dni' => '00000000C', 'email' => 'contabilidad@gmail.com', 'department_id' => $contabilidad->id],
+            ['username' => 'Laboratorio_Emp', 'first_name' => 'Empleado', 'last_name' => 'Laboratorio', 'dni' => '00000000L', 'email' => 'laboratorio@gmail.com', 'department_id' => $laboratorio->id],
+            ['username' => 'ControlEntradas_Emp', 'first_name' => 'Empleado', 'last_name' => 'Control Entradas', 'dni' => '00000000E', 'email' => 'entradas@gmail.com', 'department_id' => $controlEntradas->id],
+            ['username' => 'RRHH_Emp', 'first_name' => 'Empleado', 'last_name' => 'RRHH', 'dni' => '00000000R', 'email' => 'rrhh@gmail.com', 'department_id' => $rrhh->id],
+            ['username' => 'Administracion_Emp', 'first_name' => 'Empleado', 'last_name' => 'Administración', 'dni' => '00000000A', 'email' => 'control.entradas@gmail.com', 'department_id' => $administracion->id],
         ];
 
         foreach ($employeesByDepartment as $employee) {
@@ -109,15 +110,21 @@ class UserSeeder extends Seeder
                 'username' => $employee['username'],
                 'first_name' => $employee['first_name'],
                 'last_name' => $employee['last_name'],
+                'dni' => $employee['dni'],
                 'email' => $employee['email'],
                 'password' => Hash::make('Password123'),
                 'phone' => '654321987',
                 'status' => true,
-                'department_id' => $employee['department_id'],
             ]);
 
             $workerRole = Role::where('name', 'Empleado')->first();
             $user->roles()->attach($workerRole);
+
+            // Crear la entrada correspondiente en la tabla employees
+            Employee::create([
+                'user_id' => $user->id,  
+                'department_id' => $employee['department_id']
+            ]);
         }
 
         /* ------------------------- */
