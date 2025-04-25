@@ -21,6 +21,8 @@ Route::middleware('auth:sanctum')->group(function () {
     require __DIR__.'/api/settlements.php';
     require __DIR__.'/api/oils.php';
     require __DIR__.'/api/notifications.php';
+    require __DIR__.'/api/oil_inventories.php';
+    require __DIR__.'/api/oil_settlements.php';
 });
 
 Route::post('/reset-password-request', [UserController::class, 'resetPasswordRequest']);
