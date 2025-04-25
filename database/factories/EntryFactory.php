@@ -21,7 +21,7 @@ class EntryFactory extends Factory
         $member = Member::inRandomOrder()->first();
 
         return [
-            'entry_date' => $this->faker->date(),
+            'entry_date' => $this->faker->dateTimeBetween('2024-01-01', 'now')->format('Y-m-d'),
             'olive_quantity' => $this->faker->randomFloat(2, 1, 10000),
             'oil_quantity' => null,
             'analysis_status' => 'Pendiente',
