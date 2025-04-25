@@ -66,9 +66,8 @@ class UserController extends Controller
             $first = explode(' ', trim($request->first_name))[0];
             $last = explode(' ', trim($request->last_name))[0];
             $dniLetter = strtoupper(substr($request->dni, -1));
-            $username = strtolower("{$first}.{$last}{$dniLetter}");
+            $username = strtolower("{$first}.{$last}.{$dniLetter}");
 
-            $username = strtolower("{$first}.{$last}{$dniLetter}");
             $count = User::where('username', $username)->count();
             if ($count > 0) {
                 $username .= rand(10, 99);

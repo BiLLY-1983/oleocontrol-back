@@ -143,7 +143,7 @@ class User extends Authenticatable
     public static function generateUsername(string $first, string $last, string $dni): string
     {
         $dniLetter = substr($dni, -1);
-        $base = strtolower("{$first}.{$last}{$dniLetter}");
+        $base = strtolower("{$first}.{$last}.{$dniLetter}");
         $username = $base;
 
         $count = self::where('username', $username)->count();
