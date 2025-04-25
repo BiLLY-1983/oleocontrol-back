@@ -32,6 +32,11 @@ class UserSeeder extends Seeder
         $adminRoles = Role::whereIn('name', ['Administrador', 'Socio', 'Empleado'])->get();
         $admin->roles()->attach($adminRoles);
 
+        Employee::create([
+            'user_id' => $admin->id,
+            'department_id' => 1
+        ]);
+
         /* Crear un usuario Admin */
         $admin = User::create([
             'username' => 'AdminPruebas',
@@ -45,8 +50,12 @@ class UserSeeder extends Seeder
         ]);
 
         // El Admin tendrá todos los roles
-        $adminRoles = Role::whereIn('name', ['Administrador', 'Socio', 'Empleado'])->get();
         $admin->roles()->attach($adminRoles);
+
+        Employee::create([
+            'user_id' => $admin->id,
+            'department_id' => 1
+        ]);
 
 
         /* ------------------------- */
