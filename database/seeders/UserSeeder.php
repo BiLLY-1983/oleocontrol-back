@@ -85,7 +85,7 @@ class UserSeeder extends Seeder
             'first_name' => 'Socio',
             'last_name' => 'Pruebas',
             'dni' => '00000000S',
-            'email' => 'socio.pruebas.oleocontrol@gmail.com',
+            'email' => 'socio.oleocontrol@hotmail.com',
             'password' => Hash::make('Password123'),
             'phone' => '000000000',
             'status' => true,
