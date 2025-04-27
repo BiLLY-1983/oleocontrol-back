@@ -82,7 +82,7 @@
     <div class="logo-container">
         <img class="logo" src="{{ public_path('images/logo.png') }}" alt="Logo">
     </div>
-    <h1 class="title">Informe de Liquidación</h1>
+    <h1 class="title">Informe de recepción de aceituna</h1>
 
     <div class="card">
         <div class="card-title">Fecha de entrada</div>
