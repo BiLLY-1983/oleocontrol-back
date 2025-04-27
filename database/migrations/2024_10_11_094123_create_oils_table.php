@@ -16,6 +16,7 @@ return new class extends Migration
             $table->string('name', 255);
             $table->text('description')->max(500)->nullable();
             $table->decimal('price', 10, 2)->nullable();
+            $table->string('photo_url')->nullable(); 
             $table->timestamps();
         });
     }

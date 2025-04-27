@@ -18,7 +18,8 @@ class OilResource extends JsonResource
             'id' => $this->id,
             'name' => $this->name,
             'description' => $this->description,
-            'price' => $this->price
+            'price' => $this->price,
+            'photo_url' => $this->photo_url,
         ];
     }
 }

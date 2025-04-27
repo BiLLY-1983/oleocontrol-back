@@ -25,6 +25,7 @@ class StoreOilRequest extends FormRequest
             'name' => 'required|string|max:255',
             'description' => 'nullable|string|max:500',
             'price' => 'required|numeric|min:0',
+            'photo_url' => 'nullable|url',
         ];
     }
 }
