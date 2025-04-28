@@ -37,6 +37,9 @@
 </head>
 <body>
     <div class="card">
+        <div class="logo">
+            <img src="{{ $message->embed(public_path('images/logo.png')) }}" alt="Logo" width="80px">
+        </div>
         <h2>Hola {{ $username }},</h2>
         <p>Tu contraseña ha sido restablecida correctamente.</p>
         <p>Tu nueva contraseña es:</p>

@@ -92,7 +92,7 @@
 <body>
     <div class="container">
         <div class="logo">
-            <img src="{{ public_path('images/logo.png') }}" alt="Logo">
+            <img src="{{ $message->embed(public_path('images/logo.png')) }}" alt="Logo" width="80px">
         </div>
 
         <h2>Liquidación de Aceite</h2>

@@ -82,7 +82,7 @@
 <body>
     <div class="container">
         <div class="logo">
-            <img src="{{ asset('images/logo.png') }}" alt="Logo" style="height: 60px;">
+            <img src="{{ $message->embed(public_path('images/logo.png')) }}" alt="Logo" width="80px">
         </div>
         <h2>¡Bienvenido, {{ $full_name }}!</h2>
         <p>Gracias por unirte a nuestra plataforma. A continuación te proporcionamos tus credenciales de acceso iniciales:</p>
