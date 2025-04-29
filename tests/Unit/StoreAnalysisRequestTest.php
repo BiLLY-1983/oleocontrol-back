@@ -11,7 +11,6 @@ use App\Models\Role;
 use App\Models\User;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Foundation\Testing\RefreshDatabase;
-use Illuminate\Support\Facades\Schema;
 use Tests\TestCase;
 
 class StoreAnalysisRequestTest extends TestCase
@@ -30,8 +29,7 @@ class StoreAnalysisRequestTest extends TestCase
     protected function setUp(): void
     {
         parent::setUp();
-
-        $this->artisan('migrate');
+        $this->artisan('migrate'); 
 
         // Luego crea los roles
         $this->socioRole = Role::create(['name' => 'Socio']);
@@ -39,6 +37,9 @@ class StoreAnalysisRequestTest extends TestCase
 
         // Crear el usuario primero
         $this->user = User::factory()->create();
+
+        $this->user->roles()->attach($this->socioRole);
+        $this->user->roles()->attach($this->empleadoRole);
 
         // Crear el departamento
         $this->departamento = Department::create(['name' => 'Laboratorio']);
@@ -81,7 +82,154 @@ class StoreAnalysisRequestTest extends TestCase
         $this->assertArrayHasKey('acidity', $validator->errors()->toArray());
     }
 
+    public function test_fails_when_acidity_is_upper_100()
+    {
+        $data = [
+            'analysis_date' => $this->entrada1->entry_date,
+            'acidity'       => '200',
+            'humidity'      => '10',
+            'yield'         => '10',
+            'entry_id'      => $this->entrada1->id,
+            'member_id' => $this->socio->id,
+            'employee_id' => $this->empleado->id,
+            'oil_id'        => '',
+        ];
+
+        $request = new StoreAnalysisRequest();
+        $rules = $request->rules();
+
+        $validator = Validator::make($data, $rules);
+        $this->assertTrue($validator->fails());
+        $this->assertArrayHasKey('acidity', $validator->errors()->toArray());
+    }
+
     public function test_passes_when_acidity_is_valid()
+    {
+        $data = [
+            'analysis_date' => $this->entrada1->entry_date,
+            'acidity'       => '10',
+            'humidity'      => '10',
+            'yield'         => '10',
+            'entry_id'      => $this->entrada2->id,
+            'member_id' => $this->socio->id,
+            'employee_id' => $this->empleado->id,
+            'oil_id'        => '',
+        ];
+
+        $request = new StoreAnalysisRequest();
+        $rules = $request->rules();
+
+        $validator = Validator::make($data, $rules);
+
+        $this->assertFalse($validator->fails());
+    }
+
+    public function test_fails_when_humidity_is_negative()
+    {
+        $data = [
+            'analysis_date' => $this->entrada1->entry_date,
+            'acidity'       => '10',
+            'humidity'      => '-10',
+            'yield'         => '10',
+            'entry_id'      => $this->entrada1->id,
+            'member_id' => $this->socio->id,
+            'employee_id' => $this->empleado->id,
+            'oil_id'        => '',
+        ];
+
+        $request = new StoreAnalysisRequest();
+        $rules = $request->rules();
+
+        $validator = Validator::make($data, $rules);
+        $this->assertTrue($validator->fails());
+        $this->assertArrayHasKey('humidity', $validator->errors()->toArray());
+    }
+
+    public function test_fails_when_humidity_is_upper_100()
+    {
+        $data = [
+            'analysis_date' => $this->entrada1->entry_date,
+            'acidity'       => '10',
+            'humidity'      => '200',
+            'yield'         => '10',
+            'entry_id'      => $this->entrada1->id,
+            'member_id' => $this->socio->id,
+            'employee_id' => $this->empleado->id,
+            'oil_id'        => '',
+        ];
+
+        $request = new StoreAnalysisRequest();
+        $rules = $request->rules();
+
+        $validator = Validator::make($data, $rules);
+        $this->assertTrue($validator->fails());
+        $this->assertArrayHasKey('humidity', $validator->errors()->toArray());
+    }
+
+    public function test_passes_when_humidity_is_valid()
+    {
+        $data = [
+            'analysis_date' => $this->entrada1->entry_date,
+            'acidity'       => '10',
+            'humidity'      => '10',
+            'yield'         => '10',
+            'entry_id'      => $this->entrada2->id,
+            'member_id' => $this->socio->id,
+            'employee_id' => $this->empleado->id,
+            'oil_id'        => '',
+        ];
+
+        $request = new StoreAnalysisRequest();
+        $rules = $request->rules();
+
+        $validator = Validator::make($data, $rules);
+
+        $this->assertFalse($validator->fails());
+    }
+
+    public function test_fails_when_yield_is_negative()
+    {
+        $data = [
+            'analysis_date' => $this->entrada1->entry_date,
+            'acidity'       => '10',
+            'humidity'      => '10',
+            'yield'         => '-10',
+            'entry_id'      => $this->entrada1->id,
+            'member_id' => $this->socio->id,
+            'employee_id' => $this->empleado->id,
+            'oil_id'        => '',
+        ];
+
+        $request = new StoreAnalysisRequest();
+        $rules = $request->rules();
+
+        $validator = Validator::make($data, $rules);
+        $this->assertTrue($validator->fails());
+        $this->assertArrayHasKey('yield', $validator->errors()->toArray());
+    }
+
+    public function test_fails_when_yield_is_upper_100()
+    {
+        $data = [
+            'analysis_date' => $this->entrada1->entry_date,
+            'acidity'       => '10',
+            'humidity'      => '10',
+            'yield'         => '200',
+            'entry_id'      => $this->entrada1->id,
+            'member_id' => $this->socio->id,
+            'employee_id' => $this->empleado->id,
+            'oil_id'        => '',
+        ];
+
+        $request = new StoreAnalysisRequest();
+        $rules = $request->rules();
+
+        $validator = Validator::make($data, $rules);
+        $this->assertTrue($validator->fails());
+        $this->assertArrayHasKey('yield', $validator->errors()->toArray());
+    }
+
+    public function test_passes_when_yield_is_valid()
     {
         $data = [
             'analysis_date' => $this->entrada1->entry_date,

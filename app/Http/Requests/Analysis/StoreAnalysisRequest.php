@@ -28,7 +28,7 @@ class StoreAnalysisRequest extends FormRequest
             'yield'         => 'nullable|numeric|min:0|max:100.00',
             'entry_id'      => 'required|exists:entries,id|unique:analyses,entry_id',
             'member_id' => 'required|exists:members,id',
-            'employee_id' => 'nullable|exists:employee,id',
+            'employee_id' => 'nullable|exists:employees,id',
             'oil_id'        => 'nullable|exists:oils,id',
         ];
     }
