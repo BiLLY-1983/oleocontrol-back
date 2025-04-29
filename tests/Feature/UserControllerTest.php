@@ -2,15 +2,21 @@
 
 namespace Tests\Feature;
 
+use App\Mail\PasswordResetEmail;
 use App\Models\User;
 use App\Models\Role;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Illuminate\Support\Facades\Mail;
 use Laravel\Sanctum\Sanctum;
 use Tests\TestCase;
 
 class UserControllerTest extends TestCase
 {
     use RefreshDatabase;
+
+    protected $adminRole;
+    protected $socioRole;
+    protected $empleadoRole;
 
     protected $admin;
     protected $socio;
@@ -263,5 +269,68 @@ class UserControllerTest extends TestCase
         $response = $this->getJson('/api/users');
 
         $response->assertStatus(401);
+    }
+
+    public function test_reset_password_with_valid_credentials()
+    {
+        Mail::fake();
+
+        $user = User::factory()->create([
+            'username' => 'UsuarioTest',
+            'email' => 'usuario@test.com',
+        ]);
+
+        $response = $this->postJson('/api/reset-password-request', [
+            'email' => 'usuario@test.com',
+            'username' => 'UsuarioTest',
+        ]);
+
+        $response->assertStatus(200)
+            ->assertJson([
+                'status' => 'success',
+                'message' => 'Contraseña restablecida con éxito, se ha enviado la nueva contraseña por correo.',
+            ]);
+
+        Mail::assertSent(PasswordResetEmail::class, function ($mail) use ($user) {
+            return $mail->hasTo($user->email);
+        });
+    }
+
+    public function test_reset_password_with_invalid_email()
+    {
+        User::factory()->create([
+            'username' => 'UsuarioTest',
+            'email' => 'usuario@test.com',
+        ]);
+
+        $response = $this->postJson('/api/reset-password-request', [
+            'email' => 'otro@email.com',
+            'username' => 'UsuarioTest',
+        ]);
+
+        $response->assertStatus(404)
+            ->assertJson([
+                'status' => 'error',
+                'message' => 'Credenciales no válidas',
+            ]);
+    }
+
+    public function test_reset_password_with_invalid_username()
+    {
+        User::factory()->create([
+            'username' => 'UsuarioTest',
+            'email' => 'usuario@test.com',
+        ]);
+
+        $response = $this->postJson('/api/reset-password-request', [
+            'email' => 'usuario@test.com',
+            'username' => 'OtroNombre',
+        ]);
+
+        $response->assertStatus(404)
+            ->assertJson([
+                'status' => 'error',
+                'message' => 'Credenciales no válidas',
+            ]);
     }
 }

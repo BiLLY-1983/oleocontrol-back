@@ -20,6 +20,8 @@ class Employee extends Model
 {
     use HasFactory, HasApiTokens;
 
+    protected $table = 'employees';
+
     /**
      * Los atributos que no se pueden asignar masivamente.
      *
