@@ -570,7 +570,39 @@ class UserController extends Controller
      * Este método recibe una solicitud con el correo electrónico y nombre de usuario, verifica que las credenciales sean correctas, genera una nueva contraseña aleatoria y la guarda en la base de datos. Además, envía un correo electrónico al usuario con la nueva contraseña.
      *
      * @param ResetPasswordRequest $request La solicitud de restablecimiento de contraseña.
-     * @return \Illuminate\Http\JsonResponse Respuesta JSON con el estado de éxito, mensaje y nueva contraseña.
+     * @return JsonResponse Respuesta JSON con el estado de éxito, mensaje y nueva contraseña.
+     * @OA\Post(
+     *     path="/reset-password-request",
+     *     summary="Restablecer la contraseña de un usuario",
+     *     description="Este endpoint permite restablecer la contraseña de un usuario a partir de su correo electrónico y nombre de usuario. Si las credenciales son válidas, se genera una nueva contraseña aleatoria, se guarda y se envía por correo electrónico al usuario.",
+     *     operationId="resetPasswordRequest",
+     *     tags={"Usuarios"},
+     *     @OA\RequestBody(
+     *         required=true,
+     *         @OA\JsonContent(
+     *             required={"email","username"},
+     *             @OA\Property(property="email", type="string", format="email", example="usuario@example.com"),
+     *             @OA\Property(property="username", type="string", example="nombredeusuario")
+     *         )
+     *     ),
+     *     @OA\Response(
+     *         response=200,
+     *         description="Contraseña restablecida correctamente",
+     *         @OA\JsonContent(
+     *             @OA\Property(property="status", type="string", example="success"),
+     *             @OA\Property(property="message", type="string", example="Contraseña restablecida con éxito, se ha enviado la nueva contraseña por correo."),
+     *             @OA\Property(property="data", type="string", example="NuevaContraseña123")
+     *         )
+     *     ),
+     *     @OA\Response(
+     *         response=404,
+     *         description="Credenciales no válidas",
+     *         @OA\JsonContent(
+     *             @OA\Property(property="status", type="string", example="error"),
+     *             @OA\Property(property="message", type="string", example="Credenciales no válidas")
+     *         )
+     *     )
+     * )
      */
     public function resetPasswordRequest(ResetPasswordRequest $request)
     {
@@ -585,14 +617,11 @@ class UserController extends Controller
             ], 404);
         }
 
-        // Generar una contraseña aleatoria que cumpla con las reglas
         $newPassword = $this->generateSecurePassword();
 
-        // Guardar la nueva contraseña
         $user->password = Hash::make($newPassword);
         $user->save();
 
-        // Enviar el email con la nueva contraseña
         Mail::to($user->email)->send(new PasswordResetEmail($user->username, $newPassword));
 
         return response()->json([

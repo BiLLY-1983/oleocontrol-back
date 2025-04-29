@@ -11,9 +11,9 @@ namespace App\Http\Controllers\api;
  * 
  * @OA\SecurityScheme(
  *     securityScheme="bearerAuth",
- *     type="apiKey",
- *     in="header",
- *     name="Authorization",
+ *     type="http", 
+ *     scheme="bearer",  
+ *     bearerFormat="JWT", 
  *     description="Token de autenticación Bearer (usado por Sanctum)"
  * )
  */
@@ -72,7 +72,7 @@ class AuthController extends Controller
      *         required=true,
      *         @OA\JsonContent(
      *             required={"username", "password"},
-     *             @OA\Property(property="username", type="string", example="juan123"),
+     *             @OA\Property(property="username", type="string", example="AdminPruebas"),
      *             @OA\Property(property="password", type="string", example="Password123")
      *         )
      *     ),

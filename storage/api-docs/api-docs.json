@@ -26,7 +26,7 @@
                                 "properties": {
                                     "username": {
                                         "type": "string",
-                                        "example": "juan123"
+                                        "example": "AdminPruebas"
                                     },
                                     "password": {
                                         "type": "string",
@@ -164,6 +164,1087 @@
                                         "message": {
                                             "type": "string",
                                             "example": "Acceso denegado"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/api/departments": {
+            "get": {
+                "tags": [
+                    "Departamentos"
+                ],
+                "summary": "Obtener todos los departamentos",
+                "description": "Devuelve una lista de todos los departamentos registrados en el sistema.",
+                "operationId": "getDepartments",
+                "responses": {
+                    "200": {
+                        "description": "Lista de departamentos",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "status": {
+                                            "type": "string",
+                                            "example": "success"
+                                        },
+                                        "data": {
+                                            "type": "array",
+                                            "items": {
+                                                "$ref": "#/components/schemas/DepartmentResource"
+                                            }
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            },
+            "post": {
+                "tags": [
+                    "Departamentos"
+                ],
+                "summary": "Crear un nuevo departamento",
+                "description": "Crea un nuevo departamento con los datos proporcionados.",
+                "operationId": "storeDepartment",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "required": [
+                                    "name"
+                                ],
+                                "properties": {
+                                    "name": {
+                                        "type": "string",
+                                        "example": "Laboratorio"
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "201": {
+                        "description": "Departamento creado exitosamente",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "status": {
+                                            "type": "string",
+                                            "example": "success"
+                                        },
+                                        "data": {
+                                            "$ref": "#/components/schemas/DepartmentResource"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/api/departments/{id}": {
+            "get": {
+                "tags": [
+                    "Departamentos"
+                ],
+                "summary": "Mostrar un departamento específico",
+                "description": "Devuelve los detalles de un departamento dado su ID.",
+                "operationId": "showDepartment",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "ID del departamento",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Departamento encontrado",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "status": {
+                                            "type": "string",
+                                            "example": "success"
+                                        },
+                                        "data": {
+                                            "$ref": "#/components/schemas/DepartmentResource"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            },
+            "put": {
+                "tags": [
+                    "Departamentos"
+                ],
+                "summary": "Actualizar un departamento",
+                "description": "Actualiza los datos de un departamento existente.",
+                "operationId": "updateDepartment",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "ID del departamento a actualizar",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "required": [
+                                    "name"
+                                ],
+                                "properties": {
+                                    "name": {
+                                        "type": "string",
+                                        "example": "Recepción"
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Departamento actualizado",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "status": {
+                                            "type": "string",
+                                            "example": "success"
+                                        },
+                                        "data": {
+                                            "$ref": "#/components/schemas/DepartmentResource"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            },
+            "delete": {
+                "tags": [
+                    "Departamentos"
+                ],
+                "summary": "Eliminar un departamento",
+                "description": "Elimina un departamento según su ID.",
+                "operationId": "deleteDepartment",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "ID del departamento a eliminar",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "204": {
+                        "description": "Departamento eliminado satisfactoriamente"
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/api/employees": {
+            "get": {
+                "tags": [
+                    "Empleados"
+                ],
+                "summary": "Listar todos los empleados",
+                "description": "Muestra todos los empleados.\n\nEste método obtiene todos los empleados de la base de datos y devuelve una respuesta JSON con un estado de éxito y los datos de los empleados.",
+                "operationId": "5f4bcd5a07bb6c8d34f2feaf68f3a7c7",
+                "responses": {
+                    "200": {
+                        "description": "Lista de empleados",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "status": {
+                                            "type": "string",
+                                            "example": "success"
+                                        },
+                                        "data": {
+                                            "type": "array",
+                                            "items": {
+                                                "$ref": "#/components/schemas/EmployeeResource"
+                                            }
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            },
+            "post": {
+                "tags": [
+                    "Empleados"
+                ],
+                "summary": "Crear un nuevo empleado",
+                "description": "Crea un nuevo empleado junto con el usuario y rol correspondiente.\n\nEste método crea un nuevo empleado, su usuario asociado y le asigna el rol de \"Empleado\". La creación se realiza dentro de una transacción para garantizar la integridad de los datos.\nLa respuesta incluye un estado de éxito y los datos del usuario creado.",
+                "operationId": "7fc7d604ba7e8873bab5fcf3839b6d90",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "required": [
+                                    "first_name",
+                                    "last_name",
+                                    "dni",
+                                    "email",
+                                    "phone",
+                                    "status",
+                                    "department_id"
+                                ],
+                                "properties": {
+                                    "first_name": {
+                                        "type": "string",
+                                        "example": "Laura"
+                                    },
+                                    "last_name": {
+                                        "type": "string",
+                                        "example": "Martínez"
+                                    },
+                                    "dni": {
+                                        "type": "string",
+                                        "example": "12345678Z"
+                                    },
+                                    "email": {
+                                        "type": "string",
+                                        "format": "email",
+                                        "example": "laura@example.com"
+                                    },
+                                    "phone": {
+                                        "type": "string",
+                                        "example": "666555444"
+                                    },
+                                    "status": {
+                                        "type": "string",
+                                        "example": "activo"
+                                    },
+                                    "department_id": {
+                                        "type": "integer",
+                                        "example": 2
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "201": {
+                        "description": "Empleado creado correctamente",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "status": {
+                                            "type": "string",
+                                            "example": "success"
+                                        },
+                                        "data": {
+                                            "$ref": "#/components/schemas/UserResource"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/api/employees/{id}": {
+            "get": {
+                "tags": [
+                    "Empleados"
+                ],
+                "summary": "Mostrar un empleado",
+                "description": "Muestra un empleado específico por su ID.\n\nEste método recibe un ID de empleado, busca el empleado en la base de datos y devuelve una respuesta JSON con un estado de éxito y los datos del empleado.",
+                "operationId": "69cd01de9e0b2cd120d584ef3e639f96",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "ID del empleado",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Datos del empleado",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "status": {
+                                            "type": "string",
+                                            "example": "success"
+                                        },
+                                        "data": {
+                                            "$ref": "#/components/schemas/EmployeeResource"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            },
+            "put": {
+                "tags": [
+                    "Empleados"
+                ],
+                "summary": "Actualizar un empleado",
+                "description": "Actualiza un empleado específico por su ID.\n\nEste método recibe una solicitud de actualización de empleado, valida los datos y actualiza el empleado y su usuario asociado en la base de datos.\nLa respuesta incluye un estado de éxito y los datos del empleado actualizado en formato JSON.",
+                "operationId": "b22e1fd0d650fa5c63c8a7d1d32acbfe",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "ID del empleado",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "properties": {
+                                    "user": {
+                                        "properties": {
+                                            "username": {
+                                                "type": "string",
+                                                "example": "laura.martinezZ"
+                                            },
+                                            "first_name": {
+                                                "type": "string",
+                                                "example": "Laura"
+                                            },
+                                            "last_name": {
+                                                "type": "string",
+                                                "example": "Martínez"
+                                            },
+                                            "dni": {
+                                                "type": "string",
+                                                "example": "12345678Z"
+                                            },
+                                            "email": {
+                                                "type": "string",
+                                                "example": "laura@example.com"
+                                            },
+                                            "phone": {
+                                                "type": "string",
+                                                "example": "666555444"
+                                            },
+                                            "status": {
+                                                "type": "string",
+                                                "example": "activo"
+                                            }
+                                        },
+                                        "type": "object"
+                                    },
+                                    "department": {
+                                        "properties": {
+                                            "id": {
+                                                "type": "integer",
+                                                "example": 2
+                                            }
+                                        },
+                                        "type": "object"
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Empleado actualizado correctamente",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "status": {
+                                            "type": "string",
+                                            "example": "success"
+                                        },
+                                        "data": {
+                                            "$ref": "#/components/schemas/EmployeeResource"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            },
+            "delete": {
+                "tags": [
+                    "Empleados"
+                ],
+                "summary": "Eliminar un empleado",
+                "description": "Elimina un empleado específico por su ID.\n\nEste método recibe un ID de empleado, busca el empleado en la base de datos y elimina el empleado.\nLa respuesta incluye un estado de éxito y un mensaje de éxito en formato JSON.",
+                "operationId": "9a570eeea95ac9960cc5cfbeccc26123",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "ID del usuario del empleado",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "204": {
+                        "description": "Empleado eliminado correctamente",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "status": {
+                                            "type": "string",
+                                            "example": "success"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/api/members": {
+            "get": {
+                "tags": [
+                    "Members"
+                ],
+                "summary": "Listar todos los socios",
+                "description": "Muestra todos los socios.\n\nEste método obtiene todos los socios de la base de datos y devuelve una respuesta JSON con un estado de éxito y los datos de los socios.",
+                "operationId": "4e8230d39fe3529417c9a460cbd63a4c",
+                "responses": {
+                    "200": {
+                        "description": "Lista de socios",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "status": {
+                                            "type": "string"
+                                        },
+                                        "data": {
+                                            "type": "array",
+                                            "items": {
+                                                "$ref": "#/components/schemas/MemberResource"
+                                            }
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            },
+            "post": {
+                "tags": [
+                    "Miembros"
+                ],
+                "summary": "Crear un nuevo miembro",
+                "description": "Crea un nuevo miembro junto con su usuario y rol correspondiente.\n\nEste método crea un nuevo miembro, su usuario asociado y le asigna el rol de \"Socio\". La creación se realiza dentro de una transacción para garantizar la integridad de los datos.\nLa respuesta incluye un estado de éxito y los datos del usuario creado.",
+                "operationId": "87592872c1667344a26dc410cef5b4ba",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "required": [
+                                    "first_name",
+                                    "last_name",
+                                    "dni",
+                                    "email",
+                                    "phone",
+                                    "status"
+                                ],
+                                "properties": {
+                                    "first_name": {
+                                        "type": "string",
+                                        "example": "Juan"
+                                    },
+                                    "last_name": {
+                                        "type": "string",
+                                        "example": "Pérez"
+                                    },
+                                    "dni": {
+                                        "type": "string",
+                                        "example": "12345678Z"
+                                    },
+                                    "email": {
+                                        "type": "string",
+                                        "format": "email",
+                                        "example": "juan.perez@example.com"
+                                    },
+                                    "phone": {
+                                        "type": "string",
+                                        "example": "612345678"
+                                    },
+                                    "status": {
+                                        "type": "string",
+                                        "example": "activo"
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "201": {
+                        "description": "Miembro creado correctamente",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "status": {
+                                            "type": "string",
+                                            "example": "success"
+                                        },
+                                        "data": {
+                                            "$ref": "#/components/schemas/UserResource"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/api/members/{id}": {
+            "get": {
+                "tags": [
+                    "Members"
+                ],
+                "summary": "Obtener los datos de un socio por ID",
+                "description": "Muestra un socio específico por su ID.\n\nEste método recibe un ID de socio, busca el socio en la base de datos y devuelve una respuesta JSON con un estado de éxito y los datos del socio.",
+                "operationId": "749194efa66230d3974f3419bc51c111",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "ID del socio",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Datos del socio",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/MemberResource"
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Socio no encontrado"
+                    }
+                },
+                "security": [
+                    {
+                        "sanctum": []
+                    }
+                ]
+            },
+            "put": {
+                "tags": [
+                    "Miembros"
+                ],
+                "summary": "Actualizar datos de un socio",
+                "description": "Actualiza un socio específico por su ID.\n\nEste método recibe una solicitud de actualización de socio, valida los datos y actualiza tanto el miembro como el usuario asociado en la base de datos.\nLa respuesta incluye un estado de éxito y los datos del socio actualizado.\nSi ocurre algún error, se realiza un rollback de la transacción y se devuelve un mensaje de error.",
+                "operationId": "fca4ad568b04dd9ed139a41559860aed",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "ID del socio",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "required": [
+                                    "first_name",
+                                    "last_name",
+                                    "dni",
+                                    "email",
+                                    "phone",
+                                    "status"
+                                ],
+                                "properties": {
+                                    "first_name": {
+                                        "type": "string",
+                                        "example": "Juan"
+                                    },
+                                    "last_name": {
+                                        "type": "string",
+                                        "example": "Pérez"
+                                    },
+                                    "dni": {
+                                        "type": "string",
+                                        "example": "12345678Z"
+                                    },
+                                    "email": {
+                                        "type": "string",
+                                        "format": "email",
+                                        "example": "juan.perez@example.com"
+                                    },
+                                    "phone": {
+                                        "type": "string",
+                                        "example": "612345678"
+                                    },
+                                    "status": {
+                                        "type": "string",
+                                        "example": "activo"
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Socio actualizado exitosamente",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/MemberResource"
+                                }
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "Error al actualizar el socio"
+                    }
+                },
+                "security": [
+                    {
+                        "sanctum": []
+                    }
+                ]
+            },
+            "delete": {
+                "tags": [
+                    "Members"
+                ],
+                "summary": "Eliminar un socio",
+                "description": "Elimina un socio específico por su ID.\n\nEste método recibe un ID de socio, busca el socio en la base de datos y elimina el socio.\nLa respuesta incluye un estado de éxito y un mensaje de éxito en formato JSON.",
+                "operationId": "1fb9bc482ee522c0c7d14f5fb6e13ff6",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "ID del socio",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Socio eliminado satisfactoriamente",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "status": {
+                                            "type": "string"
+                                        },
+                                        "message": {
+                                            "type": "string"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Socio no encontrado"
+                    }
+                },
+                "security": [
+                    {
+                        "sanctum": []
+                    }
+                ]
+            }
+        },
+        "/api/roles": {
+            "get": {
+                "tags": [
+                    "Roles"
+                ],
+                "summary": "Obtener todos los roles",
+                "description": "Devuelve una lista con todos los roles registrados.",
+                "operationId": "getRoles",
+                "responses": {
+                    "200": {
+                        "description": "Lista de roles",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "status": {
+                                            "type": "string",
+                                            "example": "success"
+                                        },
+                                        "data": {
+                                            "type": "array",
+                                            "items": {
+                                                "$ref": "#/components/schemas/RoleResource"
+                                            }
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            },
+            "post": {
+                "tags": [
+                    "Roles"
+                ],
+                "summary": "Crear un nuevo rol",
+                "description": "Crea un nuevo rol en el sistema.",
+                "operationId": "storeRole",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "required": [
+                                    "name"
+                                ],
+                                "properties": {
+                                    "name": {
+                                        "type": "string",
+                                        "example": "Operario"
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "201": {
+                        "description": "Rol creado correctamente",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "status": {
+                                            "type": "string",
+                                            "example": "success"
+                                        },
+                                        "data": {
+                                            "$ref": "#/components/schemas/RoleResource"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/api/roles/{id}": {
+            "get": {
+                "tags": [
+                    "Roles"
+                ],
+                "summary": "Obtener un rol específico",
+                "description": "Devuelve los detalles de un rol por su ID.",
+                "operationId": "showRole",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "ID del rol",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Rol encontrado",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "status": {
+                                            "type": "string",
+                                            "example": "success"
+                                        },
+                                        "data": {
+                                            "$ref": "#/components/schemas/RoleResource"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            },
+            "put": {
+                "tags": [
+                    "Roles"
+                ],
+                "summary": "Actualizar un rol",
+                "description": "Actualiza los datos de un rol existente.",
+                "operationId": "updateRole",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "ID del rol",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "required": [
+                                    "name"
+                                ],
+                                "properties": {
+                                    "name": {
+                                        "type": "string",
+                                        "example": "Responsable"
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Rol actualizado correctamente",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "status": {
+                                            "type": "string",
+                                            "example": "success"
+                                        },
+                                        "data": {
+                                            "$ref": "#/components/schemas/RoleResource"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            },
+            "delete": {
+                "tags": [
+                    "Roles"
+                ],
+                "summary": "Eliminar un rol",
+                "description": "Elimina un rol existente por su ID.",
+                "operationId": "deleteRole",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "ID del rol a eliminar",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Rol eliminado satisfactoriamente",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "status": {
+                                            "type": "string",
+                                            "example": "success"
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Rol eliminado satisfactoriamente"
                                         }
                                     },
                                     "type": "object"
@@ -897,6 +1978,87 @@
                     }
                 ]
             }
+        },
+        "/reset-password-request": {
+            "post": {
+                "tags": [
+                    "Usuarios"
+                ],
+                "summary": "Restablecer la contraseña de un usuario",
+                "description": "Este endpoint permite restablecer la contraseña de un usuario a partir de su correo electrónico y nombre de usuario. Si las credenciales son válidas, se genera una nueva contraseña aleatoria, se guarda y se envía por correo electrónico al usuario.",
+                "operationId": "resetPasswordRequest",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "required": [
+                                    "email",
+                                    "username"
+                                ],
+                                "properties": {
+                                    "email": {
+                                        "type": "string",
+                                        "format": "email",
+                                        "example": "usuario@example.com"
+                                    },
+                                    "username": {
+                                        "type": "string",
+                                        "example": "nombredeusuario"
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Contraseña restablecida correctamente",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "status": {
+                                            "type": "string",
+                                            "example": "success"
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Contraseña restablecida con éxito, se ha enviado la nueva contraseña por correo."
+                                        },
+                                        "data": {
+                                            "type": "string",
+                                            "example": "NuevaContraseña123"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Credenciales no válidas",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "status": {
+                                            "type": "string",
+                                            "example": "error"
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Credenciales no válidas"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
         }
     },
     "components": {
@@ -1473,10 +2635,10 @@
         },
         "securitySchemes": {
             "bearerAuth": {
-                "type": "apiKey",
+                "type": "http",
                 "description": "Token de autenticación Bearer (usado por Sanctum)",
-                "name": "Authorization",
-                "in": "header"
+                "bearerFormat": "JWT",
+                "scheme": "bearer"
             }
         }
     },
@@ -1484,6 +2646,26 @@
         {
             "name": "Autenticación",
             "description": "Autenticación"
+        },
+        {
+            "name": "Departamentos",
+            "description": "Departamentos"
+        },
+        {
+            "name": "Empleados",
+            "description": "Empleados"
+        },
+        {
+            "name": "Members",
+            "description": "Members"
+        },
+        {
+            "name": "Miembros",
+            "description": "Miembros"
+        },
+        {
+            "name": "Roles",
+            "description": "Roles"
         },
         {
             "name": "Usuarios",

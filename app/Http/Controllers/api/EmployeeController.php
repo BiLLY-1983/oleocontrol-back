@@ -25,6 +25,23 @@ class EmployeeController extends Controller
      * Este método obtiene todos los empleados de la base de datos y devuelve una respuesta JSON con un estado de éxito y los datos de los empleados.
      *
      * @return JsonResponse Respuesta JSON con el estado de éxito y los datos de los empleados.
+     * 
+     * @OA\Get(
+     *     path="/api/employees",
+     *     summary="Listar todos los empleados",
+     *     tags={"Empleados"},
+     *     security={{
+     *         "bearerAuth": {}
+     *     }},
+     *     @OA\Response(
+     *         response=200,
+     *         description="Lista de empleados",
+     *         @OA\JsonContent(
+     *             @OA\Property(property="status", type="string", example="success"),
+     *             @OA\Property(property="data", type="array", @OA\Items(ref="#/components/schemas/EmployeeResource"))
+     *         )
+     *     )
+     * )
      */
     public function index(): JsonResponse
     {
@@ -35,52 +52,6 @@ class EmployeeController extends Controller
     }
 
     /**
-     * Muestra el empleado asociado a un usuario específico.
-     * 
-     * Este método recibe un ID de usuario, busca el empleado correspondiente y devuelve una respuesta JSON con un estado de éxito y los datos del empleado.
-     *
-     * @param int $userId El ID del usuario.
-     * @return JsonResponse Respuesta JSON con el estado de éxito y los datos del empleado.
-     */
-    public function indexByUser($userId)
-    {
-        // Buscar el empleado cuyo user_id coincida con el id proporcionado
-        $employee = Employee::where('user_id', $userId)->first();
-
-        // Verificar si el empleado existe
-        if ($employee) {
-            return response()->json([
-                'status' => 'success',
-                'data' => new EmployeeResource($employee)
-            ], 200);
-        } else {
-            return response()->json([
-                'status' => 'error',
-                'message' => 'Empleado no encontrado'
-            ], 404);
-        }
-    }
-
-    /**
-     * Crea un nuevo empleado.
-     * 
-     * Este método recibe una solicitud de creación de empleado, valida los datos y crea un nuevo empleado en la base de datos.
-     * La respuesta incluye un estado de éxito y los datos del empleado creado en formato JSON.
-     *
-     * @param StoreEmployeeRequest $request La solicitud de creación de empleado.
-     * @return JsonResponse Respuesta JSON con el estado de éxito y los datos del empleado creado.
-     */
-    public function storeOld(StoreEmployeeRequest $request): JsonResponse
-    {
-        $employee = Employee::create($request->validated());
-
-        return response()->json([
-            'status' => 'success',
-            'data' => new EmployeeResource($employee)
-        ], 201);
-    }
-
-    /**
      * Crea un nuevo empleado junto con el usuario y rol correspondiente.
      * 
      * Este método crea un nuevo empleado, su usuario asociado y le asigna el rol de "Empleado". La creación se realiza dentro de una transacción para garantizar la integridad de los datos.
@@ -88,6 +59,36 @@ class EmployeeController extends Controller
      *
      * @param StoreEmployeeRequest $request La solicitud de creación de empleado.
      * @return JsonResponse Respuesta JSON con el estado de éxito y los datos del usuario creado.
+     * 
+     * @OA\Post(
+     *     path="/api/employees",
+     *     summary="Crear un nuevo empleado",
+     *     tags={"Empleados"},
+     *     security={{
+     *         "bearerAuth": {}
+     *     }},
+     *     @OA\RequestBody(
+     *         required=true,
+     *         @OA\JsonContent(
+     *             required={"first_name", "last_name", "dni", "email", "phone", "status", "department_id"},
+     *             @OA\Property(property="first_name", type="string", example="Laura"),
+     *             @OA\Property(property="last_name", type="string", example="Martínez"),
+     *             @OA\Property(property="dni", type="string", example="12345678Z"),
+     *             @OA\Property(property="email", type="string", format="email", example="laura@example.com"),
+     *             @OA\Property(property="phone", type="string", example="666555444"),
+     *             @OA\Property(property="status", type="string", example="activo"),
+     *             @OA\Property(property="department_id", type="integer", example=2)
+     *         )
+     *     ),
+     *     @OA\Response(
+     *         response=201,
+     *         description="Empleado creado correctamente",
+     *         @OA\JsonContent(
+     *             @OA\Property(property="status", type="string", example="success"),
+     *             @OA\Property(property="data", ref="#/components/schemas/UserResource")
+     *         )
+     *     )
+     * )
      */
     public function store(StoreEmployeeRequest $request): JsonResponse
     {
@@ -166,7 +167,6 @@ class EmployeeController extends Controller
                 'message' => $e->getMessage(),
             ], 500);
         }
-         
     }
 
     /**
@@ -176,6 +176,29 @@ class EmployeeController extends Controller
      *
      * @param int $id El ID del empleado.
      * @return JsonResponse Respuesta JSON con el estado de éxito y los datos del empleado.
+     * @OA\Get(
+     *     path="/api/employees/{id}",
+     *     summary="Mostrar un empleado",
+     *     tags={"Empleados"},
+     *     security={{
+     *         "bearerAuth": {}
+     *     }},
+     *     @OA\Parameter(
+     *         name="id",
+     *         in="path",
+     *         required=true,
+     *         description="ID del empleado",
+     *         @OA\Schema(type="integer")
+     *     ),
+     *     @OA\Response(
+     *         response=200,
+     *         description="Datos del empleado",
+     *         @OA\JsonContent(
+     *             @OA\Property(property="status", type="string", example="success"),
+     *             @OA\Property(property="data", ref="#/components/schemas/EmployeeResource")
+     *         )
+     *     )
+     * )
      */
     public function show($id): JsonResponse
     {
@@ -196,6 +219,46 @@ class EmployeeController extends Controller
      * @param UpdateEmployeeRequest $request La solicitud de actualización de empleado.
      * @param int $id El ID del empleado.
      * @return JsonResponse Respuesta JSON con el estado de éxito y los datos del empleado actualizado.
+     * @OA\Put(
+     *     path="/api/employees/{id}",
+     *     summary="Actualizar un empleado",
+     *     tags={"Empleados"},
+     *     security={{
+     *         "bearerAuth": {}
+     *     }},
+     *     @OA\Parameter(
+     *         name="id",
+     *         in="path",
+     *         required=true,
+     *         description="ID del empleado",
+     *         @OA\Schema(type="integer")
+     *     ),
+     *     @OA\RequestBody(
+     *         required=true,
+     *         @OA\JsonContent(
+     *             @OA\Property(property="user", type="object",
+     *                 @OA\Property(property="username", type="string", example="laura.martinezZ"),
+     *                 @OA\Property(property="first_name", type="string", example="Laura"),
+     *                 @OA\Property(property="last_name", type="string", example="Martínez"),
+     *                 @OA\Property(property="dni", type="string", example="12345678Z"),
+     *                 @OA\Property(property="email", type="string", example="laura@example.com"),
+     *                 @OA\Property(property="phone", type="string", example="666555444"),
+     *                 @OA\Property(property="status", type="string", example="activo")
+     *             ),
+     *             @OA\Property(property="department", type="object",
+     *                 @OA\Property(property="id", type="integer", example=2)
+     *             )
+     *         )
+     *     ),
+     *     @OA\Response(
+     *         response=200,
+     *         description="Empleado actualizado correctamente",
+     *         @OA\JsonContent(
+     *             @OA\Property(property="status", type="string", example="success"),
+     *             @OA\Property(property="data", ref="#/components/schemas/EmployeeResource")
+     *         )
+     *     )
+     * )
      */
     public function update(UpdateEmployeeRequest $request, $id): JsonResponse
     {
@@ -258,6 +321,28 @@ class EmployeeController extends Controller
      *
      * @param int $id El ID del empleado.
      * @return JsonResponse Respuesta JSON con el estado de éxito y un mensaje de éxito.
+     * @OA\Delete(
+     *     path="/api/employees/{id}",
+     *     summary="Eliminar un empleado",
+     *     tags={"Empleados"},
+     *     security={{
+     *         "bearerAuth": {}
+     *     }},
+     *     @OA\Parameter(
+     *         name="id",
+     *         in="path",
+     *         required=true,
+     *         description="ID del usuario del empleado",
+     *         @OA\Schema(type="integer")
+     *     ),
+     *     @OA\Response(
+     *         response=204,
+     *         description="Empleado eliminado correctamente",
+     *         @OA\JsonContent(
+     *             @OA\Property(property="status", type="string", example="success")
+     *         )
+     *     )
+     * )
      */
     public function destroy($id): JsonResponse
     {
@@ -269,42 +354,6 @@ class EmployeeController extends Controller
         ], 204);
     }
 
-    /**
-     * Muestra el perfil del empleado autenticado.
-     * 
-     * Este método obtiene el empleado autenticado y devuelve una respuesta JSON con un estado de éxito y los datos del empleado.
-     *
-     * @return JsonResponse Respuesta JSON con el estado de éxito y los datos del empleado.
-     */
-    public function showProfile(): JsonResponse
-    {
-        $employee = Auth::user()->employee;
-
-        return response()->json([
-            'status' => 'success',
-            'data' => new EmployeeResource($employee)
-        ], 200);
-    }
-
-    /**
-     * Actualiza el perfil del empleado autenticado.
-     * 
-     * Este método recibe una solicitud de actualización de empleado, valida los datos y actualiza el empleado en la base de datos.
-     * La respuesta incluye un estado de éxito y los datos del empleado actualizado en formato JSON.
-     *
-     * @param UpdateEmployeeRequest $request La solicitud de actualización de empleado.
-     * @return JsonResponse Respuesta JSON con el estado de éxito y los datos del empleado actualizado.
-     */
-    public function updateProfile(UpdateEmployeeRequest $request): JsonResponse
-    {
-        $employee = Auth::user()->employee;
-        $employee->update($request->validated());
-
-        return response()->json([
-            'status' => 'success',
-            'data' => new EmployeeResource($employee)
-        ], 200);
-    }
 
     /**
      * Genera una contraseña segura aleatoria.

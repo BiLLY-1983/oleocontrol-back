@@ -17,6 +17,28 @@ class DepartmentController extends Controller
      * Este método obtiene todos los departamentos de la base de datos y devuelve una respuesta JSON con un estado de éxito y los datos de los departamentos.
      *
      * @return JsonResponse Respuesta JSON con el estado de éxito y los datos de los departamentos.
+     * @OA\Get(
+     *     path="/api/departments",
+     *     summary="Obtener todos los departamentos",
+     *     description="Devuelve una lista de todos los departamentos registrados en el sistema.",
+     *     operationId="getDepartments",
+     *     tags={"Departamentos"},
+     *     security={{
+     *         "bearerAuth": {}
+     *     }},
+     *     @OA\Response(
+     *         response=200,
+     *         description="Lista de departamentos",
+     *         @OA\JsonContent(
+     *             @OA\Property(property="status", type="string", example="success"),
+     *             @OA\Property(
+     *                 property="data",
+     *                 type="array",
+     *                 @OA\Items(ref="#/components/schemas/DepartmentResource")
+     *             )
+     *         )
+     *     )
+     * )
      */
     public function index(): JsonResponse
     {
@@ -34,11 +56,36 @@ class DepartmentController extends Controller
      *
      * @param StoreDepartmentRequest $request La solicitud de creación de departamento.
      * @return JsonResponse Respuesta JSON con el estado de éxito y los datos del departamento creado.
+     * @OA\Post(
+     *     path="/api/departments",
+     *     summary="Crear un nuevo departamento",
+     *     description="Crea un nuevo departamento con los datos proporcionados.",
+     *     operationId="storeDepartment",
+     *     tags={"Departamentos"},
+     *     security={{
+     *         "bearerAuth": {}
+     *     }},
+     *     @OA\RequestBody(
+     *         required=true,
+     *         @OA\JsonContent(
+     *             required={"name"},
+     *             @OA\Property(property="name", type="string", example="Laboratorio")
+     *         )
+     *     ),
+     *     @OA\Response(
+     *         response=201,
+     *         description="Departamento creado exitosamente",
+     *         @OA\JsonContent(
+     *             @OA\Property(property="status", type="string", example="success"),
+     *             @OA\Property(property="data", ref="#/components/schemas/DepartmentResource")
+     *         )
+     *     )
+     * )
      */
     public function store(StoreDepartmentRequest $request): JsonResponse
     {
         $department = Department::create($request->validated());
-        
+
         return response()->json([
             'status' => 'success',
             'data' => new DepartmentResource($department)
@@ -52,6 +99,31 @@ class DepartmentController extends Controller
      *
      * @param int $id El ID del departamento.
      * @return JsonResponse Respuesta JSON con el estado de éxito y los datos del departamento.
+     * @OA\Get(
+     *     path="/api/departments/{id}",
+     *     summary="Mostrar un departamento específico",
+     *     description="Devuelve los detalles de un departamento dado su ID.",
+     *     operationId="showDepartment",
+     *     tags={"Departamentos"},
+     *     security={{
+     *         "bearerAuth": {}
+     *     }},
+     *     @OA\Parameter(
+     *         name="id",
+     *         in="path",
+     *         required=true,
+     *         description="ID del departamento",
+     *         @OA\Schema(type="integer")
+     *     ),
+     *     @OA\Response(
+     *         response=200,
+     *         description="Departamento encontrado",
+     *         @OA\JsonContent(
+     *             @OA\Property(property="status", type="string", example="success"),
+     *             @OA\Property(property="data", ref="#/components/schemas/DepartmentResource")
+     *         )
+     *     )
+     * )
      */
     public function show($id): JsonResponse
     {
@@ -72,6 +144,38 @@ class DepartmentController extends Controller
      * @param UpdateDepartmentRequest $request La solicitud de actualización de departamento.
      * @param int $id El ID del departamento.
      * @return JsonResponse Respuesta JSON con el estado de éxito y los datos del departamento actualizado.
+     * @OA\Put(
+     *     path="/api/departments/{id}",
+     *     summary="Actualizar un departamento",
+     *     description="Actualiza los datos de un departamento existente.",
+     *     operationId="updateDepartment",
+     *     tags={"Departamentos"},
+     *     security={{
+     *         "bearerAuth": {}
+     *     }},
+     *     @OA\Parameter(
+     *         name="id",
+     *         in="path",
+     *         required=true,
+     *         description="ID del departamento a actualizar",
+     *         @OA\Schema(type="integer")
+     *     ),
+     *     @OA\RequestBody(
+     *         required=true,
+     *         @OA\JsonContent(
+     *             required={"name"},
+     *             @OA\Property(property="name", type="string", example="Recepción")
+     *         )
+     *     ),
+     *     @OA\Response(
+     *         response=200,
+     *         description="Departamento actualizado",
+     *         @OA\JsonContent(
+     *             @OA\Property(property="status", type="string", example="success"),
+     *             @OA\Property(property="data", ref="#/components/schemas/DepartmentResource")
+     *         )
+     *     )
+     * )
      */
     public function update(UpdateDepartmentRequest $request, $id): JsonResponse
     {
@@ -92,6 +196,27 @@ class DepartmentController extends Controller
      *
      * @param int $id El ID del departamento.
      * @return JsonResponse Respuesta JSON con el estado de éxito y un mensaje de éxito.
+     * @OA\Delete(
+     *     path="/api/departments/{id}",
+     *     summary="Eliminar un departamento",
+     *     description="Elimina un departamento según su ID.",
+     *     operationId="deleteDepartment",
+     *     tags={"Departamentos"},
+     *     security={{
+     *         "bearerAuth": {}
+     *     }},
+     *     @OA\Parameter(
+     *         name="id",
+     *         in="path",
+     *         required=true,
+     *         description="ID del departamento a eliminar",
+     *         @OA\Schema(type="integer")
+     *     ),
+     *     @OA\Response(
+     *         response=204,
+     *         description="Departamento eliminado satisfactoriamente"
+     *     )
+     * )
      */
     public function destroy($id): JsonResponse
     {

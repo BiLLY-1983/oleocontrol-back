@@ -25,6 +25,23 @@ class MemberController extends Controller
      * Este método obtiene todos los socios de la base de datos y devuelve una respuesta JSON con un estado de éxito y los datos de los socios.
      *
      * @return JsonResponse Respuesta JSON con el estado de éxito y los datos de los socios.
+     * 
+     * @OA\Get(
+     *     path="/api/members",
+     *     tags={"Members"},
+     *     summary="Listar todos los socios",
+     *     security={{
+     *         "bearerAuth": {}
+     *     }},
+     *     @OA\Response(
+     *         response=200,
+     *         description="Lista de socios",
+     *         @OA\JsonContent(
+     *             @OA\Property(property="status", type="string"),
+     *             @OA\Property(property="data", type="array", @OA\Items(ref="#/components/schemas/MemberResource"))
+     *         )
+     *     )
+     * )
      */
     public function index(): JsonResponse
     {
@@ -35,38 +52,42 @@ class MemberController extends Controller
     }
 
     /**
-     * Muestra el socio asociado a un usuario específico.
+     * Crea un nuevo miembro junto con su usuario y rol correspondiente.
      * 
-     * Este método recibe un ID de usuario, busca el socio correspondiente y devuelve una respuesta JSON con un estado de éxito y los datos del socio.
+     * Este método crea un nuevo miembro, su usuario asociado y le asigna el rol de "Socio". La creación se realiza dentro de una transacción para garantizar la integridad de los datos.
+     * La respuesta incluye un estado de éxito y los datos del usuario creado.
      *
-     * @param int $userId El ID del usuario.
-     * @return JsonResponse Respuesta JSON con el estado de éxito y los datos del socio.
-     */
-    public function indexByUser($userId)
-    {
-        $member = Member::where('user_id', $userId)->first();
-
-        if ($member) {
-            return response()->json([
-                'status' => 'success',
-                'data' => new MemberResource($member)
-            ], 200);
-        } else {
-            return response()->json([
-                'status' => 'error',
-                'message' => 'Socio no encontrado'
-            ], 404);
-        }
-    }
-
-    /**
-     * Crea un nuevo socio y un usuario asociado.
+     * @param StoreMemberRequest $request La solicitud de creación de miembro.
+     * @return JsonResponse Respuesta JSON con el estado de éxito y los datos del usuario creado.
      * 
-     * Este método recibe una solicitud de creación de socio, valida los datos, crea un nuevo usuario y asigna el rol de "Socio". Luego, crea un socio asociado al usuario y devuelve los datos del usuario creado.
-     * En caso de error, se realiza un rollback de la transacción y se devuelve un mensaje de error.
-     *
-     * @param StoreMemberRequest $request La solicitud de creación de socio.
-     * @return JsonResponse Respuesta JSON con el estado de éxito y los datos del usuario creado. En caso de error, se devuelve el mensaje de error.
+     * @OA\Post(
+     *     path="/api/members",
+     *     summary="Crear un nuevo miembro",
+     *     tags={"Miembros"},
+     *     security={{
+     *         "bearerAuth": {}
+     *     }},
+     *     @OA\RequestBody(
+     *         required=true,
+     *         @OA\JsonContent(
+     *             required={"first_name", "last_name", "dni", "email", "phone", "status"},
+     *             @OA\Property(property="first_name", type="string", example="Juan"),
+     *             @OA\Property(property="last_name", type="string", example="Pérez"),
+     *             @OA\Property(property="dni", type="string", example="12345678Z"),
+     *             @OA\Property(property="email", type="string", format="email", example="juan.perez@example.com"),
+     *             @OA\Property(property="phone", type="string", example="612345678"),
+     *             @OA\Property(property="status", type="string", example="activo")
+     *         )
+     *     ),
+     *     @OA\Response(
+     *         response=201,
+     *         description="Miembro creado correctamente",
+     *         @OA\JsonContent(
+     *             @OA\Property(property="status", type="string", example="success"),
+     *             @OA\Property(property="data", ref="#/components/schemas/UserResource")
+     *         )
+     *     )
+     * )
      */
     public function store(StoreMemberRequest $request): JsonResponse
     {
@@ -74,7 +95,7 @@ class MemberController extends Controller
 
         try {
 
-             
+
             // Generar contraseña aleatoria
             $generatedPassword = $this->generateSecurePassword();
 
@@ -141,7 +162,6 @@ class MemberController extends Controller
                 'message' => $e->getMessage(),
             ], 500);
         }
-
     }
 
     /**
@@ -151,6 +171,28 @@ class MemberController extends Controller
      *
      * @param int $id El ID del socio.
      * @return JsonResponse Respuesta JSON con el estado de éxito y los datos del socio.
+     * @OA\Get(
+     *     path="/api/members/{id}",
+     *     tags={"Members"},
+     *     summary="Obtener los datos de un socio por ID",
+     *     security={{"sanctum":{}}},
+     *     @OA\Parameter(
+     *         name="id",
+     *         in="path",
+     *         description="ID del socio",
+     *         required=true,
+     *         @OA\Schema(type="integer")
+     *     ),
+     *     @OA\Response(
+     *         response=200,
+     *         description="Datos del socio",
+     *         @OA\JsonContent(ref="#/components/schemas/MemberResource")
+     *     ),
+     *     @OA\Response(
+     *         response=404,
+     *         description="Socio no encontrado"
+     *     )
+     * )
      */
     public function show($id): JsonResponse
     {
@@ -172,6 +214,40 @@ class MemberController extends Controller
      * @param UpdateMemberRequest $request La solicitud de actualización de socio.
      * @param int $id El ID del socio.
      * @return JsonResponse Respuesta JSON con el estado de éxito y los datos del socio actualizado. En caso de error, se devuelve el mensaje de error.
+     * @OA\Put(
+     *     path="/api/members/{id}",
+     *     tags={"Miembros"},
+     *     summary="Actualizar datos de un socio",
+     *     security={{"sanctum":{}}},
+     *     @OA\Parameter(
+     *         name="id",
+     *         in="path",
+     *         description="ID del socio",
+     *         required=true,
+     *         @OA\Schema(type="integer")
+     *     ),
+     *     @OA\RequestBody(
+     *         required=true,
+     *         @OA\JsonContent(
+     *             required={"first_name", "last_name", "dni", "email", "phone", "status"},
+     *             @OA\Property(property="first_name", type="string", example="Juan"),
+     *             @OA\Property(property="last_name", type="string", example="Pérez"),
+     *             @OA\Property(property="dni", type="string", example="12345678Z"),
+     *             @OA\Property(property="email", type="string", format="email", example="juan.perez@example.com"),
+     *             @OA\Property(property="phone", type="string", example="612345678"),
+     *             @OA\Property(property="status", type="string", example="activo")
+     *         )
+     *     ),
+     *     @OA\Response(
+     *         response=200,
+     *         description="Socio actualizado exitosamente",
+     *         @OA\JsonContent(ref="#/components/schemas/MemberResource")
+     *     ),
+     *     @OA\Response(
+     *         response=500,
+     *         description="Error al actualizar el socio"
+     *     )
+     * )
      */
     public function update(UpdateMemberRequest $request, $id): JsonResponse
     {
@@ -234,6 +310,31 @@ class MemberController extends Controller
      *
      * @param int $id El ID del socio.
      * @return JsonResponse Respuesta JSON con el estado de éxito y un mensaje de éxito.
+     * @OA\Delete(
+     *     path="/api/members/{id}",
+     *     tags={"Members"},
+     *     summary="Eliminar un socio",
+     *     security={{"sanctum":{}}},
+     *     @OA\Parameter(
+     *         name="id",
+     *         in="path",
+     *         description="ID del socio",
+     *         required=true,
+     *         @OA\Schema(type="integer")
+     *     ),
+     *     @OA\Response(
+     *         response=200,
+     *         description="Socio eliminado satisfactoriamente",
+     *         @OA\JsonContent(
+     *             @OA\Property(property="status", type="string"),
+     *             @OA\Property(property="message", type="string")
+     *         )
+     *     ),
+     *     @OA\Response(
+     *         response=404,
+     *         description="Socio no encontrado"
+     *     )
+     * )
      */
     public function destroy($id): JsonResponse
     {
@@ -243,43 +344,6 @@ class MemberController extends Controller
         return response()->json([
             'status' => 'success',
             'message' => 'Socio eliminado satisfactoriamente'
-        ], 200);
-    }
-
-    /**
-     * Muestra el perfil del socio autenticado.
-     * 
-     * Este método obtiene el socio autenticado, busca el socio en la base de datos y devuelve una respuesta JSON con un estado de éxito y los datos del socio.
-     *
-     * @return JsonResponse Respuesta JSON con el estado de éxito y los datos del socio.
-     */
-    public function showProfile(): JsonResponse
-    {
-        $member = Auth::user()->member;
-
-        return response()->json([
-            'status' => 'success',
-            'data' => new MemberResource($member)
-        ], 200);
-    }
-
-    /**
-     * Actualiza el perfil del socio autenticado.
-     * 
-     * Este método recibe una solicitud de actualización de socio, valida los datos y actualiza el socio en la base de datos.
-     * La respuesta incluye un estado de éxito y los datos del socio actualizado en formato JSON.
-     *
-     * @param UpdateMemberRequest $request La solicitud de actualización de socio.
-     * @return JsonResponse Respuesta JSON con el estado de éxito y los datos del socio actualizado.
-     */
-    public function updateProfile(UpdateMemberRequest $request): JsonResponse
-    {
-        $member = Auth::user()->member;
-        $member->update($request->validated());
-
-        return response()->json([
-            'status' => 'success',
-            'data' => new MemberResource($member)
         ], 200);
     }
 
