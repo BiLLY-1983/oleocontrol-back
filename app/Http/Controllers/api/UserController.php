@@ -23,13 +23,43 @@ use Illuminate\Support\Facades\Mail;
 class UserController extends Controller
 {
     /**
-     * Muestra una lista de todos los usuarios.
+     * Obtener una lista de usuarios.
      * 
-     * Este método recupera todos los usuarios de la base de datos y los devuelve
-     * como una colección de recursos UserResource. La respuesta incluye un estado
-     * de éxito y los datos de los usuarios en formato JSON.
+     * Este método devuelve todos los usuarios registrados en la base de datos, utilizando la clase `UserResource` para formatear la respuesta. 
+     * Solo usuarios autenticados pueden acceder a esta ruta.
      *
-     * @return \Illuminate\Http\JsonResponse Respuesta JSON con la lista de usuarios
+     * @param Request $request Datos necesarios para realizar la acción (en este caso no se requieren parámetros).
+     * @return JsonResponse Devuelve una respuesta JSON con el estado 'success' y una lista de usuarios.
+     * @throws \Exception Excepción si no se puede obtener la lista de usuarios.
+     *
+     * @OA\Get(
+     *     path="/api/users",
+     *     summary="Obtener todos los usuarios",
+     *     description="Devuelve una lista de todos los usuarios registrados en la base de datos.",
+     *     tags={"Usuarios"},
+     *     security={{"bearerAuth": {}}},
+     *     @OA\Response(
+     *         response=200,
+     *         description="Lista de usuarios obtenida exitosamente.",
+     *         @OA\JsonContent(
+     *             type="array",
+     *             @OA\Items(
+     *                 type="object",
+     *                 @OA\Property(property="id", type="integer", example=1),
+     *                 @OA\Property(property="name", type="string", example="Juan Pérez"),
+     *                 @OA\Property(property="email", type="string", example="juan.perez@ejemplo.com")
+     *             )
+     *         )
+     *     ),
+     *     @OA\Response(
+     *         response=401,
+     *         description="No autorizado. Se requiere autenticación.",
+     *         @OA\JsonContent(
+     *             @OA\Property(property="status", type="string", example="error"),
+     *             @OA\Property(property="message", type="string", example="Token de autenticación no válido o no proporcionado.")
+     *         )
+     *     )
+     * )
      */
     public function index(): JsonResponse
     {
@@ -40,17 +70,68 @@ class UserController extends Controller
     }
 
     /**
-     * Crea y almacena un nuevo usuario en la base de datos y asigna un rol y perfil específico (Socio o Empleado).
+     * Crear un nuevo usuario.
+     * 
+     * Este método crea un nuevo usuario en la base de datos, generando automáticamente un nombre de usuario, asignando un rol y enviando un correo de bienvenida con la contraseña generada. El proceso está envuelto en una transacción para garantizar la integridad de los datos.
+     * Solo los administradores pueden acceder a esta ruta.
      *
-     * Este método maneja la creación de un nuevo usuario, asignación de roles y creación de un perfil dependiendo del tipo de rol. 
-     * Si el rol es 'Socio', se crea un miembro con un número de socio único. Si el rol es 'Empleado', se asigna el departamento correspondiente.
-     * El proceso se maneja dentro de una transacción para asegurar la integridad de los datos.
-     * 
-     * @param  \App\Http\Requests\StoreUserRequest  $request  La solicitud que contiene los datos del usuario a crear.
-     * 
-     * @return \Illuminate\Http\JsonResponse  La respuesta JSON con el estado de la operación y los datos del usuario creado.
-     * 
-     * @throws \Exception  Lanza una excepción si ocurre algún error al crear el usuario, rol, miembro o empleado.
+     * @param StoreUserRequest $request Datos necesarios para crear un nuevo usuario (nombre, apellidos, DNI, email, teléfono, rol, etc.).
+     * @return JsonResponse Respuesta con el estado 'success' y los datos del usuario recién creado.
+     * @throws \Exception Si ocurre un error durante la creación del usuario o en el proceso de asignación de roles y creación de miembro o empleado.
+     *
+     * @OA\Post(
+     *     path="/api/users",
+     *     summary="Crear un nuevo usuario",
+     *     description="Crea un nuevo usuario, generando un nombre de usuario y contraseña aleatoria, asignando un rol y enviando un correo de bienvenida con la nueva contraseña.",
+     *     tags={"Usuarios"},
+     *     security={{"bearerAuth": {}}},
+     *     @OA\RequestBody(
+     *         required=true,
+     *         @OA\JsonContent(
+     *             required={"first_name", "last_name", "dni", "email", "phone", "status", "user_type"},
+     *             @OA\Property(property="first_name", type="string", example="Juan"),
+     *             @OA\Property(property="last_name", type="string", example="Pérez"),
+     *             @OA\Property(property="dni", type="string", example="12345678Z"),
+     *             @OA\Property(property="email", type="string", example="juan.perez@ejemplo.com"),
+     *             @OA\Property(property="phone", type="string", example="123456789"),
+     *             @OA\Property(property="status", type="string", example="active"),
+     *             @OA\Property(property="user_type", type="string", example="Socio"),
+     *             @OA\Property(property="department_id", type="integer", example=1) 
+     *         )
+     *     ),
+     *     @OA\Response(
+     *         response=201,
+     *         description="Usuario creado exitosamente.",
+     *         @OA\JsonContent(
+     *             @OA\Property(property="status", type="string", example="success"),
+     *             @OA\Property(property="data", type="object", ref="#/components/schemas/UserResource")
+     *         )
+     *     ),
+     *     @OA\Response(
+     *         response=400,
+     *         description="Solicitud incorrecta, falta algún dato requerido.",
+     *         @OA\JsonContent(
+     *             @OA\Property(property="status", type="string", example="error"),
+     *             @OA\Property(property="message", type="string", example="El campo department_id es obligatorio para empleados.")
+     *         )
+     *     ),
+     *     @OA\Response(
+     *         response=401,
+     *         description="No autorizado. Se requiere autenticación de administrador.",
+     *         @OA\JsonContent(
+     *             @OA\Property(property="status", type="string", example="error"),
+     *             @OA\Property(property="message", type="string", example="Acceso denegado.")
+     *         )
+     *     ),
+     *     @OA\Response(
+     *         response=500,
+     *         description="Error interno del servidor.",
+     *         @OA\JsonContent(
+     *             @OA\Property(property="status", type="string", example="error"),
+     *             @OA\Property(property="message", type="string", example="No se pudo crear el socio.")
+     *         )
+     *     )
+     * )
      */
     public function store(StoreUserRequest $request): JsonResponse
     {
@@ -137,18 +218,63 @@ class UserController extends Controller
                 'message' => $e->getMessage(),
             ], 500);
         }
-        
     }
 
     /**
-     * Muestra un usuario en concreto.
+     * Obtener un usuario por ID.
      * 
-     * Este método recibe un ID de usuario, busca el usuario en la base de datos y devuelve los datos del usuario en formato JSON.
-     * La respuesta incluye un estado de éxito y los datos del usuario en formato JSON.
+     * Este endpoint permite obtener un usuario específico de la base de datos utilizando su ID. La ruta está protegida por autenticación utilizando Sanctum y el rol de administrador debe estar presente para poder acceder. Si el usuario no es encontrado o el rol no es el adecuado, se devolverán errores correspondientes.
      *
-     * @param int $id El ID del usuario a mostrar.
-     * @return \Illuminate\Http\JsonResponse Respuesta JSON con el estado de éxito y los datos del usuario.
+     * @param Request $request Los datos necesarios para realizar la consulta, en este caso, el ID del usuario.
+     * @return JsonResponse Respuesta con los datos del usuario o un mensaje de error en caso de fallo.
+     * @throws ModelNotFoundException Si el usuario con el ID especificado no es encontrado.
+     * @throws AuthorizationException Si el usuario no tiene los permisos necesarios (no es administrador).
+     *
+     * @OA\Get(
+     *     path="/api/users/{id}",
+     *     summary="Obtiene un usuario por ID",
+     *     description="Este endpoint permite obtener un usuario específico de la base de datos usando su ID. Solo accesible para administradores autenticados.",
+     *     tags={"Usuarios"},
+     *     security={{
+     *         "bearerAuth": {}
+     *     }},
+     *     @OA\Parameter(
+     *         name="id",
+     *         in="path",
+     *         required=true,
+     *         description="ID del usuario",
+     *         @OA\Schema(
+     *             type="integer",
+     *             example=1
+     *         )
+     *     ),
+     *     @OA\Response(
+     *         response=200,
+     *         description="Usuario encontrado",
+     *         @OA\JsonContent(
+     *             @OA\Property(property="status", type="string", example="success"),
+     *             @OA\Property(property="data", type="object", ref="#/components/schemas/UserResource")
+     *         )
+     *     ),
+     *     @OA\Response(
+     *         response=404,
+     *         description="Usuario no encontrado",
+     *         @OA\JsonContent(
+     *             @OA\Property(property="status", type="string", example="error"),
+     *             @OA\Property(property="message", type="string", example="Usuario no encontrado")
+     *         )
+     *     ),
+     *     @OA\Response(
+     *         response=403,
+     *         description="Acceso denegado. Se requiere ser administrador.",
+     *         @OA\JsonContent(
+     *             @OA\Property(property="status", type="string", example="error"),
+     *             @OA\Property(property="message", type="string", example="Acceso denegado")
+     *         )
+     *     )
+     * )
      */
+
     public function show($id): JsonResponse
     {
         $user = User::findOrFail($id);
@@ -160,12 +286,43 @@ class UserController extends Controller
     }
 
     /**
-     * Muestra el perfil del usuario autenticado.
+     * Obtener el perfil del usuario autenticado.
      * 
-     * Este método recupera el usuario autenticado y devuelve los datos del usuario en formato JSON.
-     * La respuesta incluye un estado de éxito y los datos del usuario en formato JSON.
+     * Este endpoint devuelve los datos del perfil del usuario actualmente autenticado mediante Sanctum. Si el token no es válido o ha expirado, se devuelve un error de autenticación.
      *
-     * @return \Illuminate\Http\JsonResponse Respuesta JSON con el estado de éxito y los datos del usuario.
+     * @return JsonResponse Contiene los datos del usuario autenticado o un mensaje de error si no está autenticado.
+     *
+     * @OA\Get(
+     *     path="/api/profile",
+     *     summary="Obtener el perfil del usuario autenticado",
+     *     description="Devuelve los datos del usuario que ha iniciado sesión. Requiere autenticación mediante token Bearer.",
+     *     tags={"Usuarios"},
+     *     security={{ "bearerAuth": {} }},
+     *     @OA\Response(
+     *         response=200,
+     *         description="Datos del usuario autenticado obtenidos correctamente",
+     *         @OA\JsonContent(
+     *             @OA\Property(property="status", type="string", example="success"),
+     *             @OA\Property(
+     *                 property="data",
+     *                 type="object",
+     *                 @OA\Property(property="id", type="integer", example=1),
+     *                 @OA\Property(property="name", type="string", example="Juan Pérez"),
+     *                 @OA\Property(property="email", type="string", example="juan@example.com"),
+     *                 @OA\Property(property="created_at", type="string", example="2024-09-01T12:34:56Z"),
+     *                 @OA\Property(property="updated_at", type="string", example="2024-09-20T10:11:12Z")
+     *             )
+     *         )
+     *     ),
+     *     @OA\Response(
+     *         response=401,
+     *         description="Usuario no autenticado",
+     *         @OA\JsonContent(
+     *             @OA\Property(property="status", type="string", example="error"),
+     *             @OA\Property(property="message", type="string", example="Usuario no autenticado")
+     *         )
+     *     )
+     * )
      */
     public function showProfile(): JsonResponse
     {
@@ -184,15 +341,72 @@ class UserController extends Controller
     }
 
     /**
-     * Actualiza un usuario.
+     * Actualizar un usuario por ID.
      * 
-     * Este método recibe una solicitud de actualización de usuario, valida los datos y actualiza el usuario en la base de datos.
-     * La respuesta incluye un estado de éxito y los datos del usuario actualizado en formato JSON.
+     * Este endpoint permite actualizar los detalles de un usuario específico mediante su ID. Solo los administradores autenticados pueden realizar esta acción. Si el usuario no es encontrado, se lanzará una excepción, y si el administrador no tiene permisos, se denegará el acceso.
      *
-     * @param UpdateUserRequest $request La solicitud de actualización de usuario.
-     * @param int $id El ID del usuario a actualizar.
-     * @return \Illuminate\Http\JsonResponse Respuesta JSON con el estado de éxito y los datos del usuario actualizado.
+     * @param UpdateUserRequest $request Datos para actualizar el usuario, validados por el formulario de validación `UpdateUserRequest`.
+     * @param int $id ID del usuario a actualizar.
+     * @return JsonResponse Respuesta con el estado de la actualización y los datos del usuario actualizado.
+     * @throws ModelNotFoundException Si el usuario con el ID especificado no es encontrado.
+     * @throws AuthorizationException Si el usuario no tiene los permisos necesarios (no es administrador).
+     *
+     * @OA\Put(
+     *     path="/api/users/{id}",
+     *     summary="Actualizar un usuario por ID",
+     *     description="Este endpoint permite actualizar los detalles de un usuario utilizando su ID. Solo accesible para administradores autenticados.",
+     *     tags={"Usuarios"},
+     *     security={{
+     *         "bearerAuth": {}
+     *     }},
+     *     @OA\Parameter(
+     *         name="id",
+     *         in="path",
+     *         required=true,
+     *         description="ID del usuario que se desea actualizar",
+     *         @OA\Schema(
+     *             type="integer",
+     *             example=1
+     *         )
+     *     ),
+     *     @OA\RequestBody(
+     *         required=true,
+     *         @OA\JsonContent(
+     *             required={"first_name", "last_name", "email", "phone", "status"},
+     *             @OA\Property(property="first_name", type="string", example="Juan"),
+     *             @OA\Property(property="last_name", type="string", example="Pérez"),
+     *             @OA\Property(property="email", type="string", example="juan.perez@example.com"),
+     *             @OA\Property(property="phone", type="string", example="123456789"),
+     *             @OA\Property(property="status", type="string", example="active")
+     *         )
+     *     ),
+     *     @OA\Response(
+     *         response=200,
+     *         description="Usuario actualizado con éxito",
+     *         @OA\JsonContent(
+     *             @OA\Property(property="status", type="string", example="success"),
+     *             @OA\Property(property="data", type="object", ref="#/components/schemas/UserResource")
+     *         )
+     *     ),
+     *     @OA\Response(
+     *         response=404,
+     *         description="Usuario no encontrado",
+     *         @OA\JsonContent(
+     *             @OA\Property(property="status", type="string", example="error"),
+     *             @OA\Property(property="message", type="string", example="Usuario no encontrado")
+     *         )
+     *     ),
+     *     @OA\Response(
+     *         response=403,
+     *         description="Acceso denegado. Se requiere ser administrador.",
+     *         @OA\JsonContent(
+     *             @OA\Property(property="status", type="string", example="error"),
+     *             @OA\Property(property="message", type="string", example="Acceso denegado")
+     *         )
+     *     )
+     * )
      */
+
     public function update(UpdateUserRequest $request, $id): JsonResponse
     {
         $user = User::findOrFail($id);
@@ -205,13 +419,64 @@ class UserController extends Controller
     }
 
     /**
-     * Actualiza el perfil de un usuario.
+     * Actualizar el perfil del usuario autenticado.
      * 
-     * Este método recibe una solicitud de actualización de usuario, valida los datos y actualiza el usuario en la base de datos.
-     * La respuesta incluye un estado de éxito y los datos del usuario actualizado en formato JSON.
+     * Este endpoint permite al usuario autenticado actualizar su nombre, correo electrónico y/o contraseña. Si se proporciona una nueva contraseña, esta será encriptada antes de ser almacenada.
+     * 
+     * @param UpdateProfileRequest $request Datos validados para actualizar el perfil del usuario autenticado.
+     * @return JsonResponse Devuelve los datos actualizados del usuario o un mensaje de error.
      *
-     * @param UpdateUserRequest $request La solicitud de actualización de usuario.
-     * @return \Illuminate\Http\JsonResponse Respuesta JSON con el estado de éxito y los datos del usuario actualizado.
+     * @OA\Put(
+     *     path="/api/profile",
+     *     summary="Actualizar perfil del usuario autenticado",
+     *     description="Actualiza los datos del usuario que ha iniciado sesión. Requiere autenticación con token Bearer.",
+     *     tags={"Usuarios"},
+     *     security={{ "bearerAuth": {} }},
+     *     @OA\RequestBody(
+     *         required=true,
+     *         @OA\JsonContent(
+     *             @OA\Property(property="name", type="string", example="Juan Actualizado"),
+     *             @OA\Property(property="email", type="string", format="email", example="nuevo.email@example.com"),
+     *             @OA\Property(property="password", type="string", format="password", example="nuevaContraseña123")
+     *         )
+     *     ),
+     *     @OA\Response(
+     *         response=200,
+     *         description="Perfil actualizado correctamente",
+     *         @OA\JsonContent(
+     *             @OA\Property(property="status", type="string", example="success"),
+     *             @OA\Property(
+     *                 property="data",
+     *                 type="object",
+     *                 @OA\Property(property="id", type="integer", example=1),
+     *                 @OA\Property(property="name", type="string", example="Juan Actualizado"),
+     *                 @OA\Property(property="email", type="string", example="nuevo.email@example.com"),
+     *                 @OA\Property(property="created_at", type="string", example="2024-09-01T12:34:56Z"),
+     *                 @OA\Property(property="updated_at", type="string", example="2024-10-01T10:00:00Z")
+     *             )
+     *         )
+     *     ),
+     *     @OA\Response(
+     *         response=422,
+     *         description="Error de validación en los datos proporcionados",
+     *         @OA\JsonContent(
+     *             @OA\Property(property="message", type="string", example="The given data was invalid."),
+     *             @OA\Property(
+     *                 property="errors",
+     *                 type="object",
+     *                 @OA\Property(property="email", type="array", @OA\Items(type="string", example="El email ya ha sido registrado"))
+     *             )
+     *         )
+     *     ),
+     *     @OA\Response(
+     *         response=401,
+     *         description="No autenticado",
+     *         @OA\JsonContent(
+     *             @OA\Property(property="status", type="string", example="error"),
+     *             @OA\Property(property="message", type="string", example="Usuario no autenticado")
+     *         )
+     *     )
+     * )
      */
     public function updateProfile(UpdateProfileRequest $request): JsonResponse
     {
@@ -235,13 +500,58 @@ class UserController extends Controller
     }
 
     /**
-     * Elimina un usuario.
+     * Eliminar un usuario por ID.
      * 
-     * Este método recibe un ID de usuario, busca el usuario en la base de datos y elimina el usuario.
-     * La respuesta incluye un estado de éxito y un mensaje de éxito en formato JSON.
+     * Este endpoint permite eliminar un usuario específico mediante su ID. Solo los administradores autenticados pueden realizar esta acción. Si el usuario no es encontrado, se lanzará una excepción, y si el administrador no tiene permisos, se denegará el acceso.
      *
-     * @param int $id El ID del usuario a eliminar.
-     * @return \Illuminate\Http\JsonResponse Respuesta JSON con el estado de éxito y un mensaje de éxito.
+     * @param int $id ID del usuario a eliminar.
+     * @return JsonResponse Respuesta con el estado de la eliminación y un mensaje de éxito.
+     * @throws ModelNotFoundException Si el usuario con el ID especificado no es encontrado.
+     * @throws AuthorizationException Si el usuario no tiene los permisos necesarios (no es administrador).
+     *
+     * @OA\Delete(
+     *     path="/api/users/{id}",
+     *     summary="Eliminar un usuario por ID",
+     *     description="Este endpoint permite eliminar un usuario utilizando su ID. Solo accesible para administradores autenticados.",
+     *     tags={"Usuarios"},
+     *     security={{
+     *         "bearerAuth": {}
+     *     }},
+     *     @OA\Parameter(
+     *         name="id",
+     *         in="path",
+     *         required=true,
+     *         description="ID del usuario que se desea eliminar",
+     *         @OA\Schema(
+     *             type="integer",
+     *             example=1
+     *         )
+     *     ),
+     *     @OA\Response(
+     *         response=204,
+     *         description="Usuario eliminado con éxito",
+     *         @OA\JsonContent(
+     *             @OA\Property(property="status", type="string", example="success"),
+     *             @OA\Property(property="message", type="string", example="Usuario eliminado satisfactoriamente")
+     *         )
+     *     ),
+     *     @OA\Response(
+     *         response=404,
+     *         description="Usuario no encontrado",
+     *         @OA\JsonContent(
+     *             @OA\Property(property="status", type="string", example="error"),
+     *             @OA\Property(property="message", type="string", example="Usuario no encontrado")
+     *         )
+     *     ),
+     *     @OA\Response(
+     *         response=403,
+     *         description="Acceso denegado. Se requiere ser administrador.",
+     *         @OA\JsonContent(
+     *             @OA\Property(property="status", type="string", example="error"),
+     *             @OA\Property(property="message", type="string", example="Acceso denegado")
+     *         )
+     *     )
+     * )
      */
     public function destroy($id): JsonResponse
     {

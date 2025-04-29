@@ -5,6 +5,62 @@ namespace App\Http\Resources;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
 
+/**
+ * @OA\Schema(
+ *     title="AnalysisResource",
+ *     description="Recurso que representa un análisis de aceite",
+ *     type="object",
+ *     @OA\Property(
+ *         property="id",
+ *         type="integer",
+ *         example=1
+ *     ),
+ *     @OA\Property(
+ *         property="analysis_date",
+ *         type="string",
+ *         format="date",
+ *         example="2025-04-29"
+ *     ),
+ *     @OA\Property(
+ *         property="acidity",
+ *         type="number",
+ *         format="float",
+ *         example=0.5
+ *     ),
+ *     @OA\Property(
+ *         property="humidity",
+ *         type="number",
+ *         format="float",
+ *         example=5.0
+ *     ),
+ *     @OA\Property(
+ *         property="yield",
+ *         type="number",
+ *         format="float",
+ *         example=0.85
+ *     ),
+ *     @OA\Property(
+ *         property="entry",
+ *         type="object",
+ *         ref="#/components/schemas/EntryResource"
+ *     ),
+ *     @OA\Property(
+ *         property="member",
+ *         type="object",
+ *         ref="#/components/schemas/MemberResource"
+ *     ),
+ *     @OA\Property(
+ *         property="employee",
+ *         type="object",
+ *         ref="#/components/schemas/EmployeeResource"
+ *     ),
+ *     @OA\Property(
+ *         property="oil",
+ *         type="object",
+ *         ref="#/components/schemas/OilResource"
+ *     )
+ * )
+ */
 class AnalysisResource extends JsonResource
 {
     /**
