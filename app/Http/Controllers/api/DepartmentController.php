@@ -101,6 +101,6 @@ class DepartmentController extends Controller
         return response()->json([
             'status' => 'success',
             'message' => 'Departamento eliminado satisfactoriamente'
-        ], 200);
+        ], 204);
     }
 }
