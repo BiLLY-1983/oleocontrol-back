@@ -58,7 +58,6 @@ class UserController extends Controller
 
         try {
 
-            
             // Generar contraseña aleatoria
             $generatedPassword = $this->generateSecurePassword();
 
@@ -76,16 +75,6 @@ class UserController extends Controller
             // Formar nombre completo
             $full_name = trim("{$request->first_name} {$request->last_name}");
 
-/*             // Validar que la letra del DNI sea correcta
-            $dniNumber = substr($request->dni, 0, -1);
-            $dniLetter = strtoupper(substr($request->dni, -1));
-            $letters = "TRWAGMYFPDXBNJZSQVHLCKE";
-            $expectedLetter = $letters[$dniNumber % 23];
-
-            if ($dniLetter !== $expectedLetter) {
-                throw new \Exception("La letra del DNI no es válida.");
-            } */
-
             $user = User::create([
                 'username' => $username,
                 'first_name' => $request->first_name,
@@ -94,19 +83,8 @@ class UserController extends Controller
                 'email' => $request->email,
                 'phone' => $request->phone,
                 'password' => Hash::make($generatedPassword),
+                'status' => $request->status
             ]);
-
-            
-
-           /*  $user = User::create($request->only([
-                'username',
-                'first_name',
-                'last_name',
-                'dni',
-                'email',
-                'password',
-                'phone',
-            ])); */
 
             $roleName = $request->user_type;
 
@@ -273,7 +251,7 @@ class UserController extends Controller
         return response()->json([
             'status' => 'success',
             'message' => 'Usuario eliminado satisfactoriamente'
-        ], 200);
+        ], 204);
     }
 
     /**

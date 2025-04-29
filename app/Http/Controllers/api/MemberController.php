@@ -101,18 +101,8 @@ class MemberController extends Controller
                 'email' => $request->email,
                 'phone' => $request->phone,
                 'password' => Hash::make($generatedPassword),
+                'status' => $request->status
             ]);
-             
-/* 
-            $user = User::create($request->only([
-                'username',
-                'first_name',
-                'last_name',
-                'dni',
-                'email',
-                'password',
-                'phone',
-            ])); */
 
             $roleName = 'Socio';
 

@@ -122,20 +122,8 @@ class EmployeeController extends Controller
                 'email' => $request->email,
                 'phone' => $request->phone,
                 'password' => Hash::make($generatedPassword),
+                'status' => $request->status
             ]);
-            
-
-/* 
-            // Crear el usuario
-            $user = User::create($request->only([
-                'username',
-                'first_name',
-                'last_name',
-                'dni',
-                'email',
-                'password',
-                'phone',
-            ])); */
 
             // Asignar rol al usuario
             $roleName = 'Empleado';
