@@ -7,32 +7,28 @@ return [
     | Cross-Origin Resource Sharing (CORS) Configuration
     |--------------------------------------------------------------------------
     |
-    | Aquí puedes configurar los ajustes para el intercambio de recursos entre
-    | orígenes cruzados o "CORS". Esto determina qué operaciones de origen cruzado
-    | pueden ejecutarse en los navegadores web. Puedes ajustar estos valores según
-    | sea necesario.
+    | Here you may configure your settings for cross-origin resource sharing
+    | or "CORS". This determines what cross-origin operations may execute
+    | in web browsers. You are free to adjust these settings as needed.
     |
-    | Para aprender más: https://developer.mozilla.org/en-US/docs/Web/HTTP/CORS
+    | To learn more: https://developer.mozilla.org/en-US/docs/Web/HTTP/CORS
     |
     */
 
     'paths' => ['api/*', 'sanctum/csrf-cookie'],
 
-    'allowed_methods' => ['*'],  // Permite todos los métodos HTTP (GET, POST, PUT, etc.)
+    'allowed_methods' => ['*'],
 
-    'allowed_origins' => [
-        'https://oleocontrol-front.alwaysdata.net', // URL del frontend en producción
-        'http://localhost:5173', // URL del frontend en desarrollo local
-    ],
+    'allowed_origins' => ['*'],
 
-    'allowed_origins_patterns' => [],  // No se necesita ningún patrón específico
+    'allowed_origins_patterns' => [],
 
-    'allowed_headers' => ['*'],  // Permite todas las cabeceras (como 'Authorization', 'Content-Type', etc.)
+    'allowed_headers' => ['*'],
 
-    'exposed_headers' => [],  // No se necesitan cabeceras expuestas adicionales
+    'exposed_headers' => [],
 
-    'max_age' => 0,  // No se necesita cachear el preflight
+    'max_age' => 0,
 
-    'supports_credentials' => true,  // Se necesitan credenciales para las solicitudes
+    'supports_credentials' => false,
 
 ];
