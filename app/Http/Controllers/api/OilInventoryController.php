@@ -17,6 +17,45 @@ class OilInventoryController extends Controller
      * Este método recupera todos los registros de inventario de aceite y los devuelve en formato JSON.
      *
      * @return JsonResponse Respuesta JSON con el listado de inventarios de aceite.
+     * 
+     * @OA\Get(
+     *     path="/api/oil-inventories",
+     *     summary="Listar todos los inventarios de aceite",
+     *     tags={"Inventarios de Aceite"},
+     *     security={{"bearerAuth": {}}},
+     *     @OA\Response(
+     *         response=200,
+     *         description="Listado de inventarios de aceite",
+     *         @OA\JsonContent(
+     *             @OA\Property(property="status", type="string", example="success"),
+     *             @OA\Property(property="data", type="array", @OA\Items(ref="#/components/schemas/OilInventoryResource"))
+     *         )
+     *     ),
+     *     @OA\Response(
+     *         response=401,
+     *         description="No autorizado",
+     *         @OA\JsonContent(
+     *             @OA\Property(property="status", type="string", example="error"),
+     *             @OA\Property(property="message", type="string", example="No autorizado")
+     *         )
+     *     ),
+     *     @OA\Response(
+     *         response=403,
+     *         description="Prohibido",
+     *         @OA\JsonContent(
+     *             @OA\Property(property="status", type="string", example="error"),
+     *             @OA\Property(property="message", type="string", example="Prohibido")
+     *         )
+     *     ),
+     *     @OA\Response(
+     *         response=500,
+     *         description="Error interno del servidor",
+     *         @OA\JsonContent(
+     *             @OA\Property(property="status", type="string", example="error"),
+     *             @OA\Property(property="message", type="string", example="Error interno del servidor")
+     *         )
+     *     )
+     * )
      */
     public function index(): JsonResponse
     {
@@ -35,6 +74,60 @@ class OilInventoryController extends Controller
      *
      * @param OilInventory $oilInventory El inventario de aceite a mostrar.
      * @return JsonResponse Respuesta JSON con los datos del inventario de aceite.
+     * 
+     * @OA\Get(
+     *     path="/api/oil-inventories/{id}",
+     *     summary="Mostrar un inventario de aceite específico",
+     *     tags={"Inventarios de Aceite"},
+     *     security={{"bearerAuth": {}}},
+     *     @OA\Parameter(
+     *         name="id",
+     *         in="path",
+     *         required=true,
+     *         description="ID del inventario de aceite",
+     *         @OA\Schema(type="integer")
+     *     ),
+     *     @OA\Response(
+     *         response=200,
+     *         description="Detalles del inventario de aceite",
+     *         @OA\JsonContent(
+     *             @OA\Property(property="status", type="string", example="success"),
+     *             @OA\Property(property="data", ref="#/components/schemas/OilInventoryResource")
+     *         )
+     *     ),
+     *     @OA\Response(
+     *         response=401,
+     *         description="No autorizado",
+     *         @OA\JsonContent(
+     *             @OA\Property(property="status", type="string", example="error"),
+     *             @OA\Property(property="message", type="string", example="No autorizado")
+     *         )
+     *     ),
+     *     @OA\Response(
+     *         response=403,
+     *         description="Prohibido",
+     *         @OA\JsonContent(
+     *             @OA\Property(property="status", type="string", example="error"),
+     *             @OA\Property(property="message", type="string", example="Prohibido")
+     *         )
+     *     ),
+     *     @OA\Response(
+     *         response=404,
+     *         description="No encontrado",
+     *         @OA\JsonContent(
+     *             @OA\Property(property="status", type="string", example="error"),
+     *             @OA\Property(property="message", type="string", example="No encontrado")
+     *         )
+     *     ),
+     *     @OA\Response(
+     *         response=500,
+     *         description="Error interno del servidor",
+     *         @OA\JsonContent(
+     *             @OA\Property(property="status", type="string", example="error"),
+     *             @OA\Property(property="message", type="string", example="Error interno del servidor")
+     *         )
+     *     )
+     * )
      */
     public function show(OilInventory $oilInventory): JsonResponse
     {
@@ -52,6 +145,63 @@ class OilInventoryController extends Controller
      *
      * @param StoreOilInventoryRequest $request La solicitud de creación de inventario de aceite.
      * @return JsonResponse Respuesta JSON con el estado de éxito y los datos del inventario de aceite creado.
+     * 
+     * @OA\Post(
+     *     path="/api/oil-inventories",
+     *     summary="Crear un nuevo inventario de aceite",
+     *     tags={"Inventarios de Aceite"},
+     *     security={{"bearerAuth": {}}},
+     *     @OA\RequestBody(
+     *         required=true,
+     *         @OA\JsonContent(
+     *             @OA\Property(property="member_id", type="integer", example=1),
+     *             @OA\Property(property="oil_id", type="integer", example=1),
+     *             @OA\Property(property="quantity", type="integer", example=100),
+     *             @OA\Property(property="date", type="string", format="date", example="2023-10-01"),
+     *             @OA\Property(property="description", type="string", example="Inventario inicial")
+     *         )
+     *     ),
+     *     @OA\Response(
+     *         response=201,
+     *         description="Inventario de aceite creado con éxito",
+     *         @OA\JsonContent(
+     *             @OA\Property(property="status", type="string", example="success"),
+     *             @OA\Property(property="data", ref="#/components/schemas/OilInventoryResource")
+     *         )
+     *     ),
+     *     @OA\Response(
+     *         response=400,
+     *         description="Solicitud incorrecta",
+     *         @OA\JsonContent(
+     *             @OA\Property(property="status", type="string", example="error"),
+     *             @OA\Property(property="message", type="string", example="Solicitud incorrecta")
+     *         )
+     *     ),
+     *     @OA\Response(
+     *         response=401,
+     *         description="No autorizado",
+     *         @OA\JsonContent(
+     *             @OA\Property(property="status", type="string", example="error"),
+     *             @OA\Property(property="message", type="string", example="No autorizado")
+     *         )
+     *     ),
+     *     @OA\Response(
+     *         response=403,
+     *         description="Prohibido",
+     *         @OA\JsonContent(
+     *             @OA\Property(property="status", type="string", example="error"),
+     *             @OA\Property(property="message", type="string", example="Prohibido")
+     *         )
+     *     ),
+     *     @OA\Response(
+     *         response=500,
+     *         description="Error interno del servidor",
+     *         @OA\JsonContent(
+     *             @OA\Property(property="status", type="string", example="error"),
+     *             @OA\Property(property="message", type="string", example="Error interno del servidor")
+     *         )
+     *     )
+     * )
      */
     public function store(StoreOilInventoryRequest $request): JsonResponse
     {
@@ -72,6 +222,64 @@ class OilInventoryController extends Controller
      *
      * @param int $memberId ID del socio.
      * @return JsonResponse Respuesta JSON con el estado de éxito, los inventarios de aceite y el total por tipo de aceite.
+     * 
+     * @OA\Get(
+     *     path="/api/members/{memberId}/oil-inventories",
+     *     summary="Listar inventarios de aceite por socio",
+     *     tags={"Inventarios de Aceite"},
+     *     security={{"bearerAuth": {}}},
+     *     @OA\Parameter(
+     *         name="memberId",
+     *         in="path",
+     *         required=true,
+     *         description="ID del socio",
+     *         @OA\Schema(type="integer")
+     *     ),
+     *     @OA\Response(
+     *         response=200,
+     *         description="Listado de inventarios de aceite por socio",
+     *         @OA\JsonContent(
+     *             @OA\Property(property="status", type="string", example="success"),
+     *             @OA\Property(property="data", type="array", @OA\Items(
+     *                 @OA\Property(property="oil_id", type="integer", example=1),
+     *                 @OA\Property(property="oil_name", type="string", example="Aceite de Oliva"),
+     *                 @OA\Property(property="total_quantity", type="integer", example=100)
+     *             ))
+     *         )
+     *     ),
+     *     @OA\Response(
+     *         response=401,
+     *         description="No autorizado",
+     *         @OA\JsonContent(
+     *             @OA\Property(property="status", type="string", example="error"),
+     *             @OA\Property(property="message", type="string", example="No autorizado")
+     *         )
+     *     ),
+     *     @OA\Response(
+     *         response=403,
+     *         description="Prohibido",
+     *         @OA\JsonContent(
+     *             @OA\Property(property="status", type="string", example="error"),
+     *             @OA\Property(property="message", type="string", example="Prohibido")
+     *         )
+     *     ),
+     *     @OA\Response(
+     *         response=404,
+     *         description="No encontrado",
+     *         @OA\JsonContent(
+     *             @OA\Property(property="status", type="string", example="error"),
+     *             @OA\Property(property="message", type="string", example="No encontrado")
+     *         )
+     *     ),
+     *     @OA\Response(
+     *         response=500,
+     *         description="Error interno del servidor",
+     *         @OA\JsonContent(
+     *             @OA\Property(property="status", type="string", example="error"),
+     *             @OA\Property(property="message", type="string", example="Error interno del servidor")
+     *         )
+     *     )
+     * )
      */
     public function indexForMember($memberId): JsonResponse
     {

@@ -25,6 +25,20 @@ class EntryController extends Controller
      * Este método obtiene todas las entradas de aceituna de la base de datos y devuelve una respuesta JSON con un estado de éxito y los datos de las entradas.
      *
      * @return JsonResponse Respuesta JSON con el estado de éxito y los datos de las entradas.
+     * @OA\Get(
+     *     path="/entries",
+     *     summary="Obtener todas las entradas de aceituna",
+     *     description="Este método obtiene todas las entradas de aceituna de la base de datos.",
+     *     tags={"Entradas de Aceituna"},
+     *     @OA\Response(
+     *         response=200,
+     *         description="Lista de entradas obtenida con éxito",
+     *         @OA\JsonContent(
+     *             @OA\Property(property="status", type="string", example="success"),
+     *             @OA\Property(property="data", type="array", @OA\Items(ref="#/components/schemas/EntryResource"))
+     *         )
+     *     )
+     * )
      */
     public function index(): JsonResponse
     {
@@ -43,6 +57,57 @@ class EntryController extends Controller
      *
      * @param StoreEntryRequest $request La solicitud de creación de entrada.
      * @return JsonResponse Respuesta JSON con el estado de éxito y los datos de la entrada creada.
+     * @OA\Post(
+     *     path="/api/entries",
+     *     summary="Crear una nueva entrada de aceituna",
+     *     description="Crea una nueva entrada de aceituna y genera un análisis asociado. Envía un correo con un PDF de la entrada creada al agricultor.",
+     *     tags={"Entradas de Aceituna"},
+     *     security={{"bearerAuth": {}}},
+     *     @OA\RequestBody(
+     *         required=true,
+     *         @OA\JsonContent(
+     *             required={"member_id", "weight", "variety", "harvest_date", "olive_type"},
+     *             @OA\Property(property="member_id", type="integer", example=1),
+     *             @OA\Property(property="weight", type="number", format="float", example=1500.5),
+     *             @OA\Property(property="variety", type="string", example="Arbequina"),
+     *             @OA\Property(property="harvest_date", type="string", format="date", example="2025-04-28"),
+     *             @OA\Property(property="olive_type", type="string", example="Verde")
+     *         )
+     *     ),
+     *     @OA\Response(
+     *         response=201,
+     *         description="Entrada de aceituna creada exitosamente.",
+     *         @OA\JsonContent(
+     *             @OA\Property(property="status", type="string", example="success"),
+     *             @OA\Property(property="data", type="object", ref="#/components/schemas/EntryResource"),
+     *             @OA\Property(property="analysis", type="object", ref="#/components/schemas/AnalysisResource")
+     *         )
+     *     ),
+     *     @OA\Response(
+     *         response=400,
+     *         description="Solicitud incorrecta, falta algún dato requerido o los datos son incorrectos.",
+     *         @OA\JsonContent(
+     *             @OA\Property(property="status", type="string", example="error"),
+     *             @OA\Property(property="message", type="string", example="El campo 'weight' es obligatorio.")
+     *         )
+     *     ),
+     *     @OA\Response(
+     *         response=401,
+     *         description="No autorizado. Se requiere autenticación.",
+     *         @OA\JsonContent(
+     *             @OA\Property(property="status", type="string", example="error"),
+     *             @OA\Property(property="message", type="string", example="Acceso denegado.")
+     *         )
+     *     ),
+     *     @OA\Response(
+     *         response=500,
+     *         description="Error interno del servidor.",
+     *         @OA\JsonContent(
+     *             @OA\Property(property="status", type="string", example="error"),
+     *             @OA\Property(property="message", type="string", example="No se pudo crear la entrada y el análisis.")
+     *         )
+     *     )
+     * )
      */
     public function store(StoreEntryRequest $request): JsonResponse
     {
@@ -89,6 +154,52 @@ class EntryController extends Controller
      *
      * @param int $id El ID de la entrada.
      * @return JsonResponse Respuesta JSON con el estado de éxito y los datos de la entrada.
+     * @OA\Get(
+     *     path="/api/entries/{id}",
+     *     summary="Obtener detalles de una entrada de aceituna",
+     *     description="Recupera los detalles de una entrada de aceituna específica mediante su ID.",
+     *     tags={"Entradas de Aceituna"},
+     *     security={{"bearerAuth": {}}},
+     *     @OA\Parameter(
+     *         name="id",
+     *         in="path",
+     *         required=true,
+     *         description="ID de la entrada de aceituna",
+     *         @OA\Schema(type="integer", example=1)
+     *     ),
+     *     @OA\Response(
+     *         response=200,
+     *         description="Entrada de aceituna obtenida exitosamente.",
+     *         @OA\JsonContent(
+     *             @OA\Property(property="status", type="string", example="success"),
+     *             @OA\Property(property="data", type="object", ref="#/components/schemas/EntryResource")
+     *         )
+     *     ),
+     *     @OA\Response(
+     *         response=404,
+     *         description="Entrada no encontrada.",
+     *         @OA\JsonContent(
+     *             @OA\Property(property="status", type="string", example="error"),
+     *             @OA\Property(property="message", type="string", example="La entrada de aceituna con el ID 1 no existe.")
+     *         )
+     *     ),
+     *     @OA\Response(
+     *         response=401,
+     *         description="No autorizado. Se requiere autenticación.",
+     *         @OA\JsonContent(
+     *             @OA\Property(property="status", type="string", example="error"),
+     *             @OA\Property(property="message", type="string", example="Acceso denegado.")
+     *         )
+     *     ),
+     *     @OA\Response(
+     *         response=500,
+     *         description="Error interno del servidor.",
+     *         @OA\JsonContent(
+     *             @OA\Property(property="status", type="string", example="error"),
+     *             @OA\Property(property="message", type="string", example="No se pudo recuperar la entrada de aceituna.")
+     *         )
+     *     )
+     * )
      */
     public function show($id): JsonResponse
     {
@@ -109,6 +220,70 @@ class EntryController extends Controller
      * @param UpdateEntryRequest $request La solicitud de actualización de entrada.
      * @param int $id El ID de la entrada.
      * @return JsonResponse Respuesta JSON con el estado de éxito y los datos de la entrada actualizada.
+     * @OA\Put(
+     *     path="/api/entries/{id}",
+     *     summary="Actualizar una entrada de aceituna",
+     *     description="Actualiza los detalles de una entrada de aceituna específica mediante su ID.",
+     *     tags={"Entradas de Aceituna"},
+     *     security={{"bearerAuth": {}}},
+     *     @OA\Parameter(
+     *         name="id",
+     *         in="path",
+     *         required=true,
+     *         description="ID de la entrada de aceituna a actualizar",
+     *         @OA\Schema(type="integer", example=1)
+     *     ),
+     *     @OA\RequestBody(
+     *         required=true,
+     *         @OA\JsonContent(
+     *             required={"date", "weight", "oil_content", "price"},
+     *             @OA\Property(property="date", type="string", format="date", example="2025-04-29"),
+     *             @OA\Property(property="weight", type="number", format="float", example=2500),
+     *             @OA\Property(property="oil_content", type="number", format="float", example=18.5),
+     *             @OA\Property(property="price", type="number", format="float", example=5.50)
+     *         )
+     *     ),
+     *     @OA\Response(
+     *         response=200,
+     *         description="Entrada de aceituna actualizada exitosamente.",
+     *         @OA\JsonContent(
+     *             @OA\Property(property="status", type="string", example="success"),
+     *             @OA\Property(property="data", type="object", ref="#/components/schemas/EntryResource")
+     *         )
+     *     ),
+     *     @OA\Response(
+     *         response=400,
+     *         description="Solicitud incorrecta, falta algún dato requerido.",
+     *         @OA\JsonContent(
+     *             @OA\Property(property="status", type="string", example="error"),
+     *             @OA\Property(property="message", type="string", example="El campo 'weight' es obligatorio.")
+     *         )
+     *     ),
+     *     @OA\Response(
+     *         response=404,
+     *         description="Entrada no encontrada.",
+     *         @OA\JsonContent(
+     *             @OA\Property(property="status", type="string", example="error"),
+     *             @OA\Property(property="message", type="string", example="La entrada de aceituna con el ID 1 no existe.")
+     *         )
+     *     ),
+     *     @OA\Response(
+     *         response=401,
+     *         description="No autorizado. Se requiere autenticación.",
+     *         @OA\JsonContent(
+     *             @OA\Property(property="status", type="string", example="error"),
+     *             @OA\Property(property="message", type="string", example="Acceso denegado.")
+     *         )
+     *     ),
+     *     @OA\Response(
+     *         response=500,
+     *         description="Error interno del servidor.",
+     *         @OA\JsonContent(
+     *             @OA\Property(property="status", type="string", example="error"),
+     *             @OA\Property(property="message", type="string", example="No se pudo actualizar la entrada de aceituna.")
+     *         )
+     *     )
+     * )
      */
     public function update(UpdateEntryRequest $request, $id): JsonResponse
     {
@@ -129,6 +304,51 @@ class EntryController extends Controller
      *
      * @param int $id El ID de la entrada.
      * @return JsonResponse Respuesta JSON con el estado de éxito y un mensaje de éxito.
+     * @OA\Delete(
+     *     path="/api/entries/{id}",
+     *     summary="Eliminar una entrada de aceituna",
+     *     description="Elimina una entrada de aceituna específica mediante su ID.",
+     *     tags={"Entradas de Aceituna"},
+     *     security={{"bearerAuth": {}}},
+     *     @OA\Parameter(
+     *         name="id",
+     *         in="path",
+     *         required=true,
+     *         description="ID de la entrada de aceituna a eliminar",
+     *         @OA\Schema(type="integer", example=1)
+     *     ),
+     *     @OA\Response(
+     *         response=200,
+     *         description="Entrada de aceituna eliminada exitosamente.",
+     *         @OA\JsonContent(
+     *             @OA\Property(property="status", type="string", example="success")
+     *         )
+     *     ),
+     *     @OA\Response(
+     *         response=404,
+     *         description="Entrada no encontrada.",
+     *         @OA\JsonContent(
+     *             @OA\Property(property="status", type="string", example="error"),
+     *             @OA\Property(property="message", type="string", example="La entrada de aceituna con el ID 1 no existe.")
+     *         )
+     *     ),
+     *     @OA\Response(
+     *         response=401,
+     *         description="No autorizado. Se requiere autenticación.",
+     *         @OA\JsonContent(
+     *             @OA\Property(property="status", type="string", example="error"),
+     *             @OA\Property(property="message", type="string", example="Acceso denegado.")
+     *         )
+     *     ),
+     *     @OA\Response(
+     *         response=500,
+     *         description="Error interno del servidor.",
+     *         @OA\JsonContent(
+     *             @OA\Property(property="status", type="string", example="error"),
+     *             @OA\Property(property="message", type="string", example="No se pudo eliminar la entrada de aceituna.")
+     *         )
+     *     )
+     * )
      */
     public function destroy($id): JsonResponse
     {
@@ -147,6 +367,52 @@ class EntryController extends Controller
      *
      * @param int $memberId El ID del socio.
      * @return JsonResponse Respuesta JSON con el estado de éxito y los datos de las entradas.
+     * @OA\Get(
+     *     path="/api/members/{memberId}/entries",
+     *     summary="Obtener todas las entradas de aceituna de un miembro",
+     *     description="Obtiene todas las entradas de aceituna asociadas a un miembro específico utilizando su ID.",
+     *     tags={"Entradas de Aceituna"},
+     *     security={{"bearerAuth": {}}},
+     *     @OA\Parameter(
+     *         name="memberId",
+     *         in="path",
+     *         required=true,
+     *         description="ID del miembro para obtener sus entradas de aceituna",
+     *         @OA\Schema(type="integer", example=1)
+     *     ),
+     *     @OA\Response(
+     *         response=200,
+     *         description="Entradas de aceituna obtenidas exitosamente.",
+     *         @OA\JsonContent(
+     *             @OA\Property(property="status", type="string", example="success"),
+     *             @OA\Property(property="data", type="array", @OA\Items(ref="#/components/schemas/EntryResource"))
+     *         )
+     *     ),
+     *     @OA\Response(
+     *         response=404,
+     *         description="Miembro no encontrado.",
+     *         @OA\JsonContent(
+     *             @OA\Property(property="status", type="string", example="error"),
+     *             @OA\Property(property="message", type="string", example="El miembro con el ID 1 no existe.")
+     *         )
+     *     ),
+     *     @OA\Response(
+     *         response=401,
+     *         description="No autorizado. Se requiere autenticación.",
+     *         @OA\JsonContent(
+     *             @OA\Property(property="status", type="string", example="error"),
+     *             @OA\Property(property="message", type="string", example="Acceso denegado.")
+     *         )
+     *     ),
+     *     @OA\Response(
+     *         response=500,
+     *         description="Error interno del servidor.",
+     *         @OA\JsonContent(
+     *             @OA\Property(property="status", type="string", example="error"),
+     *             @OA\Property(property="message", type="string", example="No se pudieron obtener las entradas de aceituna.")
+     *         )
+     *     )
+     * )
      */
     public function indexForMember($memberId): JsonResponse
     {
@@ -167,6 +433,65 @@ class EntryController extends Controller
      * @param int $memberId El ID del socio.
      * @param int $entryId El ID de la entrada.
      * @return JsonResponse Respuesta JSON con el estado de éxito y los datos de la entrada.
+     * @OA\Get(
+     *     path="/api/members/{memberId}/entries/{entryId}",
+     *     summary="Obtener una entrada de aceituna de un miembro específico",
+     *     description="Obtiene una entrada de aceituna específica asociada a un miembro, verificando que el usuario tiene el rol adecuado y que pertenece al miembro correcto.",
+     *     tags={"Entradas de Aceituna"},
+     *     security={{"bearerAuth": {}}},
+     *     @OA\Parameter(
+     *         name="memberId",
+     *         in="path",
+     *         required=true,
+     *         description="ID del miembro al que pertenece la entrada de aceituna",
+     *         @OA\Schema(type="integer", example=1)
+     *     ),
+     *     @OA\Parameter(
+     *         name="entryId",
+     *         in="path",
+     *         required=true,
+     *         description="ID de la entrada de aceituna que se desea obtener",
+     *         @OA\Schema(type="integer", example=1)
+     *     ),
+     *     @OA\Response(
+     *         response=200,
+     *         description="Entrada de aceituna obtenida exitosamente.",
+     *         @OA\JsonContent(
+     *             @OA\Property(property="status", type="string", example="success"),
+     *             @OA\Property(property="data", ref="#/components/schemas/EntryResource")
+     *         )
+     *     ),
+     *     @OA\Response(
+     *         response=403,
+     *         description="Acceso denegado. El usuario no tiene permiso para ver esta entrada.",
+     *         @OA\JsonContent(
+     *             @OA\Property(property="message", type="string", example="No tienes permiso para ver esta entrada.")
+     *         )
+     *     ),
+     *     @OA\Response(
+     *         response=404,
+     *         description="Miembro o entrada no encontrada.",
+     *         @OA\JsonContent(
+     *             @OA\Property(property="message", type="string", example="La entrada no pertenece al socio.")
+     *         )
+     *     ),
+     *     @OA\Response(
+     *         response=401,
+     *         description="No autorizado. Se requiere autenticación.",
+     *         @OA\JsonContent(
+     *             @OA\Property(property="status", type="string", example="error"),
+     *             @OA\Property(property="message", type="string", example="Acceso denegado.")
+     *         )
+     *     ),
+     *     @OA\Response(
+     *         response=500,
+     *         description="Error interno del servidor.",
+     *         @OA\JsonContent(
+     *             @OA\Property(property="status", type="string", example="error"),
+     *             @OA\Property(property="message", type="string", example="No se pudo obtener la entrada de aceituna.")
+     *         )
+     *     )
+     * )
      */
     public function showForMember($memberId, $entryId): JsonResponse
     {

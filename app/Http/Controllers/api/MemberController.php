@@ -28,7 +28,7 @@ class MemberController extends Controller
      * 
      * @OA\Get(
      *     path="/api/members",
-     *     tags={"Members"},
+     *     tags={"Socios"},
      *     summary="Listar todos los socios",
      *     security={{
      *         "bearerAuth": {}
@@ -63,7 +63,7 @@ class MemberController extends Controller
      * @OA\Post(
      *     path="/api/members",
      *     summary="Crear un nuevo miembro",
-     *     tags={"Miembros"},
+     *     tags={"Socios"},
      *     security={{
      *         "bearerAuth": {}
      *     }},
@@ -173,7 +173,7 @@ class MemberController extends Controller
      * @return JsonResponse Respuesta JSON con el estado de éxito y los datos del socio.
      * @OA\Get(
      *     path="/api/members/{id}",
-     *     tags={"Members"},
+     *     tags={"Socios"},
      *     summary="Obtener los datos de un socio por ID",
      *     security={{"sanctum":{}}},
      *     @OA\Parameter(
@@ -216,7 +216,7 @@ class MemberController extends Controller
      * @return JsonResponse Respuesta JSON con el estado de éxito y los datos del socio actualizado. En caso de error, se devuelve el mensaje de error.
      * @OA\Put(
      *     path="/api/members/{id}",
-     *     tags={"Miembros"},
+     *     tags={"Socios"},
      *     summary="Actualizar datos de un socio",
      *     security={{"sanctum":{}}},
      *     @OA\Parameter(
@@ -312,7 +312,7 @@ class MemberController extends Controller
      * @return JsonResponse Respuesta JSON con el estado de éxito y un mensaje de éxito.
      * @OA\Delete(
      *     path="/api/members/{id}",
-     *     tags={"Members"},
+     *     tags={"Socios"},
      *     summary="Eliminar un socio",
      *     security={{"sanctum":{}}},
      *     @OA\Parameter(
