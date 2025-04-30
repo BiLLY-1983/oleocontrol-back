@@ -21,8 +21,7 @@ return [
     'allowed_methods' => ['*'],  // Permite todos los métodos HTTP (GET, POST, PUT, etc.)
 
     'allowed_origins' => [
-        'https://oleocontrol-front.alwaysdata.net', // URL del frontend en producción
-        'http://localhost:5173', // URL del frontend en desarrollo local
+        '*', 
     ],
 
     'allowed_origins_patterns' => [],  // No se necesita ningún patrón específico
@@ -33,6 +32,6 @@ return [
 
     'max_age' => 0,  // No se necesita cachear el preflight
 
-    'supports_credentials' => true,  // Se necesitan credenciales para las solicitudes
+    'supports_credentials' => false,  // Se necesitan credenciales para las solicitudes
 
 ];
