@@ -33,6 +33,6 @@ return [
 
     'max_age' => 0,  // No se necesita cachear el preflight
 
-    'supports_credentials' => false,  // No se necesitan credenciales para las solicitudes
+    'supports_credentials' => true,  // Se necesitan credenciales para las solicitudes
 
 ];
