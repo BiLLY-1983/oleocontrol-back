@@ -1,4 +1,7 @@
-<img src="public/readme/logo-color.png" alt="Logo OleoControl" width="300"/>
+<div style="text-align: center;">
+  <img src="public/readme/logo-color.png" alt="Logo OleoControl" width="150"/>
+</div>
+
 
 
 # Laravel API para OleoControl
