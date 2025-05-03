@@ -460,12 +460,15 @@ Este proyecto está bajo licencia privada. No se permite la redistribución, mod
 Para obtener más información sobre el uso, modificación o distribución del código, por favor contacta con el propietario del proyecto.
 
 
+## Créditos
+
+Proyecto desarrollado como parte del ciclo formativo de Desarrollo de Aplicaciones Web (DAW).  
+---
+
+© 2025 OleoControl. Todos los derechos reservados.
+
 ## Autores
 
 Este proyecto fue desarrollado por:
 
 - [@BiLLY-1983](https://www.github.com/BiLLY-1983)
-
-Pedro Jesús Berzosa Ogallar
-
-Desarrollador principal y responsable del desarrollo de la aplicación OleoControl.
