@@ -219,7 +219,7 @@ La estructura de carpetas de este proyecto sigue la convención estándar de Lar
 #### Iniciar sesión (Login)
 
 ```http
-  POST /api/login
+POST /api/login
 ```
 
 | Parameter | Type     | Description                |
@@ -261,7 +261,7 @@ Respuesta:
 #### Obtener las entregas de un socio
 
 ```http
-  GET /api/enteis/{memberId}/entries
+GET /api/enteis/{memberId}/entries
 ```
 
 | Parameter | Type     | Description                       |
@@ -295,7 +295,7 @@ Respuesta:
 #### Crear una liquidación de aceite
 
 ```http
-  POST /api/settlements
+POST /api/settlements
 ```
 
 | Parameter | Type     | Description                       |
