@@ -1,4 +1,5 @@
 ![Logo OleoControl](public/readme/logo-color.png)
+<img src="public/readme/logo-color.png" alt="Logo OleoControl" width="150"/>
 
 
 # Laravel API para OleoControl
