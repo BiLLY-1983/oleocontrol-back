@@ -2,9 +2,6 @@
   <img src="public/readme/logo-color.png" alt="Logo OleoControl" width="300"/>
 </p>
 
-
-
-
 # Laravel API para OleoControl
 
 Este es el backend del proyecto **OleoControl**, una aplicación web desarrollada con Laravel 11 para la gestión integral de almazaras.
@@ -143,29 +140,29 @@ El backend de **OleoControl** expone una API RESTful que puede ser consumida por
 ```json
 [
   {
-    "id" => 1,
-    "entry_date" => "2025-03-05",
-    "olive_quantity" => 5000,
-    "oil_quantity" => "",
-    "analysis_status" => "Pendiente",
-    "member" => [
-        "id" => 25,
-        "name" => "Juan Pérez",
-        "member_number" => 1025,
-        "member_email" => "juan_perez@email.com",
+    "id": 1,
+    "entry_date": "2025-03-05",
+    "olive_quantity": 5000,
+    "oil_quantity": "",
+    "analysis_status": "Pendiente",
+    "member": [
+        "id": 25,
+        "name": "Juan Pérez",
+        "member_number": 1025,
+        "member_email": "juan_perez@email.com",
     }
   },
   {
-    "id" => 2,
-    "entry_date" => "2025-03-18",
-    "olive_quantity" => 3650,
-    "oil_quantity" => "",
-    "analysis_status" => "Pendiente",
-    "member" => [
-        "id" => 25,
-        "name" => "Juan Pérez",
-        "member_number" => 1025,
-        "member_email" => "juan_perez@email.com",
+    "id": 2,
+    "entry_date": "2025-03-18",
+    "olive_quantity": 3650,
+    "oil_quantity": "",
+    "analysis_status": "Pendiente",
+    "member": [
+        "id": 25,
+        "name": "Juan Pérez",
+        "member_number": 1025,
+        "member_email": "juan_perez@email.com",
     }
   },
 ]
