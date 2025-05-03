@@ -15,7 +15,7 @@ Toda la lógica de negocio se expone a través de una API RESTful que es consumi
 
 
 
-### Características principales de OleoControl:
+## 📋 Características principales de OleoControl:
 
 - **Gestión de Recepción de Aceituna**: Registro de entregas de aceituna por parte de los agricultores, con detalles como el peso y la calidad.
 - **Análisis de Laboratorio**: Los técnicos pueden realizar análisis de laboratorio y registrar los resultados de cada entrega de aceituna.
@@ -32,30 +32,22 @@ Toda la lógica de negocio se expone a través de una API RESTful que es consumi
 - **MySQL**: Base de datos relacional utilizada para almacenar los datos de las entregas, análisis, liquidaciones, etc.
 - **Migrations y Seeders**: Para gestionar la estructura de la base de datos y poblarla con datos de ejemplo durante el desarrollo.
 
-### Frontend (React):
-- **React**: Librería JavaScript utilizada para construir la interfaz de usuario dinámica y reactiva.
-- **Axios**: Cliente HTTP para realizar peticiones a la API RESTful del backend.
-- **TailwindCSS**: Framework CSS para crear un diseño moderno y responsivo de manera rápida y eficiente.
-- **Vite**: Herramienta de construcción que mejora el desarrollo y la experiencia en React, optimizando el tiempo de recarga.
-
 ### Herramientas adicionales:
 - **Mailtrap**: Para la gestión de correos electrónicos durante el desarrollo, evitando enviar emails reales.
 - **doompdf**: Para la generación de informes en PDF.
 
-### Requisitos del sistema:
+## ⚙️ Requisitos del sistema:
 
 - **PHP >= 8.2**: Necesario para ejecutar Laravel 11 y todas sus dependencias.
 - **Composer**: Para gestionar las dependencias de PHP.
 - **MySQL o MariaDB**: Base de datos relacional para almacenar la información del sistema.
-- **Node.js >= 16.0**: Necesario para la instalación y gestión de dependencias de frontend (React).
-- **NPM o Yarn**: Herramientas de gestión de paquetes para el frontend.
 - **Extensiones de PHP**:
   - `ext-json`
   - `ext-mbstring`
   - `ext-ctype`
   - `ext-fileinfo`
   - `ext-pdo_mysql`
-### Instalación del backend (Laravel):
+## 🔧 Instalación del backend (Laravel):
 
 1. **Clonar el repositorio**:
 
@@ -109,7 +101,7 @@ Editar .env para configurar la conexión a la base de datos y otras variables ne
     ```
 
 Esto levantará el servidor en http://localhost:8000.
-## Uso/Ejemplos
+## 📚 Uso/Ejemplos
 
 El backend de **OleoControl** expone una API RESTful que puede ser consumida por cualquier cliente HTTP (por ejemplo, el frontend de React). A continuación se muestran algunos ejemplos de cómo utilizar los endpoints más comunes:
 
@@ -173,7 +165,7 @@ El backend de **OleoControl** expone una API RESTful que puede ser consumida por
 
 
 
-## Estructura del proyecto
+## 🗂️ Estructura del proyecto
 
 La estructura de carpetas de este proyecto sigue la convención estándar de Laravel. A continuación se describen las principales carpetas y archivos:
 
@@ -214,7 +206,7 @@ La estructura de carpetas de este proyecto sigue la convención estándar de Lar
 - **storage/logs**: Aquí se guardan los logs del sistema, lo que permite depurar errores y registrar eventos importantes.
 
 
-## API Reference
+## 🌐 API Reference
 
 #### Iniciar sesión (Login)
 
@@ -398,7 +390,7 @@ POST /api/settlements
 
 
 
-## Tests
+## 🧪 Tests
 
 #### Descripción
 
@@ -425,7 +417,7 @@ php artisan test
 
 
 
-## Documentación
+## 📄 Documentación
 
 La documentación completa de la API está disponible a través de Swagger. Puedes acceder a ella directamente desde el siguiente enlace:
 
@@ -453,21 +445,21 @@ La documentación incluye detalles sobre los siguientes puntos:
     Códigos de estado: Códigos de respuesta HTTP para los diferentes casos.
 
 
-## Licencia
+## 📜 Licencia
 
 Este proyecto está bajo licencia privada. No se permite la redistribución, modificación o uso comercial sin el consentimiento explícito de los autores.
 
 Para obtener más información sobre el uso, modificación o distribución del código, por favor contacta con el propietario del proyecto.
 
 
-## Créditos
+## 💳 Créditos
 
 Proyecto desarrollado como parte del ciclo formativo de Desarrollo de Aplicaciones Web (DAW).  
 ---
 
 © 2025 OleoControl. Todos los derechos reservados.
 
-## Autores
+## ✍️ Autores
 
 Este proyecto fue desarrollado por:
 
