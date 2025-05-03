@@ -1,6 +1,8 @@
-<div style="text-align: center;">
-  <img src="public/readme/logo-color.png" alt="Logo OleoControl" width="150"/>
-</div>
+<img src="public/readme/logo-color.png" alt="Logo OleoControl" width="150"/>
+<p align="center">
+  <img src="public/readme/logo-color.png" alt="Logo OleoControl" width="300"/>
+</p>
+
 
 
 
