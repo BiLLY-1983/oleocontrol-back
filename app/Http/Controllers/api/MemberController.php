@@ -263,6 +263,7 @@ class MemberController extends Controller
             // Si 'member_number' no está vacío, lo agregamos a la actualización
             if ($request->has('member_number') && !is_null($request->input('member_number'))) {
                 $updateData['member_number'] = $request->input('member_number');
+                $member->update($updateData);
             }
 
             // Obtener los datos del usuario del request

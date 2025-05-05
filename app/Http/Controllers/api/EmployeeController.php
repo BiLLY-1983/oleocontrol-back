@@ -268,11 +268,11 @@ class EmployeeController extends Controller
             $employee = Employee::findOrFail($id);
 
             $userData = $request->input('user');
-            $departmentData = $request->input('department');
 
-            // Actualiza el departamento del empleado
-            if ($departmentData && isset($departmentData['id'])) {
-                $employee->department_id = $departmentData['id']; // Actualiza el departamento
+            $departmentId = $request->input('department_id');
+
+            if ($departmentId) {
+                $employee->department_id = $departmentId;
                 $employee->save();
             }
 
