@@ -561,7 +561,7 @@ class UserController extends Controller
         return response()->json([
             'status' => 'success',
             'message' => 'Usuario eliminado satisfactoriamente'
-        ], 204);
+        ], 200);
     }
 
     /**

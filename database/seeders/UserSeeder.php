@@ -143,15 +143,9 @@ class UserSeeder extends Seeder
 
         // Asignación de roles aleatoriamente
         $memberRole = Role::where('name', 'Socio')->first();
-        $workerRole = Role::where('name', 'Empleado')->first();
 
         foreach ($usersCreated as $user) {
-
-            if (rand(0, 1) == 0) {
-                $user->roles()->attach($memberRole);
-            } else {
-                $user->roles()->attach($workerRole);
-            }
+            $user->roles()->attach($memberRole); 
         }
     }
 }
