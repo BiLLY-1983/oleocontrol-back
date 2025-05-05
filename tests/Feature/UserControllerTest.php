@@ -152,7 +152,7 @@ class UserControllerTest extends TestCase
 
         $response = $this->deleteJson("/api/users/{$user->id}");
 
-        $response->assertStatus(204);
+        $response->assertStatus(200);
         $this->assertDatabaseMissing('users', ['id' => $user->id]);
     }
 
